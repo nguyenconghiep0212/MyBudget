@@ -8,5 +8,6 @@ export default function DrawerWithTabsLayout() {
       screenOptions={{ headerShown: false, drawerType: 'back' }}>
       <Drawer.Screen name="(tabs)" options={{ title: 'Tabs' }} />
     </Drawer>
+    
   );
 }

@@ -4,9 +4,10 @@
   "version": "5.0.0",
   "private": true,
   "scripts": {
-    "dev": "EXPO_NO_DOTENV=1 dotenvx run -f .env.dev -- expo start -c",
+    "dev:raw": "npx expo start",
+    "dev": "set EXPO_NO_DOTENV=1 dotenvx run -f .env.dev -- expo start -c",
     "dev:ios": "EXPO_NO_DOTENV=1 dotenvx run -f .env.dev -- expo start --ios -c",
-    "dev:android": "EXPO_NO_DOTENV=1 dotenvx run -f .env.dev -- expo start --android -c",
+    "dev:android": "set EXPO_NO_DOTENV=1 dotenvx run -f .env.dev -- expo start --android -c",
     "dev:web": "EXPO_NO_DOTENV=1 dotenvx run -f .env.dev -- expo start --web -c",
     "dev:doctor": "EXPO_NO_DOTENV=1 dotenvx run -f .env.dev -- npx expo-doctor",
     "dev:secret:push": "dotenvx run -f .env.dev -- eas secret:push --scope project --env-file .env.dev --force",

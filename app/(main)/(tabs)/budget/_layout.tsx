@@ -19,12 +19,13 @@ export default function HomeStackLayout() {
       <Stack.Screen
         name="index"
         options={{
-          title: 'Home',
+          title: 'Budget',
           headerTitle: () => <NavigationHeaderTitle />,
           headerLeft: () => <NavigationHeaderLeft onPress={toggleDrawer} />,
           headerTitleAlign: 'center',
         }}
-      /> 
+      />
+      <Stack.Screen name="details" options={{ title: 'Details' }} />
     </Stack>
   );
 }

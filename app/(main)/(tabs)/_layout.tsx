@@ -28,10 +28,17 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="profile"
+        name="budget"
         options={{
-          title: 'Profile',
-          tabBarIcon: ({ color }) => <AntDesign name="profile" size={24} color={color} />,
+          title: 'Budget',
+          tabBarIcon: ({ color }) => <AntDesign name="wallet" size={24} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="precious-metal"
+        options={{
+          title: 'Precious Metal',
+          tabBarIcon: ({ color }) => <AntDesign name="gold" size={24} color={color} />,
         }}
       />
     </Tabs>
