@@ -5,7 +5,6 @@ import { MD3Colors, ProgressBar } from 'react-native-paper';
 const styles = StyleSheet.create({
   body: {
     width: '100%',
-    alignItems: 'center',
   },
   superContainer: {
     flex: 1,
@@ -30,9 +29,18 @@ const MainBudget = ({ style }: MainBudgetProps) => {
   const { isDark } = useColorScheme();
   const thisMonthBudget = 4_520_000;
   const thisMonthExpense = 2_430_000;
+  function CalculateRemainBudget(): String {
+    let result = '';
+    if (thisMonthExpense > thisMonthBudget) {
+      result = 'You have exceeded your budget!';
+    } else {
+      result = 'You have exceeded your budget!';
+    }
+    return result;
+  }
   return (
     <View style={[styles.body, style]}>
-      <View style={[styles.superContainer, style]}>
+      <View style={[styles.superContainer]}>
         <View style={[styles.superItemContainer]}>
           <Text style={[styles.text, { fontWeight: 200 }]}>This month budget</Text>
           <Text style={[styles.text, { fontSize: 18, fontWeight: 600 }]}>
@@ -47,8 +55,9 @@ const MainBudget = ({ style }: MainBudgetProps) => {
           </Text>
         </View>
       </View>
-      <View style={{ width: '50%' }}>
-        <ProgressBar progress={0.5} />
+      <View style={{ paddingTop: 40, width: '60%', margin: 'auto' }}>
+        <Text style={styles.text}>{CalculateRemainBudget()}</Text>
+        <ProgressBar progress={0.5} style={{ width: '100%' }} />
       </View>
     </View>
   );

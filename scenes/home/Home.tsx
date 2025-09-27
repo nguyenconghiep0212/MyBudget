@@ -15,23 +15,6 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     color: 'white',
   },
-  body: {
-    width: '100%',
-    paddingTop: 40,
-  },
-  superContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    alignContent: 'flex-start',
-  },
-  superItemContainer: {
-    display: 'flex',
-    width: '50%', // 50% -> 2 columns | 33% -> 3 columns | 25% -> 4 columns
-  },
-  text: {
-    color: 'white',
-  },
 });
 
 export default function Home() {
