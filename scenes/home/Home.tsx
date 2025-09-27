@@ -3,31 +3,34 @@ import useColorScheme from '@/hooks/useColorScheme';
 import Button from '@/components/elements/Button';
 import { useRouter } from 'expo-router';
 import { colors } from '@/theme';
-
+import { Badge } from 'react-native-paper';
+import MainBudget from '@/components/home/mainBudget';
 const styles = StyleSheet.create({
   root: {
     flex: 1,
     flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.lightGrayPurple,
+    justifyContent: 'flex-start',
+    paddingRight: 20,
+    paddingLeft: 20,
+    color: 'white',
   },
-  title: {
-    fontSize: 24,
-    marginBottom: 20,
+  body: {
+    width: '100%',
+    paddingTop: 40,
   },
-  buttonTitle: {
-    fontSize: 16,
-    color: colors.white,
-    textAlign: 'center',
+  superContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignContent: 'flex-start',
   },
-  button: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 22,
-    backgroundColor: colors.lightPurple,
-    height: 44,
-    width: '50%',
+  superItemContainer: {
+    display: 'flex',
+    width: '50%', // 50% -> 2 columns | 33% -> 3 columns | 25% -> 4 columns
+  },
+  text: {
+    color: 'white',
   },
 });
 
@@ -36,7 +39,8 @@ export default function Home() {
   const { isDark } = useColorScheme();
   return (
     <View style={[styles.root, isDark && { backgroundColor: colors.blackGray }]}>
-      <Text style={[styles.title, isDark && { color: colors.gray }]}>Home</Text>
+      <MainBudget style={{ paddingTop: 40 }} />
+      {/* <Text style={[styles.title, isDark && { color: colors.gray }]}>Home</Text>
       <Button
         title="Go to Details"
         titleStyle={[styles.buttonTitle, isDark && { color: colors.blackGray }]}
@@ -44,7 +48,7 @@ export default function Home() {
         onPress={() =>
           router.push({ pathname: '(main)/(tabs)/home/details', params: { from: 'Home' } })
         }
-      />
+      /> */}
     </View>
   );
 }
