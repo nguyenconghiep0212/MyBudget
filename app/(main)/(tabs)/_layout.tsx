@@ -11,7 +11,7 @@ export default function TabLayout() {
         headerShown: false,
         tabBarInactiveTintColor: colors.gray,
         tabBarInactiveBackgroundColor: isDark ? colors.blackGray : colors.white,
-        tabBarActiveTintColor: colors.lightPurple,
+        tabBarActiveTintColor: colors.NavyBlueText,
         tabBarActiveBackgroundColor: isDark ? colors.blackGray : colors.white,
       }}>
       <Tabs.Screen

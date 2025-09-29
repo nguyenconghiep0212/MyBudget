@@ -61,12 +61,12 @@ function Router() {
     <Fragment>
       <Slot />
       <StatusBar style="light" />
-      <BottomSheet
+      {/* <BottomSheet
         isOpen={isOpen}
         initialOpen
         backgroundStyle={isDark && { backgroundColor: colors.blackGray }}>
         <BottomSheetContents onClose={() => setOpen(false)} />
-      </BottomSheet>
+      </BottomSheet> */}
     </Fragment>
   );
 }

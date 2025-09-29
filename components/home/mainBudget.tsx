@@ -1,13 +1,13 @@
 import { Text, View, StyleSheet, StyleProp, ViewStyle } from 'react-native';
 import useColorScheme from '@/hooks/useColorScheme';
 import { formatCurrency } from '@/utils/helper';
-import { MD3Colors, ProgressBar } from 'react-native-paper';
+import { Button, MD3Colors, ProgressBar } from 'react-native-paper';
+import { AntDesign } from '@expo/vector-icons';
 const styles = StyleSheet.create({
   body: {
     width: '100%',
   },
   superContainer: {
-    flex: 1,
     flexDirection: 'row',
     flexWrap: 'wrap',
     alignContent: 'flex-start',
@@ -28,21 +28,36 @@ type MainBudgetProps = {
 const MainBudget = ({ style }: MainBudgetProps) => {
   const { isDark } = useColorScheme();
   const thisMonthBudget = 4_520_000;
-  const thisMonthExpense = 2_430_000;
+  const thisMonthExpense = 1_430_000;
   function CalculateRemainBudget(): String {
     let result = '';
     if (thisMonthExpense > thisMonthBudget) {
-      result = 'You have exceeded your budget!';
+      result =
+        'You have exceeded your budget by' +
+        ((thisMonthExpense / thisMonthBudget) * 100).toFixed(0) +
+        '%';
     } else {
-      result = 'You have exceeded your budget!';
+      result =
+        'You have spent ' +
+        ((thisMonthExpense / thisMonthBudget) * 100).toFixed(0) +
+        '% of your budget';
     }
     return result;
+  }
+  function CalculateBudgetProgress(): number {
+    return thisMonthExpense / thisMonthBudget;
+  }
+  function EditThisMonthBudget() {
+    console.log('Edit this month budget');
   }
   return (
     <View style={[styles.body, style]}>
       <View style={[styles.superContainer]}>
         <View style={[styles.superItemContainer]}>
-          <Text style={[styles.text, { fontWeight: 200 }]}>This month budget</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
+            <Text style={[styles.text, { fontWeight: 200 }]}>This month budget</Text>
+            <AntDesign name="edit" size={14} color="gray" onPress={EditThisMonthBudget} />
+          </View>
           <Text style={[styles.text, { fontSize: 18, fontWeight: 600 }]}>
             {formatCurrency(thisMonthBudget)}
           </Text>
@@ -55,9 +70,15 @@ const MainBudget = ({ style }: MainBudgetProps) => {
           </Text>
         </View>
       </View>
-      <View style={{ paddingTop: 40, width: '60%', margin: 'auto' }}>
-        <Text style={styles.text}>{CalculateRemainBudget()}</Text>
-        <ProgressBar progress={0.5} style={{ width: '100%' }} />
+      <View style={{ paddingTop: 40, width: '75%', margin: 'auto', gap: 5 }}>
+        <Text style={[styles.text, { fontSize: 12, fontWeight: 200, textAlign: 'center' }]}>
+          {CalculateRemainBudget()}
+        </Text>
+        <ProgressBar
+          progress={CalculateBudgetProgress()}
+          color={MD3Colors.error60}
+          style={{ width: '100%' }}
+        />
       </View>
     </View>
   );

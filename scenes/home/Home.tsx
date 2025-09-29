@@ -3,8 +3,10 @@ import useColorScheme from '@/hooks/useColorScheme';
 import Button from '@/components/elements/Button';
 import { useRouter } from 'expo-router';
 import { colors } from '@/theme';
-import { Badge } from 'react-native-paper';
+import { Badge, Divider } from 'react-native-paper';
 import MainBudget from '@/components/home/mainBudget';
+import BudgetSummary from '@/components/home/budgetSummary';
+import Today from '@/components/home/date';
 const styles = StyleSheet.create({
   root: {
     flex: 1,
@@ -22,7 +24,10 @@ export default function Home() {
   const { isDark } = useColorScheme();
   return (
     <View style={[styles.root, isDark && { backgroundColor: colors.blackGray }]}>
-      <MainBudget style={{ paddingTop: 40 }} />
+      <Today></Today>
+      <MainBudget style={{ paddingTop: 20 }} />
+      <Divider style={{ width: '100%', marginTop: 40, marginBottom: 20 }} />
+      <BudgetSummary />
       {/* <Text style={[styles.title, isDark && { color: colors.gray }]}>Home</Text>
       <Button
         title="Go to Details"

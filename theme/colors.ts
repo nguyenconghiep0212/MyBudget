@@ -5,8 +5,13 @@ export const colors = {
   lightGrayPurple: '#f7f7fb',
   pink: '#ff3d69',
   gray: '#797777',
+  darkGray: '#3d3d3dff',
   blackGray: '#101212',
   black: '#000000',
   white: '#ffffff',
   transparent: 'transparent',
+  NavyBlueText: '#6298b8ff',
+  NavyBlueBg: '#355a77ff',
+  Negative: '#ff7e7eff',
+  Positive: '#7eff9dff',
 };
