@@ -1,11 +1,10 @@
 import { Text, View, StyleSheet, StyleProp, ViewStyle, ScrollView } from 'react-native';
 import useColorScheme from '@/hooks/useColorScheme';
-import { Divider, SegmentedButtons, Surface } from 'react-native-paper';
+import { SegmentedButtons, Surface } from 'react-native-paper';
 import { summaryData } from '@/local_data/data';
-import React, { SetStateAction } from 'react';
+import React, { useEffect } from 'react';
 import { colors } from '@/theme';
-import { formatCurrency, months } from '@/utils/helper';
-import { white } from 'react-native-paper/lib/typescript/styles/themes/v2/colors';
+import { formatCurrency, getWeekOfYear, months } from '@/utils/helper';
 const styles = StyleSheet.create({
   body: {
     flex: 1,
@@ -71,6 +70,25 @@ const BudgetSummary = ({ style }: MainBudgetProps) => {
       });
     }
     if (filter == 'week') {
+      summaryData.forEach((item, index) => {
+        const temp = displayData.find(
+          i => i.date === 'Week ' + getWeekOfYear(item.date) + ' / ' + item.date.getFullYear(),
+        );
+        if (temp != undefined) {
+          if (item.typeId == 2) {
+            temp.income += item.amount;
+          }
+          if (item.typeId == 1) {
+            temp.expense += item.amount;
+          }
+        } else {
+          displayData.push({
+            date: 'Week ' + getWeekOfYear(item.date) + ' / ' + item.date.getFullYear(),
+            income: item.typeId == 2 ? item.amount : 0,
+            expense: item.typeId == 1 ? item.amount : 0,
+          });
+        }
+      });
     }
     if (filter == 'month') {
       summaryData.forEach((item, index) => {
@@ -95,6 +113,9 @@ const BudgetSummary = ({ style }: MainBudgetProps) => {
     }
     setData(displayData);
   }
+  useEffect(() => {
+    OnChangeTimeSummary('day');
+  }, []);
   const DataCard = data.map((item, index) => (
     <Surface style={[styles.surface, { backgroundColor: colors.darkGray }]} key={index}>
       <View style={[styles.superContainer, { marginLeft: 6 }]}>
@@ -106,11 +127,11 @@ const BudgetSummary = ({ style }: MainBudgetProps) => {
       <View style={styles.superContainer}>
         <View style={[styles.superItemContainer, { paddingLeft: 12 }]}></View>
         <View style={[styles.superItemContainer, { alignItems: 'flex-end', paddingRight: 12 }]}>
-          <Text style={[styles.textMoney, { color: colors.NavyBlueText }]}>
-            {item.income ? formatCurrency(item.income) : '-'}
+          <Text style={[styles.textMoney, { color: colors.Positive }]}>
+            {item.income ? formatCurrency(item.income) + ' ↑' : '-'}
           </Text>
           <Text style={[styles.textMoney, { color: colors.Negative }]}>
-            {item.expense ? formatCurrency(item.expense) : '-'}
+            {item.expense ? formatCurrency(item.expense) + ' ↓' : '-'}
           </Text>
         </View>
       </View>

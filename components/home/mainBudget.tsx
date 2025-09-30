@@ -2,7 +2,9 @@ import { Text, View, StyleSheet, StyleProp, ViewStyle } from 'react-native';
 import useColorScheme from '@/hooks/useColorScheme';
 import { formatCurrency } from '@/utils/helper';
 import { Button, MD3Colors, ProgressBar } from 'react-native-paper';
+import { summaryData, monthlyBudget } from '@/local_data/data';
 import { AntDesign } from '@expo/vector-icons';
+import { use, useEffect, useState } from 'react';
 const styles = StyleSheet.create({
   body: {
     width: '100%',
@@ -27,13 +29,32 @@ type MainBudgetProps = {
 
 const MainBudget = ({ style }: MainBudgetProps) => {
   const { isDark } = useColorScheme();
-  const thisMonthBudget = 4_520_000;
-  const thisMonthExpense = 1_430_000;
+  const [thisMonthBudget, setThisMonthBudget] = useState<number>(0);
+  const [thisMonthExpense, setThisMonthExpense] = useState<number>(0);
+  function GetThisMonthBuget() {
+    const today = new Date();
+    const thisMonth = today.getMonth() + 1;
+    const thisYear = today.getFullYear();
+    monthlyBudget.forEach(item => {
+      if (thisMonth == item.month && thisYear == item.year) {
+        setThisMonthBudget(item.amount);
+      }
+    });
+  }
+  function CalculateThisMonthExpense() {
+    let total = 0;
+    summaryData.forEach(item => {
+      if (item.typeId == 1) {
+        total += item.amount;
+      }
+    });
+    setThisMonthExpense(total);
+  }
   function CalculateRemainBudget(): String {
     let result = '';
     if (thisMonthExpense > thisMonthBudget) {
       result =
-        'You have exceeded your budget by' +
+        'You have exceeded your budget by ' +
         ((thisMonthExpense / thisMonthBudget) * 100).toFixed(0) +
         '%';
     } else {
@@ -50,6 +71,10 @@ const MainBudget = ({ style }: MainBudgetProps) => {
   function EditThisMonthBudget() {
     console.log('Edit this month budget');
   }
+  useEffect(() => {
+    CalculateThisMonthExpense();
+    GetThisMonthBuget();
+  }, []);
   return (
     <View style={[styles.body, style]}>
       <View style={[styles.superContainer]}>

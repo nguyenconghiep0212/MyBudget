@@ -19,3 +19,8 @@ export interface Category {
   id: number;
   name: string;
 }
+export interface MonthlyBudget {
+  month: number;
+  year: number;
+  amount: number;
+}

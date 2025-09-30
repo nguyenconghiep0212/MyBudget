@@ -1,6 +1,12 @@
-import { Category, Type, Budget } from '@/types/budget';
-import { Ionicons } from '@expo/vector-icons';
+import { Category, Type, Budget, MonthlyBudget } from '@/types/budget';
 
+const monthlyBudget: MonthlyBudget[] = [
+  {
+    month: 9,
+    year: 2025,
+    amount: 4_000_000,
+  },
+];
 const summaryData: Budget[] = [
   {
     typeId: 1,
@@ -30,6 +36,15 @@ const summaryData: Budget[] = [
     date: new Date('2025-09-20'),
   },
   {
+    typeId: 1,
+    expenseCategoryId: 4,
+    id: 1,
+    name: 'Meat and Vegetables',
+    description: 'For weekly groceries',
+    amount: 82_000,
+    date: new Date('2025-09-21'),
+  },
+  {
     typeId: 2,
     incomeCategoryId: 0,
     id: 0,
@@ -48,7 +63,7 @@ const expenseCategory: Category[] = [
 ];
 const IncomeCategory: Category[] = [{ id: 0, name: 'Salary' }];
 const type: Type[] = [
-  { id: 1, name: 'Income' },
-  { id: 2, name: 'Expense' },
+  { id: 1, name: 'Expense' },
+  { id: 2, name: 'Income' },
 ];
-export { summaryData, expenseCategory, IncomeCategory, type };
+export { summaryData, expenseCategory, IncomeCategory, type, monthlyBudget };
