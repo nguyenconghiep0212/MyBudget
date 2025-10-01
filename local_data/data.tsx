@@ -1,4 +1,7 @@
-import { Category, Type, Budget, MonthlyBudget } from '@/types/budget';
+import { colors } from '@/theme';
+import { Category, Type, Event, MonthlyBudget } from '@/types/budget';
+import { FontAwesome, Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { ReactNode } from 'react';
 
 const monthlyBudget: MonthlyBudget[] = [
   {
@@ -7,7 +10,7 @@ const monthlyBudget: MonthlyBudget[] = [
     amount: 4_000_000,
   },
 ];
-const summaryData: Budget[] = [
+const summaryData: Event[] = [
   {
     typeId: 1,
     expenseCategoryId: 2,
@@ -55,15 +58,55 @@ const summaryData: Budget[] = [
   },
 ];
 const expenseCategory: Category[] = [
-  { id: 0, name: 'Misc' },
-  { id: 1, name: 'Food' },
-  { id: 2, name: 'Vehicle' },
-  { id: 3, name: 'Game' },
-  { id: 4, name: 'Grocery' },
+  { id: 0, name: 'Misc', icon: <FontAwesome name="list" size={24} color={colors.Negative} /> },
+  { id: 1, name: 'Food', icon: <Ionicons name="fast-food" size={24} color={colors.Negative} /> },
+  {
+    id: 2,
+    name: 'Gas',
+    icon: <MaterialIcons name="local-gas-station" size={24} color={colors.Negative} />,
+  },
+  { id: 3, name: 'Game', icon: <FontAwesome name="gamepad" size={24} color={colors.Negative} /> },
+  {
+    id: 4,
+    name: 'Grocery',
+    icon: <FontAwesome name="shopping-basket" size={24} color={colors.Negative} />,
+  },
 ];
-const IncomeCategory: Category[] = [{ id: 0, name: 'Salary' }];
+const IncomeCategory: Category[] = [
+  { id: 0, name: 'Salary', icon: <FontAwesome name="money" size={24} color={colors.Positive} /> },
+];
 const type: Type[] = [
   { id: 1, name: 'Expense' },
   { id: 2, name: 'Income' },
 ];
-export { summaryData, expenseCategory, IncomeCategory, type, monthlyBudget };
+
+function SetMonthlyBudget(newBudget: MonthlyBudget) {
+  if (
+    monthlyBudget.find(i => i.month == newBudget.month && i.year == newBudget.year) == undefined
+  ) {
+    monthlyBudget.unshift(newBudget);
+  } else {
+    monthlyBudget.forEach(item => {
+      if (newBudget.month == item.month && newBudget.year == item.year) {
+        item.amount = newBudget.amount;
+      }
+    });
+  }
+  console.log('Update existing budget' + JSON.stringify(monthlyBudget));
+}
+function GetCategoryById(id: number, isExpense: boolean): Category | undefined {
+  if (isExpense) {
+    return expenseCategory.find((i: Category) => i.id == id);
+  } else {
+    return IncomeCategory.find((i: Category) => i.id == id);
+  }
+}
+export {
+  summaryData,
+  expenseCategory,
+  IncomeCategory,
+  type,
+  monthlyBudget,
+  SetMonthlyBudget,
+  GetCategoryById,
+};

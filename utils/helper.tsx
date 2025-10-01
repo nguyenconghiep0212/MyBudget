@@ -13,7 +13,9 @@ const months = [
   'Dec',
 ];
 const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-
+function GetToday(): Date {
+  return new Date();
+}
 function formatCurrency(input: Number): string {
   const result = input.toLocaleString('en-US');
   return result;
@@ -42,4 +44,5 @@ function getWeekOfYear(date: Date): number {
 
   return weekNumber;
 }
-export { days, months, formatCurrency, getWeekOfYear };
+
+export { days, months, formatCurrency, getWeekOfYear, GetToday };

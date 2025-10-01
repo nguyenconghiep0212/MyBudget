@@ -1,10 +1,11 @@
-import { Text, View, StyleSheet, StyleProp, ViewStyle } from 'react-native';
+import { Text, View, StyleSheet, StyleProp, ViewStyle, TextInput } from 'react-native';
 import useColorScheme from '@/hooks/useColorScheme';
-import { formatCurrency } from '@/utils/helper';
-import { Button, MD3Colors, ProgressBar } from 'react-native-paper';
-import { summaryData, monthlyBudget } from '@/local_data/data';
-import { AntDesign } from '@expo/vector-icons';
-import { use, useEffect, useState } from 'react';
+import { formatCurrency, GetToday } from '@/utils/helper';
+import { MD3Colors, ProgressBar } from 'react-native-paper';
+import { summaryData, monthlyBudget, SetMonthlyBudget } from '@/local_data/data';
+import { AntDesign, Octicons } from '@expo/vector-icons';
+import { useEffect, useState } from 'react';
+import AddExpense from './addExpense';
 const styles = StyleSheet.create({
   body: {
     width: '100%',
@@ -28,31 +29,44 @@ type MainBudgetProps = {
 };
 
 const MainBudget = ({ style }: MainBudgetProps) => {
-  const { isDark } = useColorScheme();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [hasSetBudget, setHasSetBudget] = useState<boolean>(false);
   const [thisMonthBudget, setThisMonthBudget] = useState<number>(0);
   const [thisMonthExpense, setThisMonthExpense] = useState<number>(0);
+  const [isEditingBudget, setIsEditingBudget] = useState<boolean>(false);
+  const today = GetToday();
+  const thisMonth = today.getMonth() + 1;
+  const thisYear = today.getFullYear();
   function GetThisMonthBuget() {
-    const today = new Date();
-    const thisMonth = today.getMonth() + 1;
-    const thisYear = today.getFullYear();
     monthlyBudget.forEach(item => {
       if (thisMonth == item.month && thisYear == item.year) {
         setThisMonthBudget(item.amount);
+        setHasSetBudget(true);
       }
     });
+  }
+  function SetThisMonthBudget(newBudget: number) {
+    SetMonthlyBudget({ month: thisMonth, year: thisYear, amount: newBudget });
+    setThisMonthBudget(newBudget);
+    setIsEditingBudget(false);
+    GetThisMonthBuget();
   }
   function CalculateThisMonthExpense() {
     let total = 0;
     summaryData.forEach(item => {
-      if (item.typeId == 1) {
-        total += item.amount;
+      if (thisMonth == item.date.getMonth() + 1 && thisYear == item.date.getFullYear()) {
+        if (item.typeId == 1) {
+          total += item.amount;
+        }
       }
     });
     setThisMonthExpense(total);
   }
   function CalculateRemainBudget(): String {
     let result = '';
-    if (thisMonthExpense > thisMonthBudget) {
+    if (thisMonthBudget == 0) {
+      result = 'You have not set a budget for this month';
+    } else if (thisMonthExpense > thisMonthBudget) {
       result =
         'You have exceeded your budget by ' +
         ((thisMonthExpense / thisMonthBudget) * 100).toFixed(0) +
@@ -69,7 +83,7 @@ const MainBudget = ({ style }: MainBudgetProps) => {
     return thisMonthExpense / thisMonthBudget;
   }
   function EditThisMonthBudget() {
-    console.log('Edit this month budget');
+    setIsEditingBudget(!isEditingBudget);
   }
   useEffect(() => {
     CalculateThisMonthExpense();
@@ -83,28 +97,48 @@ const MainBudget = ({ style }: MainBudgetProps) => {
             <Text style={[styles.text, { fontWeight: 200 }]}>This month budget</Text>
             <AntDesign name="edit" size={14} color="gray" onPress={EditThisMonthBudget} />
           </View>
-          <Text style={[styles.text, { fontSize: 18, fontWeight: 600 }]}>
-            {formatCurrency(thisMonthBudget)}
-          </Text>
+          {isEditingBudget ? (
+            <TextInput
+              placeholderTextColor="gray"
+              placeholder={formatCurrency(thisMonthBudget) + '...'}
+              style={{ color: 'white' }}
+              keyboardType="numeric"
+              onSubmitEditing={event => SetThisMonthBudget(Number(event.nativeEvent.text))}
+            />
+          ) : (
+            <Text style={[styles.text, { fontSize: 18, fontWeight: 600 }]}>
+              {formatCurrency(thisMonthBudget)}
+            </Text>
+          )}
         </View>
         <View style={[styles.superItemContainer, { alignItems: 'flex-end' }]}>
-          <Text style={[styles.text, { fontWeight: 200 }]}>This month expense</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
+            <Octicons name="plus" size={14} color="gray" onPress={() => setModalVisible(true)} />
+            <Text style={[styles.text, { fontWeight: 200 }]}>This month expense</Text>
+          </View>
           <Text style={[styles.text, { fontSize: 18, fontWeight: 600, color: '#ff7e7eff' }]}>
-            <Text>-</Text>
+            {thisMonthExpense != 0 && <Text>-</Text>}
             {formatCurrency(thisMonthExpense)}
           </Text>
         </View>
       </View>
       <View style={{ paddingTop: 40, width: '75%', margin: 'auto', gap: 5 }}>
-        <Text style={[styles.text, { fontSize: 12, fontWeight: 200, textAlign: 'center' }]}>
+        <Text
+          style={[
+            styles.text,
+            { fontSize: hasSetBudget ? 12 : 18, fontWeight: 200, textAlign: 'center' },
+          ]}>
           {CalculateRemainBudget()}
         </Text>
-        <ProgressBar
-          progress={CalculateBudgetProgress()}
-          color={MD3Colors.error60}
-          style={{ width: '100%' }}
-        />
+        {hasSetBudget && (
+          <ProgressBar
+            progress={CalculateBudgetProgress()}
+            color={MD3Colors.error60}
+            style={{ width: '100%' }}
+          />
+        )}
       </View>
+      <AddExpense modalVisible={modalVisible} onClose={() => setModalVisible(false)} />
     </View>
   );
 };

@@ -1,7 +1,7 @@
 import { Text, View, StyleSheet, StyleProp, ViewStyle } from 'react-native';
 import React from 'react';
 import { FontAwesome } from '@expo/vector-icons';
-import { days } from '@/utils/helper';
+import { days, GetToday } from '@/utils/helper';
 const styles = StyleSheet.create({
   body: {
     width: '100%',
@@ -22,10 +22,6 @@ type MainBudgetProps = {
 };
 
 const Today = ({ style }: MainBudgetProps) => {
-  function GetToday(): Date {
-    const today = new Date();
-    return today;
-  }
   return (
     <View style={[styles.body, style]}>
       <Text style={{ color: 'gray', letterSpacing: 2 }}> {days[GetToday().getDay()]} </Text>

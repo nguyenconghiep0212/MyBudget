@@ -11,6 +11,7 @@ import { useAppSlice } from '@/slices';
 import { getUserAsync } from '@/services';
 import Provider from '@/providers';
 import { User } from '@/types';
+import { Portal } from 'react-native-paper';
 
 // keep the splash screen visible while complete fetching resources
 SplashScreen.preventAutoHideAsync();
@@ -59,7 +60,9 @@ function Router() {
 
   return (
     <Fragment>
-      <Slot />
+      <Portal.Host>
+        <Slot />
+      </Portal.Host>
       <StatusBar style="light" />
       {/* <BottomSheet
         isOpen={isOpen}

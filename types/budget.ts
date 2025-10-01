@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-export interface Budget {
+export interface Event {
   typeId: number;
   expenseCategoryId?: number;
   incomeCategoryId?: number;
@@ -18,6 +18,7 @@ export interface Type {
 export interface Category {
   id: number;
   name: string;
+  icon?: ReactNode;
 }
 export interface MonthlyBudget {
   month: number;
