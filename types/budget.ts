@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-export interface Event {
+export interface ExpenseEvent {
   typeId: number;
   expenseCategoryId?: number;
   incomeCategoryId?: number;

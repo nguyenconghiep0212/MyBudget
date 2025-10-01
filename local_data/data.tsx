@@ -1,5 +1,5 @@
 import { colors } from '@/theme';
-import { Category, Type, Event, MonthlyBudget } from '@/types/budget';
+import { Category, Type, ExpenseEvent, MonthlyBudget } from '@/types/budget';
 import { FontAwesome, Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { ReactNode } from 'react';
 
@@ -10,7 +10,7 @@ const monthlyBudget: MonthlyBudget[] = [
     amount: 4_000_000,
   },
 ];
-const summaryData: Event[] = [
+const summaryData: ExpenseEvent[] = [
   {
     typeId: 1,
     expenseCategoryId: 2,
