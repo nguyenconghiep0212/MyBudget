@@ -53,7 +53,7 @@ type MainAddExpense = {
 };
 const AddExpense = ({ modalVisible, onClose }: MainAddExpense) => {
   const [newExpense, setNewExpense] = useState<ExpenseEvent>({
-    id: 0,
+    id: new Date().getTime(), // Unique ID based on timestamp
     name: '',
     description: '',
     amount: 0,

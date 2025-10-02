@@ -28,7 +28,7 @@ export default function Home() {
       <MainBudget style={{ paddingTop: 20 }} />
       <Divider style={{ width: '100%', marginTop: 40, marginBottom: 20 }} />
       <BudgetSummary />
-      {/* <Text style={[styles.title, isDark && { color: colors.gray }]}>Home</Text>
+      {/*  
       <Button
         title="Go to Details"
         titleStyle={[styles.buttonTitle, isDark && { color: colors.blackGray }]}

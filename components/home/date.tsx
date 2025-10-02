@@ -5,7 +5,6 @@ import { days, GetToday } from '@/utils/helper';
 const styles = StyleSheet.create({
   body: {
     width: '100%',
-    marginTop: 20,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',

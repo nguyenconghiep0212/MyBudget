@@ -5,7 +5,7 @@ import { MD3Colors, ProgressBar } from 'react-native-paper';
 import { summaryData, monthlyBudget, SetMonthlyBudget } from '@/local_data/data';
 import { AntDesign, Octicons } from '@expo/vector-icons';
 import { useEffect, useState } from 'react';
-import AddExpense from './addExpense';
+import AddExpense from '../budget/addExpense';
 const styles = StyleSheet.create({
   body: {
     width: '100%',
@@ -29,7 +29,6 @@ type MainBudgetProps = {
 };
 
 const MainBudget = ({ style }: MainBudgetProps) => {
-  const [modalVisible, setModalVisible] = useState(false);
   const [hasSetBudget, setHasSetBudget] = useState<boolean>(false);
   const [thisMonthBudget, setThisMonthBudget] = useState<number>(0);
   const [thisMonthExpense, setThisMonthExpense] = useState<number>(0);
@@ -113,7 +112,6 @@ const MainBudget = ({ style }: MainBudgetProps) => {
         </View>
         <View style={[styles.superItemContainer, { alignItems: 'flex-end' }]}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
-            <Octicons name="plus" size={14} color="gray" onPress={() => setModalVisible(true)} />
             <Text style={[styles.text, { fontWeight: 200 }]}>This month expense</Text>
           </View>
           <Text style={[styles.text, { fontSize: 18, fontWeight: 600, color: '#ff7e7eff' }]}>
@@ -138,7 +136,6 @@ const MainBudget = ({ style }: MainBudgetProps) => {
           />
         )}
       </View>
-      <AddExpense modalVisible={modalVisible} onClose={() => setModalVisible(false)} />
     </View>
   );
 };
