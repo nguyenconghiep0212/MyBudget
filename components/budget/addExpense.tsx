@@ -1,11 +1,14 @@
 import { Text, View, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, FontAwesome } from '@expo/vector-icons';
 import { Button, Dialog, Divider, Portal } from 'react-native-paper';
 import { Dropdown } from 'react-native-element-dropdown';
 import { colors } from '@/theme';
 import { expenseCategory } from '@/local_data/data';
 import { ExpenseEvent } from '@/types/budget';
+import Today from '@/components/common/date';
+import RNDateTimePicker from '@react-native-community/datetimepicker';
+import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import { GetToday } from '@/utils/helper';
 const styles = StyleSheet.create({
   body: {
@@ -14,6 +17,15 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  superContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignContent: 'flex-start',
+  },
+  superItemContainer: {
+    display: 'flex',
+    width: '50%', // 50% -> 2 columns | 33% -> 3 columns | 25% -> 4 columns
   },
   text: {
     color: colors.white,
@@ -52,6 +64,7 @@ type MainAddExpense = {
   onClose?: () => void;
 };
 const AddExpense = ({ modalVisible, onClose }: MainAddExpense) => {
+  const [date, setDate] = useState(new Date());
   const [newExpense, setNewExpense] = useState<ExpenseEvent>({
     id: new Date().getTime(), // Unique ID based on timestamp
     name: '',
@@ -65,6 +78,19 @@ const AddExpense = ({ modalVisible, onClose }: MainAddExpense) => {
   function onAddExpense() {
     console.log('Adding expense:', newExpense);
     onClose;
+  }
+  function OpenTimePicker() {
+    console.log('open');
+    DateTimePickerAndroid.open({
+      value: newExpense.date,
+      onChange: (event, selectedDate) => {
+        if (selectedDate) {
+          setNewExpense({ ...newExpense, date: selectedDate });
+        }
+      },
+      mode: 'date', // or 'time'
+      is24Hour: true,
+    });
   }
   const renderItem = (item: any) => {
     return (
@@ -85,13 +111,30 @@ const AddExpense = ({ modalVisible, onClose }: MainAddExpense) => {
     <View style={styles.body}>
       <Portal>
         <Dialog visible={modalVisible} style={styles.portal} onDismiss={onClose}>
-          <Dialog.Title style={[styles.text, { color: colors.lightGray }]}>
+          {/* <Dialog.Title style={[styles.text, { color: colors.lightGray }]}>
             Add new expense
-          </Dialog.Title>
+          </Dialog.Title> */}
           <Dialog.Content style={styles.portalBody}>
-            <Text style={[styles.text, { fontSize: 16, color: colors.gray }]}>
-              {newExpense.date.toDateString()}
+            <Text
+              style={[styles.text, { fontSize: 24, color: colors.lightGray, marginBottom: 20 }]}>
+              Add new expense
             </Text>
+            <View
+              style={[
+                styles.superContainer,
+                {
+                  alignItems: 'center',
+                  justifyContent: 'flex-start',
+                  width: '100%',
+                },
+              ]}>
+              <Text style={[styles.text, { color: colors.lightGray, fontSize: 18 }]}>
+                {newExpense.date.toDateString()}
+              </Text>
+              <Button onPress={OpenTimePicker}>
+                <FontAwesome name="calendar" size={20} color={colors.lightGray} />
+              </Button>
+            </View>
             <View style={{ width: '100%' }}>
               <TextInput
                 placeholderTextColor={colors.lightGray}

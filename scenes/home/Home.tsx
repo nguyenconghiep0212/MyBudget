@@ -6,7 +6,7 @@ import { colors } from '@/theme';
 import { Badge, Divider } from 'react-native-paper';
 import MainBudget from '@/components/home/mainBudget';
 import BudgetSummary from '@/components/home/budgetSummary';
-import Today from '@/components/home/date';
+import Today from '@/components/common/date';
 const styles = StyleSheet.create({
   root: {
     flex: 1,

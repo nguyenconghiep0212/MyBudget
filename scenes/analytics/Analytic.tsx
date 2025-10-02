@@ -36,7 +36,7 @@ export default function Home() {
   const { isDark } = useColorScheme();
   return (
     <View style={[styles.root, isDark && { backgroundColor: colors.blackGray }]}>
-      <Text>Anal</Text>
+      <Text style={{ color: colors.lightGray }}>Anal</Text>
     </View>
   );
 }

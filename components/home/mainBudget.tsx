@@ -5,7 +5,6 @@ import { MD3Colors, ProgressBar } from 'react-native-paper';
 import { summaryData, monthlyBudget, SetMonthlyBudget } from '@/local_data/data';
 import { AntDesign, Octicons } from '@expo/vector-icons';
 import { useEffect, useState } from 'react';
-import AddExpense from '../budget/addExpense';
 const styles = StyleSheet.create({
   body: {
     width: '100%',
