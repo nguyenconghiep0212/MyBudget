@@ -34,6 +34,7 @@ type MainBudgetProps = {
 const BudgetEvent = ({ style }: MainBudgetProps) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [groupedData, setGroupedData] = useState(groupSummaryData(summaryData));
+  console.log(JSON.stringify(groupedData));
   function ListAccordionNode(Date: string, Amount: number, FontSize = 14): ReactNode {
     return (
       <View>
@@ -76,10 +77,11 @@ const BudgetEvent = ({ style }: MainBudgetProps) => {
             )}
             style={{ backgroundColor: colors.blackGray, padding: 0 }} // Add this line
           >
-            {Object.entries(data).map(([key, value]: any) => {
+            {Object.entries(value.data).map(([key1, value1]: any) => {
               return (
                 <List.Accordion
-                  title={ListAccordionNode('Week 1', 120_000, 12)}
+                  key={key1}
+                  title={ListAccordionNode('Week ' + key1, value1.total, 12)}
                   left={props => (
                     <List.Icon
                       {...props}
@@ -95,7 +97,37 @@ const BudgetEvent = ({ style }: MainBudgetProps) => {
                   )}
                   style={{ backgroundColor: colors.blackGray, padding: 0 }} // Add this line
                 >
-                  <List.Item title="Second item" titleStyle={{ color: 'white', marginLeft: 24 }} />
+                  {/* <Text style={{ color: 'white' }}>
+                    {JSON.stringify(Object.entries(value1.data)[0])}
+                  </Text> */}
+                  {Object.entries(value1.data).map(([key2, value2]: any) => {
+                    return (
+                      <List.Accordion
+                        key={key2}
+                        title={ListAccordionNode(key2, value2.total)}
+                        left={props => (
+                          <List.Icon
+                            {...props}
+                            icon={() => (
+                              <MaterialIcons
+                                name="today"
+                                size={24}
+                                color={colors.lightGray}
+                                style={{ marginLeft: 48 }}
+                              />
+                            )}
+                          />
+                        )}
+                        style={{ backgroundColor: colors.blackGray, padding: 0 }} // Add this line
+                      >
+                        <Text>{key2}</Text>
+                        <List.Item
+                          title="Second item"
+                          titleStyle={{ color: 'white', marginLeft: 24 }}
+                        />
+                      </List.Accordion>
+                    );
+                  })}
                 </List.Accordion>
               );
             })}
