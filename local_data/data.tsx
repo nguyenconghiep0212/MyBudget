@@ -1,5 +1,6 @@
 import { colors } from '@/theme';
 import { Category, Type, ExpenseEvent, MonthlyBudget } from '@/types/budget';
+import { months } from '@/utils/helper';
 import { FontAwesome, Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { ReactNode } from 'react';
 
@@ -101,6 +102,54 @@ function GetCategoryById(id: number, isExpense: boolean): Category | undefined {
     return IncomeCategory.find((i: Category) => i.id == id);
   }
 }
+function groupSummaryData(data: ExpenseEvent[]) {
+  const result: any = {};
+
+  data.forEach(item => {
+    const date = new Date(item.date);
+    const year = date.getFullYear();
+    const month = months[date.getMonth()];
+    const week = Math.ceil(date.getDate() / 7); // Week of month (simple)
+    const day = date.toDateString();
+
+    // Year
+    if (!result[year]) {
+      result[year] = { total: 0, data: {} };
+    }
+    result[year].total += item.amount;
+
+    // Month
+    if (!result[year].data[month]) {
+      result[year].data[month] = { total: 0, data: {} };
+    }
+    result[year].data[month].total += item.amount;
+
+    // Week
+    if (!result[year].data[month].data[week]) {
+      result[year].data[month].data[week] = { total: 0, data: {} };
+    }
+    result[year].data[month].data[week].total += item.amount;
+
+    // Day
+    if (!result[year].data[month].data[week].data[day]) {
+      result[year].data[month].data[week].data[day] = { total: 0, data: [] };
+    }
+    result[year].data[month].data[week].data[day].total += item.amount;
+    result[year].data[month].data[week].data[day].data.push(item);
+  });
+
+  // Convert nested objects to arrays for 'data' fields
+  function convert(obj: any) {
+    if (obj.data) {
+      obj.data = Object.entries(obj.data).map(([key, value]) => {
+        return { key, ...convert(value) };
+      });
+    }
+    return obj;
+  }
+
+  return convert(result);
+}
 export {
   summaryData,
   expenseCategory,
@@ -109,4 +158,5 @@ export {
   monthlyBudget,
   SetMonthlyBudget,
   GetCategoryById,
+  groupSummaryData,
 };

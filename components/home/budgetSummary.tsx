@@ -145,7 +145,7 @@ const BudgetSummary = ({ style }: MainBudgetProps) => {
     if (filter == 'month') {
       summaryData.forEach((item, index) => {
         const temp = displayData.find(
-          i => i.date === months[item.date.getMonth()] + ' ' + item.date.getFullYear(),
+          i => i.date === months[item.date.getMonth()].slice(0, 3) + ' ' + item.date.getFullYear(),
         );
         if (temp != undefined) {
           if (item.typeId == 2) {
@@ -168,7 +168,7 @@ const BudgetSummary = ({ style }: MainBudgetProps) => {
           }
         } else {
           displayData.push({
-            date: months[item.date.getMonth()] + ' ' + item.date.getFullYear(),
+            date: months[item.date.getMonth()].slice(0, 3) + ' ' + item.date.getFullYear(),
             income: item.typeId == 2 ? item.amount : 0,
             expense: item.typeId == 1 ? item.amount : 0,
             incomeCategories:

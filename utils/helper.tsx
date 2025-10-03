@@ -1,17 +1,18 @@
 const months = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
+  'January',
+  'February',
+  'March',
+  'April',
   'May',
   'June',
   'July',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
 ];
+
 const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 function GetToday(): Date {
   return new Date();
