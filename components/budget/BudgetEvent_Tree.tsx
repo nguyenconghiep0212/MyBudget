@@ -36,7 +36,7 @@ type MainBudgetProps = {
   style?: StyleProp<ViewStyle>;
 };
 
-const BudgetEvent = ({ style }: MainBudgetProps) => {
+const BudgetEventTree = ({ style }: MainBudgetProps) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [groupedData, setGroupedData] = useState(groupSummaryData(summaryData));
   console.log(JSON.stringify(groupedData));
@@ -236,4 +236,4 @@ const BudgetEvent = ({ style }: MainBudgetProps) => {
   );
 };
 
-export default BudgetEvent;
+export default BudgetEventTree;

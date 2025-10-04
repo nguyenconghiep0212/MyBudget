@@ -9,12 +9,12 @@ const monthlyBudget: MonthlyBudget[] = [
     month: 9,
     year: 2025,
     amount: 4_000_000,
+    salary: 10_000_000,
   },
 ];
 const summaryData: ExpenseEvent[] = [
   {
-    typeId: 1,
-    expenseCategoryId: 2,
+    categoryId: 2,
     id: 2,
     name: 'Gas',
     description: 'Filling gas for motorcycle',
@@ -22,8 +22,7 @@ const summaryData: ExpenseEvent[] = [
     date: new Date('2025-09-24'),
   },
   {
-    typeId: 1,
-    expenseCategoryId: 1,
+    categoryId: 1,
     id: 3,
     name: 'Takoyaki',
     description: 'yum yum',
@@ -31,8 +30,7 @@ const summaryData: ExpenseEvent[] = [
     date: new Date('2025-09-24'),
   },
   {
-    typeId: 1,
-    expenseCategoryId: 1,
+    categoryId: 1,
     id: 1,
     name: 'Lunch',
     description: 'Lunch with friends',
@@ -40,22 +38,12 @@ const summaryData: ExpenseEvent[] = [
     date: new Date('2025-09-20'),
   },
   {
-    typeId: 1,
-    expenseCategoryId: 4,
+    categoryId: 4,
     id: 1,
     name: 'Meat and Vegetables',
     description: 'For weekly groceries',
     amount: 82_000,
     date: new Date('2025-09-21'),
-  },
-  {
-    typeId: 2,
-    incomeCategoryId: 0,
-    id: 0,
-    name: 'Salary',
-    description: 'yay!!',
-    amount: 10_000_000,
-    date: new Date('2025-09-10'),
   },
 ];
 const expenseCategory: Category[] = [
@@ -73,13 +61,6 @@ const expenseCategory: Category[] = [
     icon: <FontAwesome name="shopping-basket" size={24} color={colors.Negative} />,
   },
 ];
-const IncomeCategory: Category[] = [
-  { id: 0, name: 'Salary', icon: <FontAwesome name="money" size={24} color={colors.Positive} /> },
-];
-const type: Type[] = [
-  { id: 1, name: 'Expense' },
-  { id: 2, name: 'Income' },
-];
 
 function SetMonthlyBudget(newBudget: MonthlyBudget) {
   if (
@@ -95,12 +76,8 @@ function SetMonthlyBudget(newBudget: MonthlyBudget) {
   }
   console.log('Update existing budget' + JSON.stringify(monthlyBudget));
 }
-function GetCategoryById(id: number, isExpense: boolean): Category | undefined {
-  if (isExpense) {
-    return expenseCategory.find((i: Category) => i.id == id);
-  } else {
-    return IncomeCategory.find((i: Category) => i.id == id);
-  }
+function GetCategoryById(id: number): Category | undefined {
+  return expenseCategory.find((i: Category) => i.id == id);
 }
 function groupSummaryData(data: ExpenseEvent[]) {
   const result: any = {};
@@ -110,31 +87,69 @@ function groupSummaryData(data: ExpenseEvent[]) {
     const year = date.getFullYear();
     const month = months[date.getMonth()];
     const week = Math.ceil(date.getDate() / 7); // Week of month (simple)
-    const day = date.toDateString();
+    const day = date.getDate();
+
+    // Helper to get categoryId
+    const categoryId = item.categoryId;
 
     // Year
     if (!result[year]) {
       result[year] = { total: 0, data: {} };
     }
-    result[year].total += item.amount;
+    if (item.typeId == 2) {
+      result[year].total += item.amount;
+    } else {
+      result[year].total -= item.amount;
+    }
 
     // Month
     if (!result[year].data[month]) {
-      result[year].data[month] = { total: 0, data: {} };
+      result[year].data[month] = { total: 0, data: {}, categoriesId: [] };
     }
-    result[year].data[month].total += item.amount;
+    if (item.typeId == 2) {
+      result[year].data[month].total += item.amount;
+    } else {
+      result[year].data[month].total -= item.amount;
+    }
+    // Add categoryId to month
+    if (categoryId !== undefined && !result[year].data[month].categoriesId.includes(categoryId)) {
+      result[year].data[month].categoriesId.push(categoryId);
+    }
 
     // Week
     if (!result[year].data[month].data[week]) {
-      result[year].data[month].data[week] = { total: 0, data: {} };
+      result[year].data[month].data[week] = { total: 0, data: {}, categoriesId: [] };
     }
-    result[year].data[month].data[week].total += item.amount;
+    if (item.typeId == 2) {
+      result[year].data[month].data[week].total += item.amount;
+    } else {
+      result[year].data[month].data[week].total -= item.amount;
+    }
+    // Add categoryId to week
+    if (
+      categoryId !== undefined &&
+      !result[year].data[month].data[week].categoriesId.includes(categoryId)
+    ) {
+      result[year].data[month].data[week].categoriesId.push(categoryId);
+    }
 
     // Day
     if (!result[year].data[month].data[week].data[day]) {
-      result[year].data[month].data[week].data[day] = { total: 0, data: [] };
+      result[year].data[month].data[week].data[day] = { total: 0, data: [], categoriesId: [] };
     }
-    result[year].data[month].data[week].data[day].total += item.amount;
+    if (item.typeId == 2) {
+      result[year].data[month].data[week].data[day].total += item.amount;
+    } else {
+      result[year].data[month].data[week].data[day].total -= item.amount;
+    }
+    // Add categoryId to day
+    if (
+      categoryId !== undefined &&
+      !result[year].data[month].data[week].data[day].categoriesId.includes(categoryId)
+    ) {
+      result[year].data[month].data[week].data[day].categoriesId.push(categoryId);
+    }
+
     result[year].data[month].data[week].data[day].data.push(item);
   });
 
@@ -153,8 +168,6 @@ function groupSummaryData(data: ExpenseEvent[]) {
 export {
   summaryData,
   expenseCategory,
-  IncomeCategory,
-  type,
   monthlyBudget,
   SetMonthlyBudget,
   GetCategoryById,

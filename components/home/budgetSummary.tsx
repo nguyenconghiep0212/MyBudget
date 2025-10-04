@@ -49,9 +49,7 @@ type MainBudgetProps = {
 };
 type SummaryDataDisplay = {
   date: String | Date;
-  income: number;
   expense: number;
-  incomeCategories: Category[];
   expenseCategories: Category[];
 };
 
@@ -66,37 +64,19 @@ const BudgetSummary = ({ style }: MainBudgetProps) => {
       summaryData.forEach((item, index) => {
         const temp = displayData.find(i => i.date === item.date.toDateString());
         if (temp != undefined) {
-          if (item.typeId == 2) {
-            temp.income += item.amount;
-            if (
-              temp.incomeCategories.find(i => i.id == item.incomeCategoryId) == undefined &&
-              item.incomeCategoryId != undefined
-            ) {
-              temp.incomeCategories.push(GetCategoryById(item.incomeCategoryId, false)!);
-            }
-          }
-          if (item.typeId == 1) {
-            temp.expense += item.amount;
-            if (
-              temp.expenseCategories.find(i => i.id == item.expenseCategoryId) == undefined &&
-              item.expenseCategoryId != undefined
-            ) {
-              temp.expenseCategories.push(GetCategoryById(item.expenseCategoryId, true)!);
-            }
+          temp.expense += item.amount;
+          if (
+            temp.expenseCategories.find(i => i.id == item.categoryId) == undefined &&
+            item.categoryId != undefined
+          ) {
+            temp.expenseCategories.push(GetCategoryById(item.categoryId)!);
           }
         } else {
           displayData.push({
             date: item.date.toDateString(),
-            income: item.typeId == 2 ? item.amount : 0,
-            expense: item.typeId == 1 ? item.amount : 0,
-            incomeCategories:
-              item.typeId == 2 && item.incomeCategoryId != undefined
-                ? [GetCategoryById(item.incomeCategoryId, false)!]
-                : [],
+            expense: item.amount,
             expenseCategories:
-              item.typeId == 1 && item.expenseCategoryId != undefined
-                ? [GetCategoryById(item.expenseCategoryId, true)!]
-                : [],
+              item.categoryId != undefined ? [GetCategoryById(item.categoryId)!] : [],
           });
         }
       });
@@ -107,37 +87,20 @@ const BudgetSummary = ({ style }: MainBudgetProps) => {
           i => i.date === 'Week ' + getWeekOfYear(item.date) + ' / ' + item.date.getFullYear(),
         );
         if (temp != undefined) {
-          if (item.typeId == 2) {
-            temp.income += item.amount;
-            if (
-              temp.incomeCategories.find(i => i.id == item.incomeCategoryId) == undefined &&
-              item.incomeCategoryId != undefined
-            ) {
-              temp.incomeCategories.push(GetCategoryById(item.incomeCategoryId, false)!);
-            }
-          }
-          if (item.typeId == 1) {
-            temp.expense += item.amount;
-            if (
-              temp.expenseCategories.find(i => i.id == item.expenseCategoryId) == undefined &&
-              item.expenseCategoryId != undefined
-            ) {
-              temp.expenseCategories.push(GetCategoryById(item.expenseCategoryId, true)!);
-            }
+          temp.expense += item.amount;
+          if (
+            temp.expenseCategories.find(i => i.id == item.categoryId) == undefined &&
+            item.categoryId != undefined
+          ) {
+            temp.expenseCategories.push(GetCategoryById(item.categoryId)!);
           }
         } else {
           displayData.push({
             date: 'Week ' + getWeekOfYear(item.date) + ' / ' + item.date.getFullYear(),
-            income: item.typeId == 2 ? item.amount : 0,
-            expense: item.typeId == 1 ? item.amount : 0,
-            incomeCategories:
-              item.typeId == 2 && item.incomeCategoryId != undefined
-                ? [GetCategoryById(item.incomeCategoryId, false)!]
-                : [],
+            expense: item.amount,
+
             expenseCategories:
-              item.typeId == 1 && item.expenseCategoryId != undefined
-                ? [GetCategoryById(item.expenseCategoryId, true)!]
-                : [],
+              item.categoryId != undefined ? [GetCategoryById(item.categoryId)!] : [],
           });
         }
       });
@@ -148,37 +111,19 @@ const BudgetSummary = ({ style }: MainBudgetProps) => {
           i => i.date === months[item.date.getMonth()].slice(0, 3) + ' ' + item.date.getFullYear(),
         );
         if (temp != undefined) {
-          if (item.typeId == 2) {
-            temp.income += item.amount;
-            if (
-              temp.incomeCategories.find(i => i.id == item.incomeCategoryId) == undefined &&
-              item.incomeCategoryId != undefined
-            ) {
-              temp.incomeCategories.push(GetCategoryById(item.incomeCategoryId, false)!);
-            }
-          }
-          if (item.typeId == 1) {
-            temp.expense += item.amount;
-            if (
-              temp.expenseCategories.find(i => i.id == item.expenseCategoryId) == undefined &&
-              item.expenseCategoryId != undefined
-            ) {
-              temp.expenseCategories.push(GetCategoryById(item.expenseCategoryId, true)!);
-            }
+          temp.expense += item.amount;
+          if (
+            temp.expenseCategories.find(i => i.id == item.categoryId) == undefined &&
+            item.categoryId != undefined
+          ) {
+            temp.expenseCategories.push(GetCategoryById(item.categoryId)!);
           }
         } else {
           displayData.push({
             date: months[item.date.getMonth()].slice(0, 3) + ' ' + item.date.getFullYear(),
-            income: item.typeId == 2 ? item.amount : 0,
-            expense: item.typeId == 1 ? item.amount : 0,
-            incomeCategories:
-              item.typeId == 2 && item.incomeCategoryId != undefined
-                ? [GetCategoryById(item.incomeCategoryId, false)!]
-                : [],
+            expense: item.amount,
             expenseCategories:
-              item.typeId == 1 && item.expenseCategoryId != undefined
-                ? [GetCategoryById(item.expenseCategoryId, true)!]
-                : [],
+              item.categoryId != undefined ? [GetCategoryById(item.categoryId)!] : [],
           });
         }
       });
@@ -190,12 +135,21 @@ const BudgetSummary = ({ style }: MainBudgetProps) => {
   }, []);
   const DataCard = data.map((item, index) => (
     <Surface style={[styles.surface, { backgroundColor: colors.darkGray }]} key={index}>
-      <View style={[styles.superContainer, { marginLeft: 6 }]}>
-        <Text style={{ color: colors.white, fontWeight: 600, fontSize: 16 }}>
-          {item.date.toString()}
-        </Text>
-      </View>
       <View style={[styles.superContainer, {}]}>
+        <View style={[styles.superContainer, { marginLeft: 6 }]}>
+          <Text
+            style={[
+              styles.superItemContainer,
+              { color: colors.white, fontWeight: 600, fontSize: 16 },
+            ]}>
+            {item.date.toString()}
+          </Text>
+          <View style={[styles.superItemContainer, { alignItems: 'flex-end', paddingRight: 8 }]}>
+            <Text style={[styles.textMoney, { color: colors.Negative, fontWeight: 200 }]}>
+              {item.expense ? formatCurrency(item.expense) + ' ↓' : '-'}
+            </Text>
+          </View>
+        </View>
         <View style={[styles.superItemContainer, styles.superContainer, { paddingTop: 8 }]}>
           {item.expenseCategories.map((cat, idx) => (
             <View
@@ -209,26 +163,6 @@ const BudgetSummary = ({ style }: MainBudgetProps) => {
               {cat.icon}
             </View>
           ))}
-          {item.incomeCategories.map((cat, idx) => (
-            <View
-              key={idx}
-              style={[
-                styles.icon,
-                {
-                  borderColor: colors.Positive,
-                },
-              ]}>
-              {cat.icon}
-            </View>
-          ))}
-        </View>
-        <View style={[styles.superItemContainer, { alignItems: 'flex-end', paddingRight: 12 }]}>
-          <Text style={[styles.textMoney, { color: colors.Positive }]}>
-            {item.income ? formatCurrency(item.income) + ' ↑' : '-'}
-          </Text>
-          <Text style={[styles.textMoney, { color: colors.Negative }]}>
-            {item.expense ? formatCurrency(item.expense) + ' ↓' : '-'}
-          </Text>
         </View>
       </View>
     </Surface>
