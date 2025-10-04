@@ -35,6 +35,14 @@ const summaryData: ExpenseEvent[] = [
     name: 'Lunch',
     description: 'Lunch with friends',
     amount: 50_000,
+    date: new Date('2025-04-10'),
+  },
+  {
+    categoryId: 1,
+    id: 1,
+    name: 'Lunch',
+    description: 'Lunch with friends',
+    amount: 50_000,
     date: new Date('2025-09-20'),
   },
   {
@@ -44,6 +52,14 @@ const summaryData: ExpenseEvent[] = [
     description: 'For weekly groceries',
     amount: 82_000,
     date: new Date('2025-09-21'),
+  },
+  {
+    categoryId: 4,
+    id: 1,
+    name: 'Meat and Vegetables',
+    description: 'For weekly groceries',
+    amount: 82_000,
+    date: new Date('2024-03-11'),
   },
 ];
 const expenseCategory: Category[] = [
@@ -79,6 +95,58 @@ function SetMonthlyBudget(newBudget: MonthlyBudget) {
 function GetCategoryById(id: number): Category | undefined {
   return expenseCategory.find((i: Category) => i.id == id);
 }
+function monthlyGroupSummaryData(data: ExpenseEvent[]) {
+  const result: any = {};
+
+  data.forEach(item => {
+    const date = new Date(item.date);
+    const year = date.getFullYear();
+    const month = months[date.getMonth()];
+    const day = date.getDate();
+
+    // Helper to get categoryId
+    const categoryId = item.categoryId;
+    // Year
+    if (!result[year]) {
+      result[year] = { total: 0, data: {} };
+    }
+    result[year].total -= item.amount;
+
+    // Month
+    if (!result[year].data[month]) {
+      result[year].data[month] = { total: 0, data: {}, categoriesId: [] };
+    }
+    result[year].data[month].total -= item.amount;
+
+    // Add categoryId to month
+    if (categoryId !== undefined && !result[year].data[month].categoriesId.includes(categoryId)) {
+      result[year].data[month].categoriesId.push(categoryId);
+    }
+
+    // Day
+    if (!result[year].data[month].data[day]) {
+      result[year].data[month].data[day] = { total: 0, data: [], categoriesId: [] };
+    }
+    result[year].data[month].data[day].total -= item.amount;
+
+    // Add categoryId to day
+    if (categoryId !== undefined && !result[year].data[month].categoriesId.includes(categoryId)) {
+      result[year].data[month].categoriesId.push(categoryId);
+    }
+    result[year].data[month].data[day].data.push(item);
+  });
+  // Convert nested objects to arrays for 'data' fields
+  function convert(obj: any) {
+    if (obj.data) {
+      obj.data = Object.entries(obj.data).map(([key, value]) => {
+        return { key, ...convert(value) };
+      });
+    }
+    return obj;
+  }
+
+  return convert(result);
+}
 function groupSummaryData(data: ExpenseEvent[]) {
   const result: any = {};
 
@@ -96,21 +164,14 @@ function groupSummaryData(data: ExpenseEvent[]) {
     if (!result[year]) {
       result[year] = { total: 0, data: {} };
     }
-    if (item.typeId == 2) {
-      result[year].total += item.amount;
-    } else {
-      result[year].total -= item.amount;
-    }
+    result[year].total -= item.amount;
 
     // Month
     if (!result[year].data[month]) {
       result[year].data[month] = { total: 0, data: {}, categoriesId: [] };
     }
-    if (item.typeId == 2) {
-      result[year].data[month].total += item.amount;
-    } else {
-      result[year].data[month].total -= item.amount;
-    }
+    result[year].data[month].total -= item.amount;
+
     // Add categoryId to month
     if (categoryId !== undefined && !result[year].data[month].categoriesId.includes(categoryId)) {
       result[year].data[month].categoriesId.push(categoryId);
@@ -120,11 +181,8 @@ function groupSummaryData(data: ExpenseEvent[]) {
     if (!result[year].data[month].data[week]) {
       result[year].data[month].data[week] = { total: 0, data: {}, categoriesId: [] };
     }
-    if (item.typeId == 2) {
-      result[year].data[month].data[week].total += item.amount;
-    } else {
-      result[year].data[month].data[week].total -= item.amount;
-    }
+    result[year].data[month].data[week].total -= item.amount;
+
     // Add categoryId to week
     if (
       categoryId !== undefined &&
@@ -137,11 +195,8 @@ function groupSummaryData(data: ExpenseEvent[]) {
     if (!result[year].data[month].data[week].data[day]) {
       result[year].data[month].data[week].data[day] = { total: 0, data: [], categoriesId: [] };
     }
-    if (item.typeId == 2) {
-      result[year].data[month].data[week].data[day].total += item.amount;
-    } else {
-      result[year].data[month].data[week].data[day].total -= item.amount;
-    }
+    result[year].data[month].data[week].data[day].total -= item.amount;
+
     // Add categoryId to day
     if (
       categoryId !== undefined &&
@@ -169,6 +224,7 @@ export {
   summaryData,
   expenseCategory,
   monthlyBudget,
+  monthlyGroupSummaryData,
   SetMonthlyBudget,
   GetCategoryById,
   groupSummaryData,

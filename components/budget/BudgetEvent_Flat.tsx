@@ -5,7 +5,12 @@ import { Button, Divider, List, Portal } from 'react-native-paper';
 import { colors } from '@/theme';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { formatCurrency } from '@/utils/helper';
-import { GetCategoryById, groupSummaryData, summaryData } from '@/local_data/data';
+import {
+  GetCategoryById,
+  groupSummaryData,
+  monthlyGroupSummaryData,
+  summaryData,
+} from '@/local_data/data';
 const styles = StyleSheet.create({
   body: {
     width: '100%',
@@ -37,8 +42,7 @@ type MainBudgetProps = {
 };
 
 const BudgetEventFlat = ({ style }: MainBudgetProps) => {
-  const [modalVisible, setModalVisible] = useState(false);
-  const [groupedData, setGroupedData] = useState(groupSummaryData(summaryData));
+  const [groupedData, setGroupedData] = useState(monthlyGroupSummaryData(summaryData));
   console.log(JSON.stringify(groupedData));
   function ListAccordionNode(
     Date: string,
@@ -104,7 +108,6 @@ const BudgetEventFlat = ({ style }: MainBudgetProps) => {
     );
   }
   function YearlyView(data: any) {
-    // console.log(data);
     return Object.entries(data).map(([key, value]: any) => {
       return (
         <List.Section
@@ -122,78 +125,49 @@ const BudgetEventFlat = ({ style }: MainBudgetProps) => {
             )}
             style={{ backgroundColor: colors.blackGray, padding: 0 }} // Add this line
           >
-            {Object.entries(value.data)
-              .reverse()
-              .map(([key1, value1]: any) => {
-                return (
-                  <List.Accordion
-                    key={key1}
-                    title={ListAccordionNode('Week ' + key1, value1.total, value1.categoriesId, 12)}
-                    left={props => (
-                      <List.Icon
-                        {...props}
-                        icon={() => (
-                          <MaterialCommunityIcons
-                            name="calendar-week-begin-outline"
-                            size={22}
-                            color={colors.lightGray}
-                            style={{ marginLeft: 12 }}
-                          />
-                        )}
-                      />
-                    )}
-                    style={{ backgroundColor: colors.blackGray, padding: 0 }} // Add this line
-                  >
-                    {Object.entries(value1.data)
-                      .reverse()
-                      .map(([key2, value2]: any) => {
-                        return (
-                          <List.Accordion
-                            key={key2}
-                            title={ListAccordionNode(key2, value2.total, value2.categoriesId, 11)}
-                            left={props => (
-                              <List.Icon
-                                {...props}
-                                icon={() => (
-                                  <MaterialIcons
-                                    name="today"
-                                    size={18}
-                                    color={colors.lightGray}
-                                    style={{ marginLeft: 24 }}
-                                  />
-                                )}
+            {Object.entries(data).map(([key2, value2]: any) => {
+              return (
+                <View key={key2}>
+                  {Object.entries(value2.data)
+                    .reverse()
+                    .map(([key3, value3]: any) => {
+                      return (
+                        <View key={key3} style={{ marginTop: 12 }}>
+                          <View style={{ flexDirection: 'row', gap: 5, alignItems: 'center' }}>
+                            <MaterialIcons name="today" size={18} color={colors.lightGray} />
+                            <Text
+                              style={[
+                                styles.text,
+                                { color: colors.lightGray, fontSize: 16, letterSpacing: 2 },
+                              ]}>
+                              {key3}
+                            </Text>
+                          </View>
+                          {value3.data.map((item4: any, index4: number) => {
+                            return (
+                              <List.Item
+                                key={index4}
+                                style={{
+                                  marginVertical: 0,
+                                  paddingVertical: 0,
+                                }} // outer margin/padding
+                                contentStyle={{ paddingVertical: 1 }} // inner padding
+                                title={IndividualEvent(item4)}
                               />
-                            )}
-                            style={{ backgroundColor: colors.blackGray, padding: 0 }} // Add this line
-                          >
-                            {value2.data.map((item3: any, index3: number) => {
-                              return (
-                                <View>
-                                  <List.Item
-                                    style={{
-                                      marginVertical: 0,
-                                      paddingVertical: 0,
-                                    }} // outer margin/padding
-                                    contentStyle={{ paddingVertical: 1 }} // inner padding
-                                    key={index3}
-                                    title={IndividualEvent(item3)}
-                                  />
-                                  <Divider
-                                    leftInset={true}
-                                    style={{
-                                      backgroundColor: colors.darkGray,
-                                      marginRight: 60,
-                                      marginTop: 12,
-                                    }}></Divider>
-                                </View>
-                              );
-                            })}
-                          </List.Accordion>
-                        );
-                      })}
-                  </List.Accordion>
-                );
-              })}
+                            );
+                          })}
+                          <Divider
+                            style={{
+                              backgroundColor: colors.darkGray,
+                              marginRight: 48,
+                              marginTop: 12,
+                            }}></Divider>
+                        </View>
+                      );
+                    })}
+                </View>
+              );
+            })}
           </List.Accordion>
         </List.Section>
       );
@@ -201,37 +175,38 @@ const BudgetEventFlat = ({ style }: MainBudgetProps) => {
   }
   return (
     <View style={[styles.body, style]}>
-      <View style={[styles.body, { alignItems: 'flex-end', paddingRight: 12 }]}>
-        <Button mode="outlined" onPress={() => setModalVisible(true)}>
-          <Text style={{ color: colors.lightGray }}>Add expense</Text>
-        </Button>
-      </View>
       <ScrollView style={{ width: '100%', marginBottom: 52 }}>
-        {Object.entries(groupedData).map(([key, value]: any) => (
-          <View style={[styles.body, { marginTop: 12 }]} key={key}>
-            <View
-              style={{
-                paddingLeft: 18,
-                paddingRight: 28,
-                width: '100%',
-                flexDirection: 'row',
-                alignItems: 'center',
-              }}>
-              <Text
-                style={[
-                  styles.text,
-                  { color: colors.lightGray, fontSize: 24, fontWeight: 300, letterSpacing: 6 },
-                ]}>
-                {key}
-              </Text>
+        {Object.entries(groupedData)
+          .reverse()
+          .map(([key, value]: any) => (
+            <View style={[styles.body, { marginTop: 12 }]} key={key}>
               <View
-                style={{ marginLeft: 12, backgroundColor: colors.gray, flex: 1, height: 2 }}></View>
+                style={{
+                  paddingLeft: 18,
+                  paddingRight: 28,
+                  width: '100%',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}>
+                <Text
+                  style={[
+                    styles.text,
+                    { color: colors.lightGray, fontSize: 24, fontWeight: 300, letterSpacing: 6 },
+                  ]}>
+                  {key}
+                </Text>
+                <View
+                  style={{
+                    marginLeft: 12,
+                    backgroundColor: colors.gray,
+                    flex: 1,
+                    height: 2,
+                  }}></View>
+              </View>
+              {YearlyView(value.data)}
             </View>
-            {YearlyView(value.data)}
-          </View>
-        ))}
+          ))}
       </ScrollView>
-      <AddExpense modalVisible={modalVisible} onClose={() => setModalVisible(false)} />
     </View>
   );
 };

@@ -146,7 +146,7 @@ const BudgetSummary = ({ style }: MainBudgetProps) => {
           </Text>
           <View style={[styles.superItemContainer, { alignItems: 'flex-end', paddingRight: 8 }]}>
             <Text style={[styles.textMoney, { color: colors.Negative, fontWeight: 200 }]}>
-              {item.expense ? formatCurrency(item.expense) + ' ↓' : '-'}
+              -{formatCurrency(item.expense)}
             </Text>
           </View>
         </View>

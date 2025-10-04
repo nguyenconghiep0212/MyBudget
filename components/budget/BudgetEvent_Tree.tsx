@@ -37,9 +37,7 @@ type MainBudgetProps = {
 };
 
 const BudgetEventTree = ({ style }: MainBudgetProps) => {
-  const [modalVisible, setModalVisible] = useState(false);
   const [groupedData, setGroupedData] = useState(groupSummaryData(summaryData));
-  console.log(JSON.stringify(groupedData));
   function ListAccordionNode(
     Date: string,
     Amount: number,
@@ -104,7 +102,6 @@ const BudgetEventTree = ({ style }: MainBudgetProps) => {
     );
   }
   function YearlyView(data: any) {
-    // console.log(data);
     return Object.entries(data).map(([key, value]: any) => {
       return (
         <List.Section
@@ -168,14 +165,13 @@ const BudgetEventTree = ({ style }: MainBudgetProps) => {
                           >
                             {value2.data.map((item3: any, index3: number) => {
                               return (
-                                <View>
+                                <View key={index3}>
                                   <List.Item
                                     style={{
                                       marginVertical: 0,
                                       paddingVertical: 0,
                                     }} // outer margin/padding
                                     contentStyle={{ paddingVertical: 1 }} // inner padding
-                                    key={index3}
                                     title={IndividualEvent(item3)}
                                   />
                                   <Divider
@@ -201,11 +197,6 @@ const BudgetEventTree = ({ style }: MainBudgetProps) => {
   }
   return (
     <View style={[styles.body, style]}>
-      <View style={[styles.body, { alignItems: 'flex-end', paddingRight: 12 }]}>
-        <Button mode="outlined" onPress={() => setModalVisible(true)}>
-          <Text style={{ color: colors.lightGray }}>Add expense</Text>
-        </Button>
-      </View>
       <ScrollView style={{ width: '100%', marginBottom: 52 }}>
         {Object.entries(groupedData).map(([key, value]: any) => (
           <View style={[styles.body, { marginTop: 12 }]} key={key}>
@@ -231,7 +222,6 @@ const BudgetEventTree = ({ style }: MainBudgetProps) => {
           </View>
         ))}
       </ScrollView>
-      <AddExpense modalVisible={modalVisible} onClose={() => setModalVisible(false)} />
     </View>
   );
 };
