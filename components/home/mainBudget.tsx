@@ -2,9 +2,10 @@ import { Text, View, StyleSheet, StyleProp, ViewStyle, TextInput } from 'react-n
 import useColorScheme from '@/hooks/useColorScheme';
 import { formatCurrency, GetToday } from '@/utils/helper';
 import { MD3Colors, ProgressBar } from 'react-native-paper';
-import { summaryData, monthlyBudget, SetMonthlyBudget } from '@/local_data/data';
+import { budgetEvent, monthlyBudget, SetMonthlyBudget } from '@/local_data/data';
 import { AntDesign, Octicons } from '@expo/vector-icons';
 import { useEffect, useState } from 'react';
+import { colors } from '@/theme';
 const styles = StyleSheet.create({
   body: {
     width: '100%',
@@ -35,34 +36,37 @@ const MainBudget = ({ style }: MainBudgetProps) => {
   const today = GetToday();
   const thisMonth = today.getMonth() + 1;
   const thisYear = today.getFullYear();
-  function GetThisMonthBuget() {
+  function GetThisMonthBudget() {
     monthlyBudget.forEach(item => {
-      if (thisMonth == item.month && thisYear == item.year) {
+      if (thisMonth === item.month && thisYear === item.year) {
         setThisMonthBudget(item.amount);
         setHasSetBudget(true);
       }
     });
   }
   function SetThisMonthBudget(newBudget: number) {
-    SetMonthlyBudget({ month: thisMonth, year: thisYear, amount: newBudget });
+    SetMonthlyBudget({
+      month: thisMonth,
+      year: thisYear,
+      amount: newBudget,
+      salary: 0,
+    });
     setThisMonthBudget(newBudget);
     setIsEditingBudget(false);
-    GetThisMonthBuget();
+    GetThisMonthBudget();
   }
   function CalculateThisMonthExpense() {
     let total = 0;
-    summaryData.forEach(item => {
-      if (thisMonth == item.date.getMonth() + 1 && thisYear == item.date.getFullYear()) {
-        if (item.typeId == 1) {
-          total += item.amount;
-        }
+    budgetEvent.forEach(item => {
+      if (thisMonth === item.date.getMonth() + 1 && thisYear === item.date.getFullYear()) {
+        total += item.amount;
       }
     });
     setThisMonthExpense(total);
   }
-  function CalculateRemainBudget(): String {
+  function CalculateRemainBudget(): string {
     let result = '';
-    if (thisMonthBudget == 0) {
+    if (thisMonthBudget === 0) {
       result = 'You have not set a budget for this month';
     } else if (thisMonthExpense > thisMonthBudget) {
       result =
@@ -85,7 +89,7 @@ const MainBudget = ({ style }: MainBudgetProps) => {
   }
   useEffect(() => {
     CalculateThisMonthExpense();
-    GetThisMonthBuget();
+    GetThisMonthBudget();
   }, []);
   return (
     <View style={[styles.body, style]}>
@@ -113,8 +117,8 @@ const MainBudget = ({ style }: MainBudgetProps) => {
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
             <Text style={[styles.text, { fontWeight: 200 }]}>This month expense</Text>
           </View>
-          <Text style={[styles.text, { fontSize: 18, fontWeight: 600, color: '#ff7e7eff' }]}>
-            {thisMonthExpense != 0 && <Text>-</Text>}
+          <Text style={[styles.text, { fontSize: 18, fontWeight: 600, color: colors.Negative }]}>
+            {thisMonthExpense !== 0 && <Text>-</Text>}
             {formatCurrency(thisMonthExpense)}
           </Text>
         </View>

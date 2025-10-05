@@ -5,7 +5,7 @@ import NavigationHeaderTitle from '@/components/layouts/NavigationHeaderTitle';
 import useColorScheme from '@/hooks/useColorScheme';
 import { colors } from '@/theme';
 
-export default function AnaltylicsStackLayout() {
+export default function ProfileStackLayout() {
   const navigation = useNavigation();
   const { isDark } = useColorScheme();
   const toggleDrawer = () => navigation.dispatch(DrawerActions.toggleDrawer());
@@ -19,7 +19,7 @@ export default function AnaltylicsStackLayout() {
       <Stack.Screen
         name="index"
         options={{
-          title: 'Analytics',
+          title: 'Profile',
           headerTitle: () => <NavigationHeaderTitle />,
           headerLeft: () => <NavigationHeaderLeft onPress={toggleDrawer} />,
           headerTitleAlign: 'center',

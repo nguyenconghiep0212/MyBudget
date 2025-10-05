@@ -1,12 +1,10 @@
-import { Text, View, StyleSheet, StyleProp, ViewStyle, ScrollView, TextInput } from 'react-native';
-import useColorScheme from '@/hooks/useColorScheme';
+import { Text, View, StyleSheet, StyleProp, ViewStyle, ScrollView } from 'react-native';
 import { SegmentedButtons, Surface } from 'react-native-paper';
-import { GetCategoryById, summaryData } from '@/local_data/data';
-import React, { ReactNode, useEffect } from 'react';
+import { GetCategoryById, budgetEvent } from '@/local_data/data';
+import React, { useEffect } from 'react';
 import { colors } from '@/theme';
 import { formatCurrency, getWeekOfYear, months } from '@/utils/helper';
 import { Category } from '@/types/budget';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 const styles = StyleSheet.create({
   body: {
     flex: 1,
@@ -44,30 +42,29 @@ const styles = StyleSheet.create({
   },
 });
 
-type MainBudgetProps = {
+type BudgetSummaryProps = {
   style?: StyleProp<ViewStyle>;
 };
 type SummaryDataDisplay = {
-  date: String | Date;
+  date: string | Date;
   expense: number;
   expenseCategories: Category[];
 };
 
-const BudgetSummary = ({ style }: MainBudgetProps) => {
-  const { isDark } = useColorScheme();
+const BudgetSummary = ({ style }: BudgetSummaryProps) => {
   const [data, setData] = React.useState<SummaryDataDisplay[]>([]);
   const [summaryTime, setSummaryTime] = React.useState('day');
   function OnChangeTimeSummary(filter: string) {
     const displayData: SummaryDataDisplay[] = [];
     setSummaryTime(filter);
-    if (filter == 'day') {
-      summaryData.forEach((item, index) => {
+    if (filter === 'day') {
+      budgetEvent.forEach((item, index) => {
         const temp = displayData.find(i => i.date === item.date.toDateString());
-        if (temp != undefined) {
+        if (temp !== undefined) {
           temp.expense += item.amount;
           if (
-            temp.expenseCategories.find(i => i.id == item.categoryId) == undefined &&
-            item.categoryId != undefined
+            temp.expenseCategories.find(i => i.id === item.categoryId) === undefined &&
+            item.categoryId !== undefined
           ) {
             temp.expenseCategories.push(GetCategoryById(item.categoryId)!);
           }
@@ -76,21 +73,21 @@ const BudgetSummary = ({ style }: MainBudgetProps) => {
             date: item.date.toDateString(),
             expense: item.amount,
             expenseCategories:
-              item.categoryId != undefined ? [GetCategoryById(item.categoryId)!] : [],
+              item.categoryId !== undefined ? [GetCategoryById(item.categoryId)!] : [],
           });
         }
       });
     }
-    if (filter == 'week') {
-      summaryData.forEach((item, index) => {
+    if (filter === 'week') {
+      budgetEvent.forEach((item, index) => {
         const temp = displayData.find(
           i => i.date === 'Week ' + getWeekOfYear(item.date) + ' / ' + item.date.getFullYear(),
         );
-        if (temp != undefined) {
+        if (temp !== undefined) {
           temp.expense += item.amount;
           if (
-            temp.expenseCategories.find(i => i.id == item.categoryId) == undefined &&
-            item.categoryId != undefined
+            temp.expenseCategories.find(i => i.id === item.categoryId) === undefined &&
+            item.categoryId !== undefined
           ) {
             temp.expenseCategories.push(GetCategoryById(item.categoryId)!);
           }
@@ -100,21 +97,21 @@ const BudgetSummary = ({ style }: MainBudgetProps) => {
             expense: item.amount,
 
             expenseCategories:
-              item.categoryId != undefined ? [GetCategoryById(item.categoryId)!] : [],
+              item.categoryId !== undefined ? [GetCategoryById(item.categoryId)!] : [],
           });
         }
       });
     }
-    if (filter == 'month') {
-      summaryData.forEach((item, index) => {
+    if (filter === 'month') {
+      budgetEvent.forEach((item, index) => {
         const temp = displayData.find(
           i => i.date === months[item.date.getMonth()].slice(0, 3) + ' ' + item.date.getFullYear(),
         );
-        if (temp != undefined) {
+        if (temp !== undefined) {
           temp.expense += item.amount;
           if (
-            temp.expenseCategories.find(i => i.id == item.categoryId) == undefined &&
-            item.categoryId != undefined
+            temp.expenseCategories.find(i => i.id === item.categoryId) === undefined &&
+            item.categoryId !== undefined
           ) {
             temp.expenseCategories.push(GetCategoryById(item.categoryId)!);
           }
@@ -123,7 +120,7 @@ const BudgetSummary = ({ style }: MainBudgetProps) => {
             date: months[item.date.getMonth()].slice(0, 3) + ' ' + item.date.getFullYear(),
             expense: item.amount,
             expenseCategories:
-              item.categoryId != undefined ? [GetCategoryById(item.categoryId)!] : [],
+              item.categoryId !== undefined ? [GetCategoryById(item.categoryId)!] : [],
           });
         }
       });

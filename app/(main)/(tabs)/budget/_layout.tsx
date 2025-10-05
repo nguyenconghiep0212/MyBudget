@@ -1,14 +1,17 @@
-import { Stack, useNavigation } from 'expo-router';
-import { DrawerActions } from '@react-navigation/native';
-import NavigationHeaderLeft from '@/components/layouts/NavigationHeaderLeft';
+import { Stack } from 'expo-router';
 import NavigationHeaderTitle from '@/components/layouts/NavigationHeaderTitle';
 import useColorScheme from '@/hooks/useColorScheme';
 import { colors } from '@/theme';
+import { useBudgetSlice } from '@/slices';
+import { View } from 'react-native';
+import { IconButton } from 'react-native-paper';
+import { FontAwesome } from '@expo/vector-icons';
+import { useEffect } from 'react';
 
 export default function HomeStackLayout() {
-  const navigation = useNavigation();
+  const { dispatch, viewMode, ChangeViewMode } = useBudgetSlice();
   const { isDark } = useColorScheme();
-  const toggleDrawer = () => navigation.dispatch(DrawerActions.toggleDrawer());
+  useEffect(() => {}, [viewMode]);
   return (
     <Stack
       screenOptions={{
@@ -21,10 +24,24 @@ export default function HomeStackLayout() {
         options={{
           title: 'Budget',
           headerTitle: () => <NavigationHeaderTitle />,
+          headerLeft: () => (
+            <View>
+              <IconButton
+                icon={() => (
+                  <FontAwesome
+                    name="table"
+                    size={18}
+                    color={viewMode === 'summary' ? colors.white : colors.gray}
+                  />
+                )}
+                containerColor={colors.darkGray}
+                size={20}
+                onPress={() => dispatch(ChangeViewMode())}></IconButton>
+            </View>
+          ),
           headerTitleAlign: 'center',
         }}
       />
-      <Stack.Screen name="details" options={{ title: 'Details' }} />
     </Stack>
   );
 }

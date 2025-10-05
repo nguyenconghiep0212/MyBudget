@@ -1,9 +1,9 @@
-import { Text, View, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import useColorScheme from '@/hooks/useColorScheme';
-import Button from '@/components/elements/Button';
-import { useRouter } from 'expo-router';
 import { colors } from '@/theme';
 import BudgetEvent from '@/components/budget/BudgetEvent';
+import { useBudgetSlice } from '@/slices';
+import BudgetMonthly from '@/components/budget/BudgetMonthly';
 
 const styles = StyleSheet.create({
   root: {
@@ -16,11 +16,12 @@ const styles = StyleSheet.create({
 });
 
 export default function Budget() {
-  const router = useRouter();
+  const { viewMode } = useBudgetSlice();
+
   const { isDark } = useColorScheme();
   return (
     <View style={[styles.root, isDark && { backgroundColor: colors.blackGray }]}>
-      <BudgetEvent />
+      {viewMode === 'summary' ? <BudgetMonthly /> : <BudgetEvent />}
     </View>
   );
 }

@@ -1,11 +1,10 @@
 import { Text, View, StyleSheet, StyleProp, ViewStyle, ScrollView } from 'react-native';
-import React, { ReactNode, useEffect, useState } from 'react';
-import AddExpense from './addExpense';
-import { Button, Divider, List, Portal } from 'react-native-paper';
+import React, { ReactNode, useState } from 'react';
+import { Divider, List } from 'react-native-paper';
 import { colors } from '@/theme';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { formatCurrency } from '@/utils/helper';
-import { GetCategoryById, groupSummaryData, summaryData } from '@/local_data/data';
+import { GetCategoryById, groupBudgetDataTree, budgetEvent } from '@/local_data/data';
 const styles = StyleSheet.create({
   body: {
     width: '100%',
@@ -32,12 +31,12 @@ const styles = StyleSheet.create({
   },
 });
 
-type MainBudgetProps = {
+type BudgetEventTreeProps = {
   style?: StyleProp<ViewStyle>;
 };
 
-const BudgetEventTree = ({ style }: MainBudgetProps) => {
-  const [groupedData, setGroupedData] = useState(groupSummaryData(summaryData));
+const BudgetEventTree = ({ style }: BudgetEventTreeProps) => {
+  const [groupedData] = useState(groupBudgetDataTree(budgetEvent));
   function ListAccordionNode(
     Date: string,
     Amount: number,

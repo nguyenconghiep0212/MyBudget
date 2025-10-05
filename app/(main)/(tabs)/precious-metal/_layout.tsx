@@ -19,7 +19,7 @@ export default function ProfileStackLayout() {
       <Stack.Screen
         name="index"
         options={{
-          title: 'Profile',
+          title: 'Precious Metal',
           headerTitle: () => <NavigationHeaderTitle />,
           headerLeft: () => <NavigationHeaderLeft onPress={toggleDrawer} />,
           headerTitleAlign: 'center',

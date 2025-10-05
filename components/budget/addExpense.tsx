@@ -1,13 +1,12 @@
-import { Text, View, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { AntDesign, FontAwesome } from '@expo/vector-icons';
-import { Button, Dialog, Divider, Portal } from 'react-native-paper';
+import { Text, View, StyleSheet, TextInput } from 'react-native';
+import React, { useState } from 'react';
+import { FontAwesome } from '@expo/vector-icons';
+import { Button, Dialog, Portal } from 'react-native-paper';
 import { Dropdown } from 'react-native-element-dropdown';
 import { colors } from '@/theme';
 import { expenseCategory } from '@/local_data/data';
-import { ExpenseEvent } from '@/types/budget';
-import Today from '@/components/common/date';
-import RNDateTimePicker, { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
+import { BudgetEvent } from '@/types/budget';
+import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import { GetToday } from '@/utils/helper';
 const styles = StyleSheet.create({
   body: {
@@ -60,23 +59,20 @@ const styles = StyleSheet.create({
 
 type MainAddExpense = {
   modalVisible: boolean;
-  onClose?: () => void;
+  onClose: () => void;
 };
 const AddExpense = ({ modalVisible, onClose }: MainAddExpense) => {
-  const [date, setDate] = useState(new Date());
-  const [newExpense, setNewExpense] = useState<ExpenseEvent>({
+  const [newExpense, setNewExpense] = useState<BudgetEvent>({
     id: new Date().getTime(), // Unique ID based on timestamp
     name: '',
     description: '',
     amount: 0,
     date: GetToday(), // Fixed
-    typeId: 2, // Fixed
-    expenseCategoryId: 0,
+    categoryId: 0,
   });
-  const [value, setValue] = useState(null);
   function onAddExpense() {
     console.log('Adding expense:', newExpense);
-    onClose;
+    onClose();
   }
   function OpenTimePicker() {
     console.log('open');
@@ -160,10 +156,10 @@ const AddExpense = ({ modalVisible, onClose }: MainAddExpense) => {
                 labelField="name"
                 valueField="id"
                 placeholder="Select category"
-                value={newExpense.expenseCategoryId}
+                value={newExpense.categoryId}
                 renderItem={renderItem}
                 onChange={item => {
-                  setNewExpense({ ...newExpense, expenseCategoryId: item.id });
+                  setNewExpense({ ...newExpense, categoryId: item.id });
                 }}
               />
               <TextInput

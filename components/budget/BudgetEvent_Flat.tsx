@@ -1,16 +1,10 @@
 import { Text, View, StyleSheet, StyleProp, ViewStyle, ScrollView } from 'react-native';
-import React, { ReactNode, useEffect, useState } from 'react';
-import AddExpense from './addExpense';
-import { Button, Divider, List, Portal } from 'react-native-paper';
+import React, { ReactNode, useState } from 'react';
+import { Divider, List } from 'react-native-paper';
 import { colors } from '@/theme';
-import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { formatCurrency } from '@/utils/helper';
-import {
-  GetCategoryById,
-  groupSummaryData,
-  monthlyGroupSummaryData,
-  summaryData,
-} from '@/local_data/data';
+import { GetCategoryById, groupBudgetDataFlat, budgetEvent } from '@/local_data/data';
 const styles = StyleSheet.create({
   body: {
     width: '100%',
@@ -37,12 +31,12 @@ const styles = StyleSheet.create({
   },
 });
 
-type MainBudgetProps = {
+type BudgetEventFlatProps = {
   style?: StyleProp<ViewStyle>;
 };
 
-const BudgetEventFlat = ({ style }: MainBudgetProps) => {
-  const [groupedData, setGroupedData] = useState(monthlyGroupSummaryData(summaryData));
+const BudgetEventFlat = ({ style }: BudgetEventFlatProps) => {
+  const [groupedData] = useState(groupBudgetDataFlat(budgetEvent));
   console.log(JSON.stringify(groupedData));
   function ListAccordionNode(
     Date: string,
@@ -125,37 +119,33 @@ const BudgetEventFlat = ({ style }: MainBudgetProps) => {
             )}
             style={{ backgroundColor: colors.blackGray, padding: 0 }} // Add this line
           >
-            {Object.entries(data).map(([key2, value2]: any) => {
-              return (
-                <View key={key2}>
-                  {Object.entries(value2.data)
-                    .reverse()
-                    .map(([key3, value3]: any) => {
+            {Object.entries(value.data)
+              .reverse()
+              .map((item2: any, index2: number) => {
+                return (
+                  <View key={index2}>
+                    <View
+                      style={{ flexDirection: 'row', gap: 5, alignItems: 'center', marginTop: 12 }}>
+                      <MaterialIcons name="today" size={18} color={colors.lightGray} />
+                      <Text
+                        style={[
+                          styles.text,
+                          { color: colors.lightGray, fontSize: 16, letterSpacing: 2 },
+                        ]}>
+                        {item2[0]}
+                      </Text>
+                    </View>
+                    {item2[1].data.map((item3: any, index3: number) => {
                       return (
-                        <View key={key3} style={{ marginTop: 12 }}>
-                          <View style={{ flexDirection: 'row', gap: 5, alignItems: 'center' }}>
-                            <MaterialIcons name="today" size={18} color={colors.lightGray} />
-                            <Text
-                              style={[
-                                styles.text,
-                                { color: colors.lightGray, fontSize: 16, letterSpacing: 2 },
-                              ]}>
-                              {key3}
-                            </Text>
-                          </View>
-                          {value3.data.map((item4: any, index4: number) => {
-                            return (
-                              <List.Item
-                                key={index4}
-                                style={{
-                                  marginVertical: 0,
-                                  paddingVertical: 0,
-                                }} // outer margin/padding
-                                contentStyle={{ paddingVertical: 1 }} // inner padding
-                                title={IndividualEvent(item4)}
-                              />
-                            );
-                          })}
+                        <View key={index3}>
+                          <List.Item
+                            style={{
+                              marginVertical: 0,
+                              paddingVertical: 0,
+                            }} // outer margin/padding
+                            contentStyle={{ paddingVertical: 1 }} // inner padding
+                            title={IndividualEvent(item3)}
+                          />
                           <Divider
                             style={{
                               backgroundColor: colors.darkGray,
@@ -165,9 +155,9 @@ const BudgetEventFlat = ({ style }: MainBudgetProps) => {
                         </View>
                       );
                     })}
-                </View>
-              );
-            })}
+                  </View>
+                );
+              })}
           </List.Accordion>
         </List.Section>
       );

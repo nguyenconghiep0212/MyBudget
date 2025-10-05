@@ -1,8 +1,7 @@
 import { colors } from '@/theme';
-import { Category, Type, ExpenseEvent, MonthlyBudget } from '@/types/budget';
+import { Category, BudgetEvent, MonthlyBudget } from '@/types/budget';
 import { months } from '@/utils/helper';
-import { FontAwesome, Ionicons, MaterialIcons } from '@expo/vector-icons';
-import { ReactNode } from 'react';
+import { FontAwesome, Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 
 const monthlyBudget: MonthlyBudget[] = [
   {
@@ -12,7 +11,7 @@ const monthlyBudget: MonthlyBudget[] = [
     salary: 10_000_000,
   },
 ];
-const summaryData: ExpenseEvent[] = [
+const budgetEvent: BudgetEvent[] = [
   {
     categoryId: 2,
     id: 2,
@@ -67,25 +66,71 @@ const expenseCategory: Category[] = [
   { id: 1, name: 'Food', icon: <Ionicons name="fast-food" size={24} color={colors.Negative} /> },
   {
     id: 2,
-    name: 'Gas',
-    icon: <MaterialIcons name="local-gas-station" size={24} color={colors.Negative} />,
+    name: 'Vehicle',
+    icon: <MaterialCommunityIcons name="motorbike" size={24} color={colors.Negative} />,
   },
-  { id: 3, name: 'Game', icon: <FontAwesome name="gamepad" size={24} color={colors.Negative} /> },
+  {
+    id: 3,
+    name: 'Game',
+    icon: <Ionicons name="game-controller" size={24} color={colors.Negative} />,
+  },
   {
     id: 4,
     name: 'Grocery',
-    icon: <FontAwesome name="shopping-basket" size={24} color={colors.Negative} />,
+    icon: <FontAwesome name="shopping-cart" size={24} color={colors.Negative} />,
+  },
+  {
+    id: 5,
+    name: 'Pet',
+    icon: <MaterialIcons name="pets" size={24} color={colors.Negative} />,
+  },
+  {
+    id: 6,
+    name: 'Vacation',
+    icon: <Ionicons name="earth-sharp" size={24} color={colors.Negative} />,
+  },
+  {
+    id: 7,
+    name: 'Healthcare',
+    icon: <MaterialIcons name="health-and-safety" size={24} color={colors.Negative} />,
+  },
+  {
+    id: 8,
+    name: 'Work',
+    icon: <MaterialIcons name="work" size={24} color={colors.Negative} />,
+  },
+  {
+    id: 9,
+    name: 'Family',
+    icon: <MaterialIcons name="family-restroom" size={24} color={colors.Negative} />,
   },
 ];
-
+function GetAvailableYear(): number[] {
+  const years: number[] = [];
+  budgetEvent.forEach((item: BudgetEvent, index: number) => {
+    if (!years.includes(item.date.getFullYear())) {
+      years.push(item.date.getFullYear());
+    }
+  });
+  return years;
+}
+function GetMonthlyBudget(data: BudgetEvent[], year: number) {
+  // need data : [
+  //   month:{
+  //     categories:[],
+  //     expense:0,
+  //     budget:0
+  //   }
+  // ]
+}
 function SetMonthlyBudget(newBudget: MonthlyBudget) {
   if (
-    monthlyBudget.find(i => i.month == newBudget.month && i.year == newBudget.year) == undefined
+    monthlyBudget.find(i => i.month === newBudget.month && i.year === newBudget.year) === undefined
   ) {
     monthlyBudget.unshift(newBudget);
   } else {
     monthlyBudget.forEach(item => {
-      if (newBudget.month == item.month && newBudget.year == item.year) {
+      if (newBudget.month === item.month && newBudget.year === item.year) {
         item.amount = newBudget.amount;
       }
     });
@@ -93,9 +138,9 @@ function SetMonthlyBudget(newBudget: MonthlyBudget) {
   console.log('Update existing budget' + JSON.stringify(monthlyBudget));
 }
 function GetCategoryById(id: number): Category | undefined {
-  return expenseCategory.find((i: Category) => i.id == id);
+  return expenseCategory.find((i: Category) => i.id === id);
 }
-function monthlyGroupSummaryData(data: ExpenseEvent[]) {
+function groupBudgetDataFlat(data: BudgetEvent[]) {
   const result: any = {};
 
   data.forEach(item => {
@@ -147,7 +192,7 @@ function monthlyGroupSummaryData(data: ExpenseEvent[]) {
 
   return convert(result);
 }
-function groupSummaryData(data: ExpenseEvent[]) {
+function groupBudgetDataTree(data: BudgetEvent[]) {
   const result: any = {};
 
   data.forEach(item => {
@@ -221,11 +266,13 @@ function groupSummaryData(data: ExpenseEvent[]) {
   return convert(result);
 }
 export {
-  summaryData,
+  budgetEvent,
   expenseCategory,
   monthlyBudget,
-  monthlyGroupSummaryData,
+  GetAvailableYear,
+  GetMonthlyBudget,
   SetMonthlyBudget,
   GetCategoryById,
-  groupSummaryData,
+  groupBudgetDataFlat,
+  groupBudgetDataTree,
 };
