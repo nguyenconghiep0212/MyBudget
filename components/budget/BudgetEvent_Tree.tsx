@@ -198,29 +198,36 @@ const BudgetEventTree = ({ style }: MainBudgetProps) => {
   return (
     <View style={[styles.body, style]}>
       <ScrollView style={{ width: '100%', marginBottom: 52 }}>
-        {Object.entries(groupedData).map(([key, value]: any) => (
-          <View style={[styles.body, { marginTop: 12 }]} key={key}>
-            <View
-              style={{
-                paddingLeft: 18,
-                paddingRight: 28,
-                width: '100%',
-                flexDirection: 'row',
-                alignItems: 'center',
-              }}>
-              <Text
-                style={[
-                  styles.text,
-                  { color: colors.lightGray, fontSize: 24, fontWeight: 300, letterSpacing: 6 },
-                ]}>
-                {key}
-              </Text>
+        {Object.entries(groupedData)
+          .reverse()
+          .map(([key, value]: any) => (
+            <View style={[styles.body, { marginTop: 12 }]} key={key}>
               <View
-                style={{ marginLeft: 12, backgroundColor: colors.gray, flex: 1, height: 2 }}></View>
+                style={{
+                  paddingLeft: 18,
+                  paddingRight: 28,
+                  width: '100%',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}>
+                <Text
+                  style={[
+                    styles.text,
+                    { color: colors.lightGray, fontSize: 24, fontWeight: 300, letterSpacing: 6 },
+                  ]}>
+                  {key}
+                </Text>
+                <View
+                  style={{
+                    marginLeft: 12,
+                    backgroundColor: colors.gray,
+                    flex: 1,
+                    height: 2,
+                  }}></View>
+              </View>
+              {YearlyView(value.data)}
             </View>
-            {YearlyView(value.data)}
-          </View>
-        ))}
+          ))}
       </ScrollView>
     </View>
   );

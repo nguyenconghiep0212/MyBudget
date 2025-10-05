@@ -7,8 +7,7 @@ import { colors } from '@/theme';
 import { expenseCategory } from '@/local_data/data';
 import { ExpenseEvent } from '@/types/budget';
 import Today from '@/components/common/date';
-import RNDateTimePicker from '@react-native-community/datetimepicker';
-import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
+import RNDateTimePicker, { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import { GetToday } from '@/utils/helper';
 const styles = StyleSheet.create({
   body: {
