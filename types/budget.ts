@@ -8,15 +8,15 @@ export interface BudgetEvent {
   amount: number;
   date: Date;
 }
-
-export interface Category {
-  id: number;
-  name: string;
-  icon?: ReactNode;
-}
 export interface MonthlyBudget {
   month: number;
   year: number;
   amount: number;
   salary: number;
+}
+
+export interface Category {
+  id: number;
+  name: string;
+  icon?: ReactNode;
 }

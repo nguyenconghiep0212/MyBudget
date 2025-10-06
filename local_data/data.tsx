@@ -114,14 +114,46 @@ function GetAvailableYear(): number[] {
   });
   return years;
 }
-function GetMonthlyBudget(data: BudgetEvent[], year: number) {
-  // need data : [
-  //   month:{
+function GetMonthlyBudget(year: number) {
+  const result: any[] = [];
+  for (let month = 1; month <= 12; month++) {
+    result.push({
+      month: month,
+      categories: [],
+      expense: 0,
+      budget: 0,
+      salary: 0,
+    });
+  }
+  monthlyBudget.forEach((item, index) => {
+    if (item.year === year) {
+      const temp = result.find(resItem => resItem.month === item.month);
+      if (temp) {
+        temp.salary = item.salary;
+        temp.budget = item.amount;
+      }
+    }
+  });
+  budgetEvent.forEach(item => {
+    if (item.date.getFullYear() === year) {
+      const temp = result.find(resItem => resItem.month === item.date.getMonth() + 1);
+      if (temp) {
+        temp.expense += item.amount;
+        if (!temp.categories.includes(item.categoryId)) {
+          temp.categories.push(item.categoryId);
+        }
+      }
+    }
+  });
+  return result;
+  // need data :
+  //     [
+  //     month: '',
   //     categories:[],
   //     expense:0,
-  //     budget:0
-  //   }
-  // ]
+  //     budget:0,
+  //     salary:0,
+  //    ]
 }
 function SetMonthlyBudget(newBudget: MonthlyBudget) {
   if (
@@ -140,10 +172,10 @@ function SetMonthlyBudget(newBudget: MonthlyBudget) {
 function GetCategoryById(id: number): Category | undefined {
   return expenseCategory.find((i: Category) => i.id === id);
 }
-function groupBudgetDataFlat(data: BudgetEvent[]) {
+function groupBudgetDataFlat() {
   const result: any = {};
 
-  data.forEach(item => {
+  budgetEvent.forEach(item => {
     const date = new Date(item.date);
     const year = date.getFullYear();
     const month = months[date.getMonth()];
@@ -192,10 +224,10 @@ function groupBudgetDataFlat(data: BudgetEvent[]) {
 
   return convert(result);
 }
-function groupBudgetDataTree(data: BudgetEvent[]) {
+function groupBudgetDataTree() {
   const result: any = {};
 
-  data.forEach(item => {
+  budgetEvent.forEach(item => {
     const date = new Date(item.date);
     const year = date.getFullYear();
     const month = months[date.getMonth()];

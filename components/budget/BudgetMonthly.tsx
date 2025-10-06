@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { DataTable } from 'react-native-paper';
 import { colors } from '@/theme';
 import { Dropdown } from 'react-native-element-dropdown';
-import { GetToday } from '@/utils/helper';
+import { GetToday, months } from '@/utils/helper';
 import { budgetEvent, GetAvailableYear, GetMonthlyBudget } from '@/local_data/data';
 import { BudgetEvent } from '@/types/budget';
 const styles = StyleSheet.create({
@@ -35,14 +35,22 @@ type MonthlyBudgetProps = {
   style?: StyleProp<ViewStyle>;
 };
 
+type TableDataType = {
+  month: number;
+  categories: number[];
+  expense: number;
+  budget: number;
+  salary: number;
+};
+
 const MonthlyBudget = ({ style }: MonthlyBudgetProps) => {
   const [availableYear, setAvailableYear] = useState<{ value: number; label: string }[]>([]);
   const [selectedYear, setSelectedYear] = useState(GetToday().getFullYear());
-  const [tableData, setTableData] = useState([]);
-  function GetMonthBudgetByYear(budgetEvent: BudgetEvent[], selectedYear: number) {
-    // const temp = GetMonthlyBudget(budgetEvent, selectedYear);
-    // setTableData(temp);
-    // console.log(JSON.stringify(Object.entries(temp)));
+  const [tableData, setTableData] = useState<TableDataType[]>([]);
+  function GetMonthBudgetByYear(selectedYear: number) {
+    const temp = GetMonthlyBudget(selectedYear);
+    setTableData(temp);
+    console.log(JSON.stringify(temp));
   }
   function GetYear() {
     const years: { value: number; label: string }[] = [];
@@ -53,7 +61,7 @@ const MonthlyBudget = ({ style }: MonthlyBudgetProps) => {
   }
   function UpdateData(selectedYear: number) {
     setSelectedYear(selectedYear);
-    GetMonthBudgetByYear(budgetEvent, selectedYear);
+    GetMonthBudgetByYear(selectedYear);
   }
   useEffect(() => {
     GetYear();
@@ -104,16 +112,22 @@ const MonthlyBudget = ({ style }: MonthlyBudgetProps) => {
           <DataTable.Title numeric>
             <Text style={[styles.text]}>Expense</Text>
           </DataTable.Title>
+          <DataTable.Title numeric>
+            <Text style={[styles.text]}>Expense</Text>
+          </DataTable.Title>
         </DataTable.Header>
 
-        {/* {Object.entries(tableData).map((item: any, index: number) => (
-          <DataTable.Row key={item.index}>
-            <DataTable.Cell>{item.month}</DataTable.Cell>
-            <DataTable.Cell>aaa</DataTable.Cell>
+        {tableData.map((item: any, index: number) => (
+          <DataTable.Row key={index}>
+            <DataTable.Cell>
+              <Text style={{ color: colors.lightGray }}>{months[item.month - 1]}</Text>
+            </DataTable.Cell>
+            <DataTable.Cell>{item.Categories}</DataTable.Cell>
             <DataTable.Cell numeric>{item.expense}</DataTable.Cell>
             <DataTable.Cell numeric>{item.budget}</DataTable.Cell>
+            <DataTable.Cell numeric>{item.salary}</DataTable.Cell>
           </DataTable.Row>
-        ))} */}
+        ))}
       </DataTable>
     </View>
   );

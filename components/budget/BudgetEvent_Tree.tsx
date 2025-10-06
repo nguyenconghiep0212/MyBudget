@@ -36,7 +36,7 @@ type BudgetEventTreeProps = {
 };
 
 const BudgetEventTree = ({ style }: BudgetEventTreeProps) => {
-  const [groupedData] = useState(groupBudgetDataTree(budgetEvent));
+  const [groupedData] = useState(groupBudgetDataTree());
   function ListAccordionNode(
     Date: string,
     Amount: number,

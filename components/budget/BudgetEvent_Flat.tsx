@@ -36,7 +36,7 @@ type BudgetEventFlatProps = {
 };
 
 const BudgetEventFlat = ({ style }: BudgetEventFlatProps) => {
-  const [groupedData] = useState(groupBudgetDataFlat(budgetEvent));
+  const [groupedData] = useState(groupBudgetDataFlat());
   console.log(JSON.stringify(groupedData));
   function ListAccordionNode(
     Date: string,
