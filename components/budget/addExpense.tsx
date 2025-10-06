@@ -1,6 +1,6 @@
 import { Text, View, StyleSheet, TextInput } from 'react-native';
-import React, { useState } from 'react';
-import { FontAwesome } from '@expo/vector-icons';
+import React, { useEffect, useState } from 'react';
+import { FontAwesome, FontAwesome5, Ionicons } from '@expo/vector-icons';
 import { Button, Dialog, Portal } from 'react-native-paper';
 import { Dropdown } from 'react-native-element-dropdown';
 import { colors } from '@/theme';
@@ -58,10 +58,11 @@ const styles = StyleSheet.create({
 });
 
 type MainAddExpense = {
+  existedExpense?: BudgetEvent;
   modalVisible: boolean;
   onClose: () => void;
 };
-const AddExpense = ({ modalVisible, onClose }: MainAddExpense) => {
+const AddExpense = ({ existedExpense, modalVisible, onClose }: MainAddExpense) => {
   const [newExpense, setNewExpense] = useState<BudgetEvent>({
     id: new Date().getTime(), // Unique ID based on timestamp
     name: '',
@@ -70,12 +71,25 @@ const AddExpense = ({ modalVisible, onClose }: MainAddExpense) => {
     date: GetToday(), // Fixed
     categoryId: 0,
   });
+  const [isEdit, setIsEdit] = useState<boolean>(false);
+  function checkEditExpense() {
+    console.log(JSON.stringify(existedExpense));
+    if (existedExpense) {
+      setIsEdit(true);
+    } else {
+      setIsEdit(false);
+    }
+  }
+  function onEditExpense() {
+    console.log('Editing expense:', newExpense);
+    onClose();
+  }
   function onAddExpense() {
     console.log('Adding expense:', newExpense);
     onClose();
   }
+  function onDeleteExpense() {}
   function OpenTimePicker() {
-    console.log('open');
     DateTimePickerAndroid.open({
       value: newExpense.date,
       onChange: (event, selectedDate) => {
@@ -87,6 +101,9 @@ const AddExpense = ({ modalVisible, onClose }: MainAddExpense) => {
       is24Hour: true,
     });
   }
+  useEffect(() => {
+    checkEditExpense();
+  }, [existedExpense]);
   const renderItem = (item: any) => {
     return (
       <View
@@ -112,7 +129,7 @@ const AddExpense = ({ modalVisible, onClose }: MainAddExpense) => {
           <Dialog.Content style={styles.portalBody}>
             <Text
               style={[styles.text, { fontSize: 24, color: colors.lightGray, marginBottom: 20 }]}>
-              Add new expense
+              {isEdit ? 'Edit expense' : 'Add new expense'}
             </Text>
             <View
               style={[
@@ -168,7 +185,6 @@ const AddExpense = ({ modalVisible, onClose }: MainAddExpense) => {
                 style={[styles.inputField, { color: 'white' }]}
                 keyboardType="numeric"
                 onSubmitEditing={event => () => {
-                  console.log(event.nativeEvent.text);
                   setNewExpense({
                     ...newExpense,
                     amount: event.nativeEvent.text as unknown as number,
@@ -178,12 +194,23 @@ const AddExpense = ({ modalVisible, onClose }: MainAddExpense) => {
             </View>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button onPress={onClose}>
-              <Text style={{ color: colors.Negative }}>Cancel</Text>
-            </Button>
-            <Button onPress={onAddExpense}>
-              <Text style={{ color: colors.NavyBlueText }}>Confirm</Text>
-            </Button>
+            <View style={styles.superContainer}>
+              <View style={[styles.superItemContainer, { alignItems: 'flex-start' }]}>
+                {isEdit && (
+                  <Button mode="text" compact onPress={onDeleteExpense}>
+                    <Ionicons name="trash-bin" size={18} color={colors.Negative} />
+                  </Button>
+                )}
+              </View>
+              <View style={[styles.superItemContainer, { flexDirection: 'row' }]}>
+                <Button onPress={onClose}>
+                  <Text style={{ color: colors.Negative }}>Cancel</Text>
+                </Button>
+                <Button onPress={isEdit ? onEditExpense : onAddExpense}>
+                  <Text style={{ color: colors.NavyBlueText }}>{isEdit ? 'Edit' : 'Add'}</Text>
+                </Button>
+              </View>
+            </View>
           </Dialog.Actions>
         </Dialog>
       </Portal>

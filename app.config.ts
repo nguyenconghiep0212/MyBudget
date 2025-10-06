@@ -4,8 +4,8 @@ export default ({ config }: ConfigContext): ExpoConfig => {
   const expoProjectId = process.env.EXPO_PROJECT_ID ?? '18adc0d0-eb1d-11e9-8009-d524ed5cc4a7';
   const expoConfig: ExpoConfig = {
     ...config,
-    slug: process.env.EXPO_SLUG ?? 'react-native-boilerplate',
-    name: process.env.EXPO_NAME ?? 'React Native Boilerplate',
+    slug: process.env.EXPO_SLUG ?? 'my-budget',
+    name: process.env.EXPO_NAME ?? 'My Budget',
     ios: {
       ...config.ios,
       bundleIdentifier:

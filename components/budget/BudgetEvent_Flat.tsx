@@ -1,10 +1,11 @@
 import { Text, View, StyleSheet, StyleProp, ViewStyle, ScrollView } from 'react-native';
 import React, { ReactNode, useState } from 'react';
-import { Divider, List } from 'react-native-paper';
+import { Button, Divider, List } from 'react-native-paper';
 import { colors } from '@/theme';
-import { MaterialIcons } from '@expo/vector-icons';
+import { FontAwesome6, MaterialIcons } from '@expo/vector-icons';
 import { formatCurrency } from '@/utils/helper';
 import { GetCategoryById, groupBudgetDataFlat, budgetEvent } from '@/local_data/data';
+import { BudgetEvent } from '@/types/budget';
 const styles = StyleSheet.create({
   body: {
     width: '100%',
@@ -33,11 +34,11 @@ const styles = StyleSheet.create({
 
 type BudgetEventFlatProps = {
   style?: StyleProp<ViewStyle>;
+  onSelectBudgetEvent: (selectedBudget: BudgetEvent) => void;
 };
 
-const BudgetEventFlat = ({ style }: BudgetEventFlatProps) => {
+const BudgetEventFlat = ({ style, onSelectBudgetEvent }: BudgetEventFlatProps) => {
   const [groupedData] = useState(groupBudgetDataFlat());
-  console.log(JSON.stringify(groupedData));
   function ListAccordionNode(
     Date: string,
     Amount: number,
@@ -80,6 +81,15 @@ const BudgetEventFlat = ({ style }: BudgetEventFlatProps) => {
     return (
       <View>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <View style={{ marginRight: 10 }}>
+            <Button
+              mode="text"
+              compact
+              style={{ marginLeft: -8 }}
+              onPress={() => onSelectBudgetEvent(data)}>
+              <FontAwesome6 name="edit" size={16} color={colors.gray} />
+            </Button>
+          </View>
           <Text style={{ color: colors.lightGray }}>{data.name}</Text>
           <Text
             style={{

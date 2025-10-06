@@ -30,7 +30,7 @@ const budgetEvent: BudgetEvent[] = [
   },
   {
     categoryId: 1,
-    id: 1,
+    id: 11,
     name: 'Lunch',
     description: 'Lunch with friends',
     amount: 50_000,
@@ -38,7 +38,7 @@ const budgetEvent: BudgetEvent[] = [
   },
   {
     categoryId: 1,
-    id: 1,
+    id: 21,
     name: 'Lunch',
     description: 'Lunch with friends',
     amount: 50_000,
@@ -46,7 +46,7 @@ const budgetEvent: BudgetEvent[] = [
   },
   {
     categoryId: 4,
-    id: 1,
+    id: 41,
     name: 'Meat and Vegetables',
     description: 'For weekly groceries',
     amount: 82_000,
@@ -54,7 +54,7 @@ const budgetEvent: BudgetEvent[] = [
   },
   {
     categoryId: 4,
-    id: 1,
+    id: 32,
     name: 'Meat and Vegetables',
     description: 'For weekly groceries',
     amount: 82_000,
@@ -109,9 +109,10 @@ function GetAvailableYear(): number[] {
   const years: number[] = [];
   budgetEvent.forEach((item: BudgetEvent, index: number) => {
     if (!years.includes(item.date.getFullYear())) {
-      years.push(item.date.getFullYear());
+      years.unshift(item.date.getFullYear());
     }
   });
+  years.push(years[years.length - 1] + 1);
   return years;
 }
 function GetMonthlyBudget(year: number) {

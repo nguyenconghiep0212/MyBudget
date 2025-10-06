@@ -1,9 +1,9 @@
 import { View, StyleSheet } from 'react-native';
 import useColorScheme from '@/hooks/useColorScheme';
 import { colors } from '@/theme';
-import BudgetEvent from '@/components/budget/BudgetEvent';
+import BudgetEvent from '@/components/budget/budgetEvent';
 import { useBudgetSlice } from '@/slices';
-import BudgetMonthly from '@/components/budget/BudgetMonthly';
+import BudgetMonthly from '@/components/budget/monthlyBudget';
 
 const styles = StyleSheet.create({
   root: {
