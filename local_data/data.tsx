@@ -14,7 +14,7 @@ const monthlyBudget: MonthlyBudget[] = [
 const budgetEvent: BudgetEvent[] = [
   {
     categoryId: 2,
-    id: 2,
+    id: '2',
     name: 'Gas',
     description: 'Filling gas for motorcycle',
     amount: 70_000,
@@ -22,7 +22,7 @@ const budgetEvent: BudgetEvent[] = [
   },
   {
     categoryId: 1,
-    id: 3,
+    id: '3',
     name: 'Takoyaki',
     description: 'yum yum',
     amount: 54_000,
@@ -30,7 +30,7 @@ const budgetEvent: BudgetEvent[] = [
   },
   {
     categoryId: 1,
-    id: 11,
+    id: '11',
     name: 'Lunch',
     description: 'Lunch with friends',
     amount: 50_000,
@@ -38,7 +38,7 @@ const budgetEvent: BudgetEvent[] = [
   },
   {
     categoryId: 1,
-    id: 21,
+    id: '21',
     name: 'Lunch',
     description: 'Lunch with friends',
     amount: 50_000,
@@ -46,7 +46,7 @@ const budgetEvent: BudgetEvent[] = [
   },
   {
     categoryId: 4,
-    id: 41,
+    id: '41',
     name: 'Meat and Vegetables',
     description: 'For weekly groceries',
     amount: 82_000,
@@ -54,7 +54,7 @@ const budgetEvent: BudgetEvent[] = [
   },
   {
     categoryId: 4,
-    id: 32,
+    id: '32',
     name: 'Meat and Vegetables',
     description: 'For weekly groceries',
     amount: 82_000,
@@ -105,6 +105,24 @@ const expenseCategory: Category[] = [
     icon: <MaterialIcons name="family-restroom" size={24} color={colors.Negative} />,
   },
 ];
+function AddExpense(newExpense: BudgetEvent) {
+  budgetEvent.unshift(newExpense);
+  console.log(JSON.stringify(budgetEvent));
+}
+function EditExpense(expense: BudgetEvent) {
+  budgetEvent.forEach(item => {
+    if (item.id === expense.id) {
+      Object.assign(item, expense);
+      console.log(JSON.stringify(expense));
+      console.log(JSON.stringify(item));
+    }
+  });
+}
+function DeleteExpense(expenseId: string) {
+  const index = budgetEvent.findIndex(item => item.id === expenseId);
+  budgetEvent.splice(index, 1);
+  console.log(JSON.stringify(budgetEvent));
+}
 function GetAvailableYear(): number[] {
   const years: number[] = [];
   budgetEvent.forEach((item: BudgetEvent, index: number) => {
@@ -147,14 +165,6 @@ function GetMonthlyBudget(year: number) {
     }
   });
   return result;
-  // need data :
-  //     [
-  //     month: '',
-  //     categories:[],
-  //     expense:0,
-  //     budget:0,
-  //     salary:0,
-  //    ]
 }
 function SetMonthlyBudget(newBudget: MonthlyBudget) {
   if (
@@ -302,6 +312,9 @@ export {
   budgetEvent,
   expenseCategory,
   monthlyBudget,
+  AddExpense,
+  EditExpense,
+  DeleteExpense,
   GetAvailableYear,
   GetMonthlyBudget,
   SetMonthlyBudget,

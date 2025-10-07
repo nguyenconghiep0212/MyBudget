@@ -1,6 +1,6 @@
 import { Text, View, StyleSheet, StyleProp, ViewStyle } from 'react-native';
 import React, { useEffect } from 'react';
-import AddExpense from './addExpense';
+import AddExpenseModal from './addExpense';
 import { Button } from 'react-native-paper';
 import { colors } from '@/theme';
 import { FontAwesome6 } from '@expo/vector-icons';
@@ -39,9 +39,9 @@ type BudgetEventProps = {
 
 const BudgetEvent = ({ style }: BudgetEventProps) => {
   const [modalVisible, setModalVisible] = React.useState(false);
+  const [refreshFlag, setRefreshFlag] = React.useState(true);
   const [existedExpense, setExistedExpense] = React.useState<BudgetEventType>();
   const [viewMode, setViewMode] = React.useState('tree');
-  useEffect(() => {}, [existedExpense]);
   return (
     <View style={[styles.body, style]}>
       <View style={[styles.superContainer, { alignItems: 'flex-end', paddingRight: 12 }]}>
@@ -79,6 +79,7 @@ const BudgetEvent = ({ style }: BudgetEventProps) => {
       </View>
       {viewMode === 'tree' ? (
         <BudgetEventTree
+          refreshFlag={refreshFlag}
           onSelectBudgetEvent={event => {
             setExistedExpense(event);
             setModalVisible(true);
@@ -86,16 +87,20 @@ const BudgetEvent = ({ style }: BudgetEventProps) => {
         />
       ) : (
         <BudgetEventFlat
+          refreshFlag={refreshFlag}
           onSelectBudgetEvent={event => {
             setExistedExpense(event);
             setModalVisible(true);
           }}
         />
       )}
-      <AddExpense
+      <AddExpenseModal
         existedExpense={existedExpense}
         modalVisible={modalVisible}
         onClose={() => setModalVisible(false)}
+        onRefreshData={() => {
+          setRefreshFlag(!refreshFlag);
+        }}
       />
     </View>
   );

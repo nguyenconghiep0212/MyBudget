@@ -4,10 +4,10 @@ import { FontAwesome, FontAwesome5, Ionicons } from '@expo/vector-icons';
 import { Button, Dialog, Portal } from 'react-native-paper';
 import { Dropdown } from 'react-native-element-dropdown';
 import { colors } from '@/theme';
-import { expenseCategory } from '@/local_data/data';
+import { DeleteExpense, EditExpense, AddExpense, expenseCategory } from '@/local_data/data';
 import { BudgetEvent } from '@/types/budget';
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
-import { GetToday } from '@/utils/helper';
+import { formatCurrency, GetToday } from '@/utils/helper';
 const styles = StyleSheet.create({
   body: {
     width: '100%',
@@ -61,34 +61,48 @@ type MainAddExpense = {
   existedExpense?: BudgetEvent;
   modalVisible: boolean;
   onClose: () => void;
+  onRefreshData: () => void;
 };
-const AddExpense = ({ existedExpense, modalVisible, onClose }: MainAddExpense) => {
-  const [newExpense, setNewExpense] = useState<BudgetEvent>({
-    id: new Date().getTime(), // Unique ID based on timestamp
+const AddExpenseModal = ({
+  existedExpense,
+  modalVisible,
+  onClose,
+  onRefreshData,
+}: MainAddExpense) => {
+  const defaultExpense = {
+    id: new Date().getTime().toString(), // Unique ID based on timestamp
     name: '',
     description: '',
     amount: 0,
     date: GetToday(), // Fixed
     categoryId: 0,
-  });
+  };
+  const [newExpense, setNewExpense] = useState<BudgetEvent>(defaultExpense);
   const [isEdit, setIsEdit] = useState<boolean>(false);
   function checkEditExpense() {
-    console.log(JSON.stringify(existedExpense));
     if (existedExpense) {
+      setNewExpense(existedExpense);
       setIsEdit(true);
     } else {
+      setNewExpense(defaultExpense);
       setIsEdit(false);
     }
   }
   function onEditExpense() {
-    console.log('Editing expense:', newExpense);
+    if (newExpense) EditExpense(newExpense);
     onClose();
+    onRefreshData();
   }
   function onAddExpense() {
-    console.log('Adding expense:', newExpense);
+    if (newExpense) AddExpense(newExpense);
     onClose();
+    onRefreshData();
   }
-  function onDeleteExpense() {}
+  function onDeleteExpense() {
+    if (existedExpense) DeleteExpense(existedExpense.id);
+    onClose();
+    onRefreshData();
+  }
   function OpenTimePicker() {
     DateTimePickerAndroid.open({
       value: newExpense.date,
@@ -151,17 +165,19 @@ const AddExpense = ({ existedExpense, modalVisible, onClose }: MainAddExpense) =
               <TextInput
                 placeholderTextColor={colors.lightGray}
                 placeholder="Name"
+                value={newExpense.name}
                 style={[styles.inputField, { color: 'white' }]}
-                onSubmitEditing={event => () => {
-                  setNewExpense({ ...newExpense, name: event.nativeEvent.text });
+                onChangeText={event => {
+                  setNewExpense({ ...newExpense, name: event });
                 }}
               />
               <TextInput
                 placeholderTextColor={colors.lightGray}
                 placeholder="Description (optional)"
+                value={newExpense.description}
                 style={[styles.inputField, { color: 'white' }]}
-                onSubmitEditing={event => () => {
-                  setNewExpense({ ...newExpense, description: event.nativeEvent.text });
+                onChangeText={event => {
+                  setNewExpense({ ...newExpense, description: event });
                 }}
               />
               <Dropdown
@@ -183,11 +199,13 @@ const AddExpense = ({ existedExpense, modalVisible, onClose }: MainAddExpense) =
                 placeholderTextColor={colors.lightGray}
                 placeholder="Input amount"
                 style={[styles.inputField, { color: 'white' }]}
+                value={newExpense.amount ? newExpense.amount.toString() : ''}
                 keyboardType="numeric"
-                onSubmitEditing={event => () => {
+                onChangeText={event => {
+                  console.log(event);
                   setNewExpense({
                     ...newExpense,
-                    amount: event.nativeEvent.text as unknown as number,
+                    amount: parseFloat(event) as unknown as number,
                   });
                 }}
               />
@@ -218,4 +236,4 @@ const AddExpense = ({ existedExpense, modalVisible, onClose }: MainAddExpense) =
   );
 };
 
-export default AddExpense;
+export default AddExpenseModal;

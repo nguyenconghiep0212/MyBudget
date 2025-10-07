@@ -1,5 +1,5 @@
 import { Text, View, StyleSheet, StyleProp, ViewStyle, ScrollView } from 'react-native';
-import React, { ReactNode, useState } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { Button, Divider, List } from 'react-native-paper';
 import { colors } from '@/theme';
 import { FontAwesome6, MaterialIcons } from '@expo/vector-icons';
@@ -34,11 +34,16 @@ const styles = StyleSheet.create({
 
 type BudgetEventFlatProps = {
   style?: StyleProp<ViewStyle>;
+  refreshFlag: boolean;
   onSelectBudgetEvent: (selectedBudget: BudgetEvent) => void;
 };
 
-const BudgetEventFlat = ({ style, onSelectBudgetEvent }: BudgetEventFlatProps) => {
-  const [groupedData] = useState(groupBudgetDataFlat());
+const BudgetEventFlat = ({ refreshFlag, style, onSelectBudgetEvent }: BudgetEventFlatProps) => {
+  const [groupedData, setGroupedData] = useState(groupBudgetDataFlat());
+  useEffect(() => {
+    setGroupedData(groupBudgetDataFlat());
+  }, [refreshFlag]);
+
   function ListAccordionNode(
     Date: string,
     Amount: number,
@@ -106,7 +111,7 @@ const BudgetEventFlat = ({ style, onSelectBudgetEvent }: BudgetEventFlatProps) =
           </View>
         </View>
         <Text style={{ color: colors.gray, fontSize: 12, fontWeight: 300 }}>
-          {data.description}
+          {data.description ? data.description : 'NaN'}
         </Text>
       </View>
     );
@@ -175,7 +180,7 @@ const BudgetEventFlat = ({ style, onSelectBudgetEvent }: BudgetEventFlatProps) =
   }
   return (
     <View style={[styles.body, style]}>
-      <ScrollView style={{ width: '100%', marginBottom: 52 }}>
+      <ScrollView style={{ width: '100%', marginBottom: 100 }}>
         {Object.entries(groupedData)
           .reverse()
           .map(([key, value]: any) => (

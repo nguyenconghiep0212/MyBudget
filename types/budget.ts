@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 
 export interface BudgetEvent {
   categoryId: number;
-  id: number;
+  id: string;
   name: string;
   description?: string;
   amount: number;

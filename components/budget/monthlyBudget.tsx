@@ -121,7 +121,8 @@ const MonthlyBudget = ({ style }: MonthlyBudgetProps) => {
             <DataTable.Row
               key={index}
               style={
-                selectedYear === GetToday().getFullYear() && item.month === GetToday().getMonth()
+                selectedYear === GetToday().getFullYear() &&
+                item.month === GetToday().getMonth() + 1
                   ? {
                       backgroundColor: colors.darkGray,
                     }
