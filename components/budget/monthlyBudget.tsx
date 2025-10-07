@@ -5,6 +5,8 @@ import { colors } from '@/theme';
 import { Dropdown } from 'react-native-element-dropdown';
 import { formatCurrency, GetToday, months } from '@/utils/helper';
 import { GetAvailableYear, GetCategoryById, GetMonthlyBudget } from '@/local_data/data';
+import { MonthlyBudget as MonthlyBudgetType } from '@/types/budget';
+import MonthEdit from './monthly_Edit';
 const styles = StyleSheet.create({
   body: {
     width: '100%',
@@ -43,12 +45,15 @@ type TableDataType = {
 };
 
 const MonthlyBudget = ({ style }: MonthlyBudgetProps) => {
+  const [selectedDate, setSelectedDate] = useState<MonthlyBudgetType>();
   const [availableYear, setAvailableYear] = useState<{ value: number; label: string }[]>([]);
+  const [modalVisible, setModalVisible] = React.useState(false);
   const [selectedYear, setSelectedYear] = useState(GetToday().getFullYear());
   const [tableData, setTableData] = useState<TableDataType[]>([]);
+  const [refreshFlag, setRefreshFlag] = useState<boolean>(false);
   function GetMonthBudgetByYear(selectedYear: number) {
     const temp = GetMonthlyBudget(selectedYear);
-    setTableData(temp);
+    setTableData(temp.reverse());
   }
   function GetYear() {
     const years: { value: number; label: string }[] = [];
@@ -67,6 +72,9 @@ const MonthlyBudget = ({ style }: MonthlyBudgetProps) => {
     GetYear();
     UpdateData(selectedYear);
   }, []);
+  useEffect(() => {
+    UpdateData(selectedYear);
+  }, [refreshFlag]);
   const renderItem = (item: any) => {
     return (
       <View
@@ -108,16 +116,16 @@ const MonthlyBudget = ({ style }: MonthlyBudgetProps) => {
               <Text style={[styles.text]}>Categories</Text>
             </DataTable.Title>
             <DataTable.Title numeric>
-              <Text style={[styles.text]}>Budget</Text>
+              <Text style={[styles.text]}>Expense</Text>
             </DataTable.Title>
             <DataTable.Title numeric>
-              <Text style={[styles.text]}>Expense</Text>
+              <Text style={[styles.text]}>Budget</Text>
             </DataTable.Title>
             <DataTable.Title numeric>
               <Text style={[styles.text]}>Income</Text>
             </DataTable.Title>
           </DataTable.Header>
-          {tableData.reverse().map((item: any, index: number) => (
+          {tableData.map((item: any, index: number) => (
             <DataTable.Row
               key={index}
               style={
@@ -129,7 +137,16 @@ const MonthlyBudget = ({ style }: MonthlyBudgetProps) => {
                   : {
                       backgroundColor: index % 2 === 0 ? colors.black : colors.blackGray,
                     }
-              }>
+              }
+              onLongPress={() => {
+                setSelectedDate({
+                  month: item.month,
+                  year: selectedYear,
+                  amount: item.budget,
+                  salary: item.salary,
+                });
+                setModalVisible(true);
+              }}>
               <DataTable.Cell>
                 <Text style={{ color: colors.lightGray, fontSize: 12 }}>
                   {months[item.month - 1]}
@@ -178,6 +195,12 @@ const MonthlyBudget = ({ style }: MonthlyBudgetProps) => {
           ))}
         </DataTable>
       </ScrollView>
+      <MonthEdit
+        selectedDate={selectedDate}
+        modalVisible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        onRefreshData={() => setRefreshFlag(!refreshFlag)}
+      />
     </View>
   );
 };

@@ -1,6 +1,6 @@
 import { colors } from '@/theme';
 import { Category, BudgetEvent, MonthlyBudget } from '@/types/budget';
-import { months } from '@/utils/helper';
+import { GetToday, months } from '@/utils/helper';
 import { FontAwesome, Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 
 const monthlyBudget: MonthlyBudget[] = [
@@ -125,6 +125,10 @@ function DeleteExpense(expenseId: string) {
 }
 function GetAvailableYear(): number[] {
   const years: number[] = [];
+  if (budgetEvent.length === 0) {
+    years.push(GetToday().getFullYear());
+    return years;
+  }
   budgetEvent.forEach((item: BudgetEvent, index: number) => {
     if (!years.includes(item.date.getFullYear())) {
       years.unshift(item.date.getFullYear());
@@ -175,6 +179,7 @@ function SetMonthlyBudget(newBudget: MonthlyBudget) {
     monthlyBudget.forEach(item => {
       if (newBudget.month === item.month && newBudget.year === item.year) {
         item.amount = newBudget.amount;
+        item.salary = newBudget.salary;
       }
     });
   }

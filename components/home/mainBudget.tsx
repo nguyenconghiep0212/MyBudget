@@ -6,6 +6,7 @@ import { budgetEvent, monthlyBudget, SetMonthlyBudget } from '@/local_data/data'
 import { AntDesign, Octicons } from '@expo/vector-icons';
 import { useEffect, useState } from 'react';
 import { colors } from '@/theme';
+import { useFocusEffect } from 'expo-router';
 const styles = StyleSheet.create({
   body: {
     width: '100%',
@@ -91,6 +92,10 @@ const MainBudget = ({ style }: MainBudgetProps) => {
     CalculateThisMonthExpense();
     GetThisMonthBudget();
   }, []);
+  useFocusEffect(() => {
+    CalculateThisMonthExpense();
+    GetThisMonthBudget();
+  });
   return (
     <View style={[styles.body, style]}>
       <View style={[styles.superContainer]}>

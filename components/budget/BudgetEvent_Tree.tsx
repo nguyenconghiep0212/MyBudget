@@ -211,38 +211,36 @@ const BudgetEventTree = ({ refreshFlag, style, onSelectBudgetEvent }: BudgetEven
   }
   return (
     <View style={[styles.body, style]}>
-      <ScrollView style={{ width: '100%', marginBottom: 100 }}>
-        {Object.entries(groupedData)
-          .reverse()
-          .map(([key, value]: any) => (
-            <View style={[styles.body, { marginTop: 12 }]} key={key}>
+      {Object.entries(groupedData)
+        .reverse()
+        .map(([key, value]: any) => (
+          <View style={[styles.body, { marginTop: 12 }]} key={key}>
+            <View
+              style={{
+                paddingLeft: 18,
+                paddingRight: 28,
+                width: '100%',
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}>
+              <Text
+                style={[
+                  styles.text,
+                  { color: colors.lightGray, fontSize: 24, fontWeight: 300, letterSpacing: 6 },
+                ]}>
+                {key}
+              </Text>
               <View
                 style={{
-                  paddingLeft: 18,
-                  paddingRight: 28,
-                  width: '100%',
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                }}>
-                <Text
-                  style={[
-                    styles.text,
-                    { color: colors.lightGray, fontSize: 24, fontWeight: 300, letterSpacing: 6 },
-                  ]}>
-                  {key}
-                </Text>
-                <View
-                  style={{
-                    marginLeft: 12,
-                    backgroundColor: colors.gray,
-                    flex: 1,
-                    height: 2,
-                  }}></View>
-              </View>
-              {YearlyView(value.data)}
+                  marginLeft: 12,
+                  backgroundColor: colors.gray,
+                  flex: 1,
+                  height: 2,
+                }}></View>
             </View>
-          ))}
-      </ScrollView>
+            {YearlyView(value.data)}
+          </View>
+        ))}
     </View>
   );
 };

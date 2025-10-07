@@ -1,4 +1,4 @@
-import { Text, View, StyleSheet, StyleProp, ViewStyle } from 'react-native';
+import { Text, View, StyleSheet, StyleProp, ViewStyle, ScrollView } from 'react-native';
 import React, { useEffect } from 'react';
 import AddExpenseModal from './addExpense';
 import { Button } from 'react-native-paper';
@@ -44,7 +44,11 @@ const BudgetEvent = ({ style }: BudgetEventProps) => {
   const [viewMode, setViewMode] = React.useState('tree');
   return (
     <View style={[styles.body, style]}>
-      <View style={[styles.superContainer, { alignItems: 'flex-end', paddingRight: 12 }]}>
+      <View
+        style={[
+          styles.superContainer,
+          { alignItems: 'flex-end', paddingRight: 12, paddingVertical: 8 },
+        ]}>
         <View
           style={[styles.superItemContainer, styles.superContainer, { gap: 5, paddingLeft: 12 }]}>
           <Button
@@ -78,21 +82,25 @@ const BudgetEvent = ({ style }: BudgetEventProps) => {
         </View>
       </View>
       {viewMode === 'tree' ? (
-        <BudgetEventTree
-          refreshFlag={refreshFlag}
-          onSelectBudgetEvent={event => {
-            setExistedExpense(event);
-            setModalVisible(true);
-          }}
-        />
+        <ScrollView style={{ width: '100%', marginBottom: 52 }}>
+          <BudgetEventTree
+            refreshFlag={refreshFlag}
+            onSelectBudgetEvent={event => {
+              setExistedExpense(event);
+              setModalVisible(true);
+            }}
+          />
+        </ScrollView>
       ) : (
-        <BudgetEventFlat
-          refreshFlag={refreshFlag}
-          onSelectBudgetEvent={event => {
-            setExistedExpense(event);
-            setModalVisible(true);
-          }}
-        />
+        <ScrollView style={{ width: '100%', marginBottom: 52 }}>
+          <BudgetEventFlat
+            refreshFlag={refreshFlag}
+            onSelectBudgetEvent={event => {
+              setExistedExpense(event);
+              setModalVisible(true);
+            }}
+          />
+        </ScrollView>
       )}
       <AddExpenseModal
         existedExpense={existedExpense}
