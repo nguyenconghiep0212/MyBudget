@@ -3,6 +3,7 @@ import useColorScheme from '@/hooks/useColorScheme';
 import Button from '@/components/elements/Button';
 import { useRouter } from 'expo-router';
 import { colors } from '@/theme';
+import PreciousMetalList from '@/components/precious-metal';
 
 const styles = StyleSheet.create({
   root: {
@@ -12,23 +13,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: colors.lightGrayPurple,
   },
-  title: {
-    fontSize: 24,
-    marginBottom: 20,
-  },
-  buttonTitle: {
-    fontSize: 16,
-    color: colors.white,
-    textAlign: 'center',
-  },
-  button: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 22,
-    height: 44,
-    width: '50%',
-    backgroundColor: colors.lightPurple,
-  },
 });
 
 export default function PreciousMetal() {
@@ -36,18 +20,7 @@ export default function PreciousMetal() {
   const { isDark } = useColorScheme();
   return (
     <View style={[styles.root, isDark && { backgroundColor: colors.blackGray }]}>
-      <Text style={[styles.title, isDark && { color: colors.gray }]}>PreciousMetal</Text>
-      <Button
-        title="Go to Details"
-        titleStyle={[styles.buttonTitle, isDark && { color: colors.blackGray }]}
-        style={styles.button}
-        onPress={() =>
-          router.push({
-            pathname: '(main)/(tabs)/precious-metal/details',
-            params: { from: 'Details' },
-          })
-        }
-      />
+      <PreciousMetalList></PreciousMetalList>
     </View>
   );
 }
