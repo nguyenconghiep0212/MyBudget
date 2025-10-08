@@ -1,25 +1,30 @@
 import axios from 'axios';
 import * as FileSystem from 'expo-file-system/legacy';
 
-let API_KEY =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjExNTI2MzYsImlhdCI6MTc1OTg1NjYzNiwic2NvcGUiOiJnb2xkIiwicGVybWlzc2lvbiI6MH0.J8heE3Q81VlN4iZ8x3HAzIbio-P9tUT9YED5eOEsSj4';
-const retryMax = 3;
-let retry = 0;
+let API_KEY: string =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjEyMDc3NTUsImlhdCI6MTc1OTkxMTc1NSwic2NvcGUiOiJnb2xkIiwicGVybWlzc2lvbiI6MH0.C9WZYVeWGEwdC86qOMbcyl4EAc26SIR2q25b8lABWNE';
+const api_key_file = 'vnappmob_key.txt';
+
+export enum GOLD_BRAND {
+  SJC = 'sjc',
+  DOJI = 'doji',
+  PNJ = 'pnj',
+}
+
 // Function to fetch gold price
-const fetchGoldPrice = async () => {
+const fetchGoldPrice = async (brand: GOLD_BRAND) => {
   try {
-    if (retry === retryMax) {
-      throw new Error('Max retry reached !!!');
-    }
-    const response = await axios.get(`https://vapi.vnappmob.com/api/v2/gold/sjc`, {
+    console.log('call =============');
+    const API_KEY = await getFile(api_key_file);
+    const response = await axios.get(`https://vapi.vnappmob.com/api/v2/gold/${brand}`, {
       headers: {
-        Authorization: `Bearer ${API_KEY}`,
+        Authorization: `Bearer ${API_KEY?.replaceAll('"', '')}`,
         Accept: 'application/json',
       },
-      params: {
-        date_from: new Date('2025-09-24'),
-        date_to: new Date(), // Pass the date as a query parameter
-      },
+      // params: {
+      //   date_from: new Date('2025-09-24'),
+      //   date_to: new Date(), // Pass the date as a query parameter
+      // },
     });
     if (response.status === 200) {
       const result = response.data.results;
@@ -27,14 +32,31 @@ const fetchGoldPrice = async () => {
     }
   } catch (error: any) {
     console.error('Error fetching gold price:', error);
-    if (error.status === 500 || error.status === 403) {
-      retry++;
-      API_KEY = await refreshApiKey();
-    }
-    retry = 0;
   } finally {
   }
 };
+
+// Function to fetch gold price
+const refreshApiKey = async () => {
+  try {
+    const response = await axios.get(`https://vapi.vnappmob.com/api/request_api_key?scope=gold`, {
+      headers: {
+        Accept: 'application/json',
+      },
+    });
+    if (response.status === 200) {
+      const result = response.data.results;
+      API_KEY = JSON.stringify(result);
+      setFile(API_KEY, api_key_file);
+    } else {
+      throw new Error(JSON.stringify(response));
+    }
+  } catch (error) {
+    console.error('Error fetching API key:', error);
+  } finally {
+  }
+};
+
 async function setFile(content: string, fileName: string) {
   try {
     const fileUri = `${FileSystem.documentDirectory}${fileName}`;
@@ -51,7 +73,7 @@ async function getFile(fileName: string) {
     const res = await FileSystem.readAsStringAsync(fileUri, {
       encoding: FileSystem.EncodingType.UTF8,
     });
-    console.log('READ: ' + JSON.stringify(res));
+    return res;
   } catch (error) {
     console.error(error);
   }
@@ -59,28 +81,19 @@ async function getFile(fileName: string) {
 async function getAllFiles() {
   if (FileSystem.documentDirectory) {
     const files = await FileSystem.readDirectoryAsync(FileSystem.documentDirectory);
-    console.log(files);
+    console.log('All files: ' + JSON.stringify(files));
   }
 }
-// Function to fetch gold price
-const refreshApiKey = async () => {
+async function RemoveFile(fileName: string) {
   try {
-    const response = await axios.get(`https://vapi.vnappmob.com/api/request_api_key?scope=gold`, {
-      headers: {
-        Accept: 'application/json',
-      },
-    });
-    if (response.status === 200) {
-      const result = response.data.results;
-      API_KEY = JSON.stringify(result);
-      return result;
-    } else {
-      throw new Error(JSON.stringify(response));
+    if (fileName) {
+      const path = `${FileSystem.documentDirectory}${fileName}`;
+      const res = await FileSystem.getInfoAsync(path);
+      if (res.exists) FileSystem.deleteAsync(path);
     }
   } catch (error) {
-    console.error('Error fetching API key:', error);
-  } finally {
+    console.error('Unable to delete file: ' + error);
   }
-};
+}
 
-export { fetchGoldPrice, refreshApiKey, getFile, setFile, getAllFiles };
+export { fetchGoldPrice, refreshApiKey, getFile, setFile, getAllFiles, RemoveFile };

@@ -4,7 +4,7 @@ import { formatCurrency, GetToday } from '@/utils/helper';
 import { MD3Colors, ProgressBar } from 'react-native-paper';
 import { budgetEvent, monthlyBudget, SetMonthlyBudget } from '@/local_data/data';
 import { AntDesign, Octicons } from '@expo/vector-icons';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { colors } from '@/theme';
 import { useFocusEffect } from 'expo-router';
 const styles = StyleSheet.create({
@@ -46,11 +46,12 @@ const MainBudget = ({ style }: MainBudgetProps) => {
     });
   }
   function SetThisMonthBudget(newBudget: number) {
+    const temp = monthlyBudget.find(i => i.month === thisMonth && i.year === thisYear);
     SetMonthlyBudget({
       month: thisMonth,
       year: thisYear,
       amount: newBudget,
-      salary: 0,
+      salary: temp ? temp.salary : 0,
     });
     setThisMonthBudget(newBudget);
     setIsEditingBudget(false);
@@ -92,10 +93,12 @@ const MainBudget = ({ style }: MainBudgetProps) => {
     CalculateThisMonthExpense();
     GetThisMonthBudget();
   }, []);
-  useFocusEffect(() => {
-    CalculateThisMonthExpense();
-    GetThisMonthBudget();
-  });
+  useFocusEffect(
+    useCallback(() => {
+      CalculateThisMonthExpense();
+      GetThisMonthBudget();
+    }, []),
+  );
   return (
     <View style={[styles.body, style]}>
       <View style={[styles.superContainer]}>
@@ -113,7 +116,7 @@ const MainBudget = ({ style }: MainBudgetProps) => {
               onSubmitEditing={event => SetThisMonthBudget(Number(event.nativeEvent.text))}
             />
           ) : (
-            <Text style={[styles.text, { fontSize: 18, fontWeight: 600 }]}>
+            <Text style={[styles.text, { letterSpacing: 2, fontSize: 18, fontWeight: 600 }]}>
               {formatCurrency(thisMonthBudget)}
             </Text>
           )}
@@ -122,13 +125,17 @@ const MainBudget = ({ style }: MainBudgetProps) => {
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
             <Text style={[styles.text, { fontWeight: 200 }]}>This month expense</Text>
           </View>
-          <Text style={[styles.text, { fontSize: 18, fontWeight: 600, color: colors.Negative }]}>
-            {thisMonthExpense !== 0 && <Text>-</Text>}
+          <Text
+            style={[
+              styles.text,
+              { letterSpacing: 2, fontSize: 18, fontWeight: 600, color: colors.Negative },
+            ]}>
+            {thisMonthExpense !== 0 && '-'}
             {formatCurrency(thisMonthExpense)}
           </Text>
         </View>
       </View>
-      <View style={{ paddingTop: 40, width: '75%', margin: 'auto', gap: 5 }}>
+      <View style={{ paddingTop: 30, width: '75%', margin: 'auto', gap: 5 }}>
         <Text
           style={[
             styles.text,
@@ -137,11 +144,24 @@ const MainBudget = ({ style }: MainBudgetProps) => {
           {CalculateRemainBudget()}
         </Text>
         {hasSetBudget && (
-          <ProgressBar
-            progress={CalculateBudgetProgress()}
-            color={MD3Colors.error60}
-            style={{ width: '100%' }}
-          />
+          <>
+            <ProgressBar
+              progress={CalculateBudgetProgress()}
+              color={MD3Colors.error60}
+              style={{ width: '100%' }}
+            />
+            <Text
+              style={{
+                alignSelf: 'center',
+                fontSize: 18,
+                fontWeight: 600,
+                letterSpacing: 2,
+                color: thisMonthBudget >= thisMonthExpense ? colors.Positive : colors.Negative,
+              }}>
+              {thisMonthBudget < thisMonthExpense && '-'}
+              {formatCurrency(thisMonthBudget - thisMonthExpense)}
+            </Text>
+          </>
         )}
       </View>
     </View>

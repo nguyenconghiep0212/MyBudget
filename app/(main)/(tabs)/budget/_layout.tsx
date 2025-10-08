@@ -1,5 +1,5 @@
 import { Stack } from 'expo-router';
-import NavigationHeaderTitle from '@/components/layouts/NavigationHeaderTitle';
+import NavigationHeaderTitle from '@/components/_layouts/NavigationHeaderTitle';
 import useColorScheme from '@/hooks/useColorScheme';
 import { colors } from '@/theme';
 import { useBudgetSlice } from '@/slices';

@@ -1,7 +1,7 @@
 import { Fragment, useState, useEffect } from 'react';
 import * as SplashScreen from 'expo-splash-screen';
-import BottomSheetContents from '@/components/layouts/BottomSheetContents';
-import BottomSheet from '@/components/elements/BottomSheet';
+import BottomSheetContents from '@/components/_layouts/BottomSheetContents';
+import BottomSheet from '@/components/_layouts/BottomSheet';
 import { useDataPersist, DataPersistKeys } from '@/hooks';
 import useColorScheme from '@/hooks/useColorScheme';
 import { loadImages, loadFonts, colors } from '@/theme';

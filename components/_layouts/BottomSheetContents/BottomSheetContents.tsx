@@ -1,4 +1,4 @@
-import GradientButton from '@/components/elements/GradientButton';
+import GradientButton from '@/components/_layouts/GradientButton';
 import { StyleSheet, View, Text } from 'react-native';
 import useColorScheme from '@/hooks/useColorScheme';
 import { windowWidth } from '@/utils/deviceInfo';

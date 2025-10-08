@@ -5,6 +5,12 @@ import { FontAwesome, Ionicons, MaterialCommunityIcons, MaterialIcons } from '@e
 
 const monthlyBudget: MonthlyBudget[] = [
   {
+    month: 10,
+    year: 2025,
+    amount: 5_250_000,
+    salary: 10_000_000,
+  },
+  {
     month: 9,
     year: 2025,
     amount: 4_000_000,
@@ -12,6 +18,14 @@ const monthlyBudget: MonthlyBudget[] = [
   },
 ];
 const budgetEvent: BudgetEvent[] = [
+  {
+    categoryId: 2,
+    id: '412',
+    name: 'Gas',
+    description: 'Filling gas for motorcycle',
+    amount: 65_000,
+    date: new Date('2025-10-04'),
+  },
   {
     categoryId: 2,
     id: '2',
@@ -29,12 +43,12 @@ const budgetEvent: BudgetEvent[] = [
     date: new Date('2025-09-24'),
   },
   {
-    categoryId: 1,
-    id: '11',
-    name: 'Lunch',
-    description: 'Lunch with friends',
-    amount: 50_000,
-    date: new Date('2025-04-10'),
+    categoryId: 4,
+    id: '41',
+    name: 'Meat and Vegetables',
+    description: 'For weekly groceries',
+    amount: 82_000,
+    date: new Date('2025-09-21'),
   },
   {
     categoryId: 1,
@@ -45,12 +59,12 @@ const budgetEvent: BudgetEvent[] = [
     date: new Date('2025-09-20'),
   },
   {
-    categoryId: 4,
-    id: '41',
-    name: 'Meat and Vegetables',
-    description: 'For weekly groceries',
-    amount: 82_000,
-    date: new Date('2025-09-21'),
+    categoryId: 1,
+    id: '11',
+    name: 'Lunch',
+    description: 'Lunch with friends',
+    amount: 50_000,
+    date: new Date('2025-04-10'),
   },
   {
     categoryId: 4,

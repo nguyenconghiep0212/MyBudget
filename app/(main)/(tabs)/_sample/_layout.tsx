@@ -1,7 +1,7 @@
 import { Stack, useNavigation } from 'expo-router';
 import { DrawerActions } from '@react-navigation/native';
-import NavigationHeaderLeft from '@/components/layouts/NavigationHeaderLeft';
-import NavigationHeaderTitle from '@/components/layouts/NavigationHeaderTitle';
+import NavigationHeaderLeft from '@/components/_layouts/NavigationHeaderLeft';
+import NavigationHeaderTitle from '@/components/_layouts/NavigationHeaderTitle';
 import useColorScheme from '@/hooks/useColorScheme';
 import { colors } from '@/theme';
 

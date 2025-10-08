@@ -1,5 +1,5 @@
 import { Text, View, StyleSheet, StyleProp, ViewStyle, ScrollView } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { DataTable } from 'react-native-paper';
 import { colors } from '@/theme';
 import { Dropdown } from 'react-native-element-dropdown';
@@ -7,6 +7,7 @@ import { formatCurrency, GetToday, months } from '@/utils/helper';
 import { GetAvailableYear, GetCategoryById, GetMonthlyBudget } from '@/local_data/data';
 import { MonthlyBudget as MonthlyBudgetType } from '@/types/budget';
 import MonthEdit from './monthly_Edit';
+import { useFocusEffect } from 'expo-router';
 const styles = StyleSheet.create({
   body: {
     width: '100%',
@@ -75,6 +76,11 @@ const MonthlyBudget = ({ style }: MonthlyBudgetProps) => {
   useEffect(() => {
     UpdateData(selectedYear);
   }, [refreshFlag]);
+  useFocusEffect(
+    useCallback(() => {
+      GetMonthBudgetByYear(selectedYear);
+    }, []),
+  );
   const renderItem = (item: any) => {
     return (
       <View

@@ -1,5 +1,5 @@
 import { Drawer } from 'expo-router/drawer';
-import DrawerContents from '@/components/layouts/DrawerContents';
+import DrawerContents from '@/components/_layouts/DrawerContents';
 
 export default function DrawerWithTabsLayout() {
   return (

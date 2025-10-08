@@ -1,22 +1,22 @@
 import { Text, View, StyleSheet, StyleProp, ViewStyle, ScrollView } from 'react-native';
-import { SegmentedButtons, Surface } from 'react-native-paper';
+import { Divider, SegmentedButtons, Surface } from 'react-native-paper';
 import { GetCategoryById, budgetEvent } from '@/local_data/data';
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { colors } from '@/theme';
-import { formatCurrency, getWeekOfYear, months } from '@/utils/helper';
+import { days, formatCurrency, getWeekOfYear, months } from '@/utils/helper';
 import { Category } from '@/types/budget';
+import { useFocusEffect } from 'expo-router';
 const styles = StyleSheet.create({
   body: {
     flex: 1,
     width: '100%',
   },
   surface: {
-    padding: 8,
-    minHeight: 80,
+    paddingHorizontal: 8,
     justifyContent: 'center',
-    borderRadius: 12,
-    marginTop: 10,
+    borderRadius: 4,
     width: '100%',
+    backgroundColor: colors.blackGray,
   },
   superContainer: {
     flexDirection: 'row',
@@ -36,8 +36,8 @@ const styles = StyleSheet.create({
   icon: {
     transform: [{ scale: 0.8 }],
     borderWidth: 2,
-    borderRadius: 6,
-    marginTop: 4,
+    borderRadius: 10,
+    marginTop: -2,
     padding: 6,
   },
 });
@@ -59,29 +59,16 @@ const BudgetSummary = ({ style }: BudgetSummaryProps) => {
     setSummaryTime(filter);
     if (filter === 'day') {
       budgetEvent.forEach((item, index) => {
-        const temp = displayData.find(i => i.date === item.date.toDateString());
-        if (temp !== undefined) {
-          temp.expense += item.amount;
-          if (
-            temp.expenseCategories.find(i => i.id === item.categoryId) === undefined &&
-            item.categoryId !== undefined
-          ) {
-            temp.expenseCategories.push(GetCategoryById(item.categoryId)!);
-          }
-        } else {
-          displayData.push({
-            date: item.date.toDateString(),
-            expense: item.amount,
-            expenseCategories:
-              item.categoryId !== undefined ? [GetCategoryById(item.categoryId)!] : [],
-          });
-        }
-      });
-    }
-    if (filter === 'week') {
-      budgetEvent.forEach((item, index) => {
         const temp = displayData.find(
-          i => i.date === 'Week ' + getWeekOfYear(item.date) + ' / ' + item.date.getFullYear(),
+          i =>
+            i.date ===
+            days[item.date.getDay()].slice(0, 3) +
+              ' ' +
+              item.date.getDate() +
+              ' - ' +
+              (item.date.getMonth() + 1) +
+              ' - ' +
+              item.date.getFullYear(),
         );
         if (temp !== undefined) {
           temp.expense += item.amount;
@@ -93,7 +80,37 @@ const BudgetSummary = ({ style }: BudgetSummaryProps) => {
           }
         } else {
           displayData.push({
-            date: 'Week ' + getWeekOfYear(item.date) + ' / ' + item.date.getFullYear(),
+            date:
+              days[item.date.getDay()].slice(0, 3) +
+              ' ' +
+              item.date.getDate() +
+              ' - ' +
+              (item.date.getMonth() + 1) +
+              ' - ' +
+              item.date.getFullYear(),
+            expense: item.amount,
+            expenseCategories:
+              item.categoryId !== undefined ? [GetCategoryById(item.categoryId)!] : [],
+          });
+        }
+      });
+    }
+    if (filter === 'week') {
+      budgetEvent.forEach((item, index) => {
+        const temp = displayData.find(
+          i => i.date === 'Week ' + getWeekOfYear(item.date) + ' - ' + item.date.getFullYear(),
+        );
+        if (temp !== undefined) {
+          temp.expense += item.amount;
+          if (
+            temp.expenseCategories.find(i => i.id === item.categoryId) === undefined &&
+            item.categoryId !== undefined
+          ) {
+            temp.expenseCategories.push(GetCategoryById(item.categoryId)!);
+          }
+        } else {
+          displayData.push({
+            date: 'Week ' + getWeekOfYear(item.date) + ' - ' + item.date.getFullYear(),
             expense: item.amount,
 
             expenseCategories:
@@ -105,7 +122,7 @@ const BudgetSummary = ({ style }: BudgetSummaryProps) => {
     if (filter === 'month') {
       budgetEvent.forEach((item, index) => {
         const temp = displayData.find(
-          i => i.date === months[item.date.getMonth()].slice(0, 3) + ' ' + item.date.getFullYear(),
+          i => i.date === item.date.getMonth() + 1 + ' - ' + item.date.getFullYear(),
         );
         if (temp !== undefined) {
           temp.expense += item.amount;
@@ -117,7 +134,7 @@ const BudgetSummary = ({ style }: BudgetSummaryProps) => {
           }
         } else {
           displayData.push({
-            date: months[item.date.getMonth()].slice(0, 3) + ' ' + item.date.getFullYear(),
+            date: item.date.getMonth() + 1 + ' - ' + item.date.getFullYear(),
             expense: item.amount,
             expenseCategories:
               item.categoryId !== undefined ? [GetCategoryById(item.categoryId)!] : [],
@@ -128,16 +145,24 @@ const BudgetSummary = ({ style }: BudgetSummaryProps) => {
     setData(displayData);
   }
   useEffect(() => {
-    OnChangeTimeSummary('day');
+    OnChangeTimeSummary(summaryTime);
   }, []);
+  useFocusEffect(
+    useCallback(() => {
+      OnChangeTimeSummary(summaryTime);
+    }, []),
+  );
   const DataCard = data.map((item, index) => (
-    <Surface style={[styles.surface, { backgroundColor: colors.darkGray }]} key={index}>
-      <View style={[styles.superContainer, {}]}>
+    <Surface style={[styles.surface]} key={index}>
+      {index === 0 && (
+        <Divider style={{ width: '100%', backgroundColor: colors.darkGray, height: 1.5 }}></Divider>
+      )}
+      <View style={[styles.superContainer, { paddingVertical: 4 }]}>
         <View style={[styles.superContainer, { marginLeft: 6 }]}>
           <Text
             style={[
               styles.superItemContainer,
-              { color: colors.white, fontWeight: 600, fontSize: 16 },
+              { color: colors.lightGray, fontWeight: 400, fontSize: 16 },
             ]}>
             {item.date.toString()}
           </Text>
@@ -147,7 +172,7 @@ const BudgetSummary = ({ style }: BudgetSummaryProps) => {
             </Text>
           </View>
         </View>
-        <View style={[styles.superItemContainer, styles.superContainer, { paddingTop: 8 }]}>
+        <View style={[styles.superItemContainer, styles.superContainer]}>
           {item.expenseCategories.map((cat, idx) => (
             <View
               key={idx}
@@ -155,6 +180,8 @@ const BudgetSummary = ({ style }: BudgetSummaryProps) => {
                 styles.icon,
                 {
                   borderColor: colors.Negative,
+                  transform: [{ scale: 0.6 }],
+                  marginLeft: idx > 0 ? -10 : 0,
                 },
               ]}>
               {cat.icon}
@@ -162,6 +189,7 @@ const BudgetSummary = ({ style }: BudgetSummaryProps) => {
           ))}
         </View>
       </View>
+      <Divider style={{ width: '100%', backgroundColor: colors.darkGray, height: 1.5 }}></Divider>
     </Surface>
   ));
   return (
