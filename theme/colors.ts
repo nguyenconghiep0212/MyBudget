@@ -15,4 +15,6 @@ export const colors = {
   NavyBlueBg: '#355a77ff',
   Negative: '#ff7e7eff',
   Positive: '#7eff9dff',
+  gold: '#ffee00b9',
+  exchange: '#108f2dff',
 };

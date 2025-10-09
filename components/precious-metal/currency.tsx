@@ -1,5 +1,6 @@
 import { fetchGoldPrice, getAllFiles, GOLD_BRAND, refreshApiKey, RemoveFile } from '@/services';
 import { colors } from '@/theme';
+import { MaterialIcons } from '@expo/vector-icons';
 import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useEffect } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
@@ -10,7 +11,6 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
-    backgroundColor: colors.darkGray,
     paddingHorizontal: 12,
   },
 });
@@ -27,8 +27,26 @@ const Currency = () => {
     }, []),
   );
   return (
-    <View style={[styles.body]}>
-      <Text style={{ color: colors.lightGray }}>Exchange Rate</Text>
+    <View style={[styles.body, { marginTop: 12 }]}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+        <MaterialIcons name="currency-exchange" size={24} color={colors.exchange} />
+        <Text
+          style={{
+            color: colors.gray,
+            fontSize: 18,
+            fontWeight: 400,
+            letterSpacing: 1.5,
+          }}>
+          EXCHANGE
+        </Text>
+        <View
+          style={{
+            flexGrow: 1,
+            marginRight: 4,
+            height: 1.5,
+            backgroundColor: colors.gray,
+          }}></View>
+      </View>
     </View>
   );
 };

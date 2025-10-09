@@ -1,4 +1,4 @@
-import { Text, View, StyleSheet } from 'react-native';
+import { Text, View, StyleSheet, ScrollView } from 'react-native';
 import useColorScheme from '@/hooks/useColorScheme';
 import { useRouter } from 'expo-router';
 import { colors } from '@/theme';
@@ -19,8 +19,10 @@ export default function PreciousMetal() {
   const router = useRouter();
   return (
     <View style={[styles.root, { backgroundColor: colors.blackGray }]}>
-      <Metal></Metal>
-      <Currecy></Currecy>
+      <ScrollView style={{ width: '100%', marginBottom: 60, gap: 12 }}>
+        <Metal></Metal>
+        <Currecy></Currecy>
+      </ScrollView>
     </View>
   );
 }

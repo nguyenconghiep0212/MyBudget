@@ -20,3 +20,9 @@ export interface Category {
   name: string;
   icon?: ReactNode;
 }
+
+export interface Gold {
+  own: number;
+  category: string;
+  priceAtBought: number;
+}

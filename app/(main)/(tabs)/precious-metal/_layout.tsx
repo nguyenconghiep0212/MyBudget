@@ -4,11 +4,16 @@ import NavigationHeaderLeft from '@/components/_layouts/NavigationHeaderLeft';
 import NavigationHeaderTitle from '@/components/_layouts/NavigationHeaderTitle';
 import useColorScheme from '@/hooks/useColorScheme';
 import { colors } from '@/theme';
+import { View } from 'react-native';
+import { usePreciousMetalSlice } from '@/slices';
+import { FontAwesome } from '@expo/vector-icons';
+import { IconButton } from 'react-native-paper';
 
 export default function ProfileStackLayout() {
   const navigation = useNavigation();
   const { isDark } = useColorScheme();
-  const toggleDrawer = () => navigation.dispatch(DrawerActions.toggleDrawer());
+  const { dispatch, RefreshGoldPrice } = usePreciousMetalSlice();
+
   return (
     <Stack
       screenOptions={{
@@ -21,11 +26,17 @@ export default function ProfileStackLayout() {
         options={{
           title: 'Precious Metal',
           headerTitle: () => <NavigationHeaderTitle />,
-          headerLeft: () => <NavigationHeaderLeft onPress={toggleDrawer} />,
+          headerLeft: () => (
+            <View>
+              <IconButton
+                icon={() => <FontAwesome name="refresh" size={24} color={colors.gray} />}
+                size={20}
+                onPress={() => dispatch(RefreshGoldPrice())}></IconButton>
+            </View>
+          ),
           headerTitleAlign: 'center',
         }}
       />
-      <Stack.Screen name="details" options={{ title: 'Details' }} />
     </Stack>
   );
 }

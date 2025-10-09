@@ -14,17 +14,12 @@ export enum GOLD_BRAND {
 // Function to fetch gold price
 const fetchGoldPrice = async (brand: GOLD_BRAND) => {
   try {
-    console.log('call =============');
     const API_KEY = await getFile(api_key_file);
     const response = await axios.get(`https://vapi.vnappmob.com/api/v2/gold/${brand}`, {
       headers: {
         Authorization: `Bearer ${API_KEY?.replaceAll('"', '')}`,
         Accept: 'application/json',
       },
-      // params: {
-      //   date_from: new Date('2025-09-24'),
-      //   date_to: new Date(), // Pass the date as a query parameter
-      // },
     });
     if (response.status === 200) {
       const result = response.data.results;
