@@ -1,4 +1,4 @@
-import { fetchGoldPrice, getAllFiles, GOLD_BRAND, refreshApiKey, RemoveFile } from '@/services';
+import { fetchGoldPrice, GOLD_BRAND, refreshApiKey } from '@/services';
 import { colors } from '@/theme';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router, useFocusEffect } from 'expo-router';

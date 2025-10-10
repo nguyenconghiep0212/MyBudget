@@ -19,7 +19,7 @@ export default function PreciousMetal() {
   const router = useRouter();
   return (
     <View style={[styles.root, { backgroundColor: colors.blackGray }]}>
-      <ScrollView style={{ width: '100%', marginBottom: 60, gap: 12 }}>
+      <ScrollView style={{ width: '100%', marginBottom: 0, gap: 12 }}>
         <Metal></Metal>
         <Currecy></Currecy>
       </ScrollView>
