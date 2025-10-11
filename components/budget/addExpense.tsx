@@ -1,13 +1,13 @@
 import { Text, View, StyleSheet, TextInput } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { FontAwesome, FontAwesome5, Ionicons } from '@expo/vector-icons';
+import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { Button, Dialog, Portal } from 'react-native-paper';
 import { Dropdown } from 'react-native-element-dropdown';
 import { colors } from '@/theme';
 import { DeleteExpense, EditExpense, AddExpense, expenseCategory } from '@/local_data/data';
 import { BudgetEvent } from '@/types/budget';
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
-import { formatCurrency, GetToday } from '@/utils/helper';
+import { GetToday } from '@/utils/helper';
 const styles = StyleSheet.create({
   body: {
     width: '100%',

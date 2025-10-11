@@ -21,7 +21,7 @@ export default function PreciousMetal() {
     <View style={[styles.root, { backgroundColor: colors.blackGray }]}>
       <ScrollView style={{ width: '100%', marginBottom: 0, gap: 12 }}>
         <Metal></Metal>
-        <Currecy></Currecy>
+        {/* <Currecy></Currecy> */}
       </ScrollView>
     </View>
   );

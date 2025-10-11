@@ -7,6 +7,7 @@ import { Surface } from 'react-native-paper';
 import { Gold } from '@/types/budget';
 import { goldData } from '@/local_data/assets';
 import { usePreciousMetalSlice } from '@/slices';
+import { formatCurrency } from '@/utils/helper';
 const styles = StyleSheet.create({
   body: {
     width: '100%',
@@ -36,8 +37,8 @@ const MetalChart = () => {
   const { refreshGoldPrice } = usePreciousMetalSlice();
   const [chartData, setChartData] = useState<any>({ sellPrice: [], buyPrice: [] });
   const [chartOptions, setChartOption] = useState<any>({});
+  const offset = 10_000_000;
   async function MapGoldPriceChart() {
-    const offset = 10_000_000;
     const res = await getGoldPriceByMonth();
     if (res) {
       const temp: any = { sellPrice: [], buyPrice: [] };
@@ -144,6 +145,28 @@ const MetalChart = () => {
         <View style={[styles.superItemContainer, { alignItems: 'flex-end', paddingRight: 16 }]}>
           <Text style={{ color: colors.gray, fontSize: 12, letterSpacing: 0.75 }}>
             Unit: 10 million
+          </Text>
+        </View>
+        <View
+          style={{
+            flexDirection: 'column',
+            paddingRight: 16,
+            alignItems: 'flex-end',
+            width: '100%',
+          }}>
+          <Text style={{ color: colors.lightGray, fontSize: 12, letterSpacing: 0.75 }}>
+            Sell:
+            <Text style={{ color: colors.Negative }}>
+              {' '}
+              {formatCurrency(chartData.sellPrice[chartData.buyPrice.length - 1].value * offset)}
+            </Text>
+          </Text>
+          <Text style={{ color: colors.lightGray, fontSize: 12, letterSpacing: 0.75 }}>
+            Buy:
+            <Text style={{ color: colors.Positive }}>
+              {' ' +
+                formatCurrency(chartData.buyPrice[chartData.buyPrice.length - 1].value * offset)}
+            </Text>
           </Text>
         </View>
       </View>

@@ -64,7 +64,6 @@ async function getGoldPriceByMonth() {
     );
     if (response.status === 200) {
       const result = extractChartObject(response.data);
-      console.log('===================================' + JSON.stringify(result));
       return result;
     } else {
       throw new Error(JSON.stringify(response));

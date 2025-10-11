@@ -4,9 +4,11 @@ import { useEffect, useState } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { Button, DataTable } from 'react-native-paper';
 import { Gold } from '@/types/budget';
-import { GetCategoryName, goldData } from '@/local_data/assets';
+import { GetCategoryName, goldData, RemoveAsset } from '@/local_data/assets';
 import { usePreciousMetalSlice } from '@/slices';
 import { formatCurrency } from '@/utils/helper';
+import MetalTableAdd from './metal_table_Add';
+import { Ionicons } from '@expo/vector-icons';
 const styles = StyleSheet.create({
   body: {
     width: '100%',
@@ -43,13 +45,13 @@ const MetalTable = () => {
   const [tableData, setTableData] = useState<TableData[]>([]);
   const [goldPrice, setGoldPrice] = useState({});
   const { refreshGoldPrice } = usePreciousMetalSlice();
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [refreshTable, setRefreshTable] = useState<boolean>(false);
 
   function MapTableData() {
     const result: TableData[] = [];
     goldData.forEach((item: Gold) => {
-      const temp = Object.entries(goldPrice).find(
-        ([key, value]) => key === `sell_${item.category}`,
-      );
+      const temp = Object.entries(goldPrice).find(([key, value]) => key === `buy_${item.category}`);
       const priceCurrent = temp ? parseInt(temp[1] + '') : 0;
       const discrepancy = priceCurrent - item.priceAtBought;
       result.push({
@@ -66,29 +68,26 @@ const MetalTable = () => {
       setGoldPrice(res[0]);
     }
   }
+  function onDeleteGold(id: string) {
+    RemoveAsset(id);
+    setRefreshTable(!refreshTable);
+  }
   useEffect(() => {
     GetGoldPrice(GOLD_BRAND.SJC);
     MapTableData();
   }, [refreshGoldPrice]);
   useEffect(() => {
     MapTableData();
-  }, [goldPrice]);
+  }, [goldPrice, refreshTable]);
 
   return (
-    <View>
-      <View
-        style={{
-          borderColor: colors.darkGray,
-          borderWidth: 0.5,
-          paddingVertical: 4,
-          paddingHorizontal: 8,
-          width: 'auto',
-          justifyContent: 'center',
-          alignContent: 'center',
-          borderRadius: 16,
-        }}>
+    <View style={{ marginTop: 12 }}>
+      <Button
+        mode="outlined"
+        style={{ width: 120, alignSelf: 'flex-end' }}
+        onPress={() => setModalVisible(true)}>
         <Text style={{ color: colors.lightGray }}>Add gold</Text>
-      </View>
+      </Button>
       <DataTable>
         <DataTable.Header>
           <DataTable.Title style={{ maxWidth: 30, justifyContent: 'center' }}>
@@ -107,6 +106,9 @@ const MetalTable = () => {
           </DataTable.Title>
           <DataTable.Title numeric style={{ maxWidth: 90, justifyContent: 'center' }}>
             <Text style={[styles.TableTitle]}>Discrepancy</Text>
+          </DataTable.Title>
+          <DataTable.Title numeric style={{ maxWidth: 12, justifyContent: 'center' }}>
+            <Text style={[styles.TableTitle]}>#</Text>
           </DataTable.Title>
         </DataTable.Header>
         {tableData.map((item: any, index: number) => (
@@ -140,7 +142,7 @@ const MetalTable = () => {
                   fontWeight: 200,
                   fontSize: 9,
                   letterSpacing: 0.75,
-                  color: item.discrepancy > 0 ? colors.Positive : colors.Negative,
+                  color: colors.Positive,
                 }}>
                 {formatCurrency(item.priceCurrent)}
               </Text>
@@ -156,9 +158,24 @@ const MetalTable = () => {
                 {formatCurrency(item.discrepancy)}
               </Text>
             </DataTable.Cell>
+            <DataTable.Cell style={{ maxWidth: 12, justifyContent: 'center' }}>
+              <Ionicons
+                name="trash-bin"
+                size={10}
+                color={colors.Negative}
+                onPress={() => onDeleteGold(item.id)}
+              />
+            </DataTable.Cell>
           </DataTable.Row>
         ))}
       </DataTable>
+      <View></View>
+      <MetalTableAdd
+        modalVisible={modalVisible}
+        dataGoldPriceAPI={goldPrice}
+        onClose={() => setModalVisible(false)}
+        onRefreshData={() => setRefreshTable(!refreshTable)}
+      />
     </View>
   );
 };
