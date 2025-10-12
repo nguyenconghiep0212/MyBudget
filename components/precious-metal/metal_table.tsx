@@ -1,4 +1,5 @@
-import { fetchGoldPrice, getGoldPriceByMonth, GOLD_BRAND } from '@/services';
+/* eslint-disable react-hooks/exhaustive-deps */
+import { fetchGoldPrice, GOLD_BRAND, refreshApiKey } from '@/services';
 import { colors } from '@/theme';
 import { useEffect, useState } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
@@ -9,6 +10,7 @@ import { usePreciousMetalSlice } from '@/slices';
 import { formatCurrency } from '@/utils/helper';
 import MetalTableAdd from './metal_table_Add';
 import { Ionicons } from '@expo/vector-icons';
+import Confirmation from '../_common/confirmation';
 const styles = StyleSheet.create({
   body: {
     width: '100%',
@@ -44,8 +46,19 @@ interface TableData {
 const MetalTable = () => {
   const [tableData, setTableData] = useState<TableData[]>([]);
   const [goldPrice, setGoldPrice] = useState({});
-  const { refreshGoldPrice } = usePreciousMetalSlice();
+  const {
+    dispatch,
+    refreshGoldPrice,
+    refreshKey,
+    DataApiLoading,
+    DataApiLoaded,
+    setKeyAvailability,
+    KeyApiLoaded,
+    KeyApiLoading,
+  } = usePreciousMetalSlice();
+  const [removalItem, setRemovalItem] = useState<Gold>();
   const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [confirmVisible, setConfirmVisible] = useState<boolean>(false);
   const [refreshTable, setRefreshTable] = useState<boolean>(false);
 
   function MapTableData() {
@@ -63,14 +76,34 @@ const MetalTable = () => {
     setTableData(result);
   }
   async function GetGoldPrice(brand: GOLD_BRAND) {
-    const res = await fetchGoldPrice(brand);
-    if (res) {
-      setGoldPrice(res[0]);
+    try {
+      dispatch(DataApiLoading());
+      const res = await fetchGoldPrice(brand);
+      if (res) {
+        setGoldPrice(res[0]);
+        dispatch(DataApiLoaded());
+      }
+    } catch (error) {
+      dispatch(DataApiLoaded());
+      dispatch(setKeyAvailability(false));
+      console.error(error);
     }
   }
   function onDeleteGold(id: string) {
     RemoveAsset(id);
     setRefreshTable(!refreshTable);
+  }
+  async function ResetGoldApiKey() {
+    try {
+      dispatch(KeyApiLoading());
+      await refreshApiKey();
+      dispatch(KeyApiLoaded());
+      dispatch(setKeyAvailability(true));
+    } catch (error) {
+      dispatch(KeyApiLoaded());
+      dispatch(setKeyAvailability(false));
+      console.error(error);
+    }
   }
   useEffect(() => {
     GetGoldPrice(GOLD_BRAND.SJC);
@@ -79,7 +112,9 @@ const MetalTable = () => {
   useEffect(() => {
     MapTableData();
   }, [goldPrice, refreshTable]);
-
+  useEffect(() => {
+    ResetGoldApiKey();
+  }, [refreshKey]);
   return (
     <View style={{ marginTop: 12 }}>
       <Button
@@ -163,7 +198,10 @@ const MetalTable = () => {
                 name="trash-bin"
                 size={10}
                 color={colors.Negative}
-                onPress={() => onDeleteGold(item.id)}
+                onPress={() => {
+                  setRemovalItem(item);
+                  setConfirmVisible(true);
+                }}
               />
             </DataTable.Cell>
           </DataTable.Row>
@@ -175,6 +213,34 @@ const MetalTable = () => {
         dataGoldPriceAPI={goldPrice}
         onClose={() => setModalVisible(false)}
         onRefreshData={() => setRefreshTable(!refreshTable)}
+      />
+      <Confirmation
+        modalOption={{
+          title: 'Removal confirm',
+          body: (
+            <View>
+              <Text style={{ color: colors.gray }}>You want to remove this asset ?</Text>
+              {removalItem && (
+                <View style={{ flexDirection: 'row', gap: 12, marginTop: 8 }}>
+                  <Text style={{ color: colors.lightGray }}>{removalItem.own}</Text>
+                  <Text style={{ color: colors.lightGray }}>
+                    {GetCategoryName(removalItem.category)}
+                  </Text>
+                  <Text style={{ color: colors.lightGray }}>at</Text>
+                  <Text style={{ color: colors.NavyBlueText }}>
+                    {formatCurrency(removalItem.priceAtBought)}
+                  </Text>
+                </View>
+              )}
+            </View>
+          ),
+        }}
+        modalVisible={confirmVisible}
+        onClose={() => setConfirmVisible(false)}
+        onConfirm={() => {
+          if (removalItem) onDeleteGold(removalItem.id);
+          setConfirmVisible(false);
+        }}
       />
     </View>
   );

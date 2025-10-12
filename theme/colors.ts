@@ -17,5 +17,5 @@ export const colors = {
   Negative: '#ff7e7eff',
   Positive: '#7eff9dff',
   gold: '#ffee00b9',
-  exchange: '#108f2dff',
+  darkGreen: '#2d8241ff',
 };

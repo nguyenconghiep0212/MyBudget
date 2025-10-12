@@ -1,5 +1,4 @@
 import { AddAsset, GetCategoryName, goldCategories } from '@/local_data/assets';
-import { fetchGoldPrice, getGoldPriceByMonth, GOLD_BRAND } from '@/services';
 import { colors } from '@/theme';
 import { Gold } from '@/types/budget';
 import { GetToday } from '@/utils/helper';

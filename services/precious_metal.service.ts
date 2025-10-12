@@ -1,8 +1,7 @@
 import axios from 'axios';
 import { getFile, setFile } from './file.service';
 
-let API_KEY: string =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjEyMDc3NTUsImlhdCI6MTc1OTkxMTc1NSwic2NvcGUiOiJnb2xkIiwicGVybWlzc2lvbiI6MH0.C9WZYVeWGEwdC86qOMbcyl4EAc26SIR2q25b8lABWNE';
+let API_KEY: string = '';
 const api_key_file = 'vnappmob_key.txt';
 
 export enum GOLD_BRAND {

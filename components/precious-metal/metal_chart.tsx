@@ -1,11 +1,9 @@
-import { fetchGoldPrice, getGoldPriceByMonth, GOLD_BRAND, refreshApiKey } from '@/services';
+import { getGoldPriceByMonth } from '@/services';
 import { colors } from '@/theme';
 import { LineChart } from 'react-native-gifted-charts';
 import { useEffect, useState } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { Surface } from 'react-native-paper';
-import { Gold } from '@/types/budget';
-import { goldData } from '@/local_data/assets';
 import { usePreciousMetalSlice } from '@/slices';
 import { formatCurrency } from '@/utils/helper';
 const styles = StyleSheet.create({
@@ -45,11 +43,11 @@ const MetalChart = () => {
       res.xAxis.categories.forEach((item: string, index: number) => {
         temp.buyPrice.push({
           value: res.series[0].data[index] / offset,
-          labelComponent: index % 5 == 0 ? () => customLabel(item) : '',
+          labelComponent: index % 5 === 0 ? () => customLabel(item) : '',
         });
         temp.sellPrice.push({
           value: res.series[1].data[index] / offset,
-          labelComponent: index % 5 == 0 ? () => customLabel(item) : '',
+          labelComponent: index % 5 === 0 ? () => customLabel(item) : '',
         });
       });
       setChartData(temp);
@@ -158,13 +156,15 @@ const MetalChart = () => {
             Sell:
             <Text style={{ color: colors.Negative }}>
               {' '}
-              {formatCurrency(chartData.sellPrice[chartData.buyPrice.length - 1].value * offset)}
+              {chartData.sellPrice[chartData.buyPrice.length - 1] &&
+                formatCurrency(chartData.sellPrice[chartData.buyPrice.length - 1].value * offset)}
             </Text>
           </Text>
           <Text style={{ color: colors.lightGray, fontSize: 12, letterSpacing: 0.75 }}>
             Buy:
             <Text style={{ color: colors.Positive }}>
-              {' ' +
+              {' '}
+              {chartData.buyPrice[chartData.buyPrice.length - 1] &&
                 formatCurrency(chartData.buyPrice[chartData.buyPrice.length - 1].value * offset)}
             </Text>
           </Text>

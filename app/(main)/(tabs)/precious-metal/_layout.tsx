@@ -1,19 +1,36 @@
-import { Stack, useNavigation } from 'expo-router';
-import { DrawerActions } from '@react-navigation/native';
-import NavigationHeaderLeft from '@/components/_layouts/NavigationHeaderLeft';
+import { Stack } from 'expo-router';
 import NavigationHeaderTitle from '@/components/_layouts/NavigationHeaderTitle';
 import useColorScheme from '@/hooks/useColorScheme';
 import { colors } from '@/theme';
-import { View } from 'react-native';
+import { ActivityIndicator, View } from 'react-native';
 import { usePreciousMetalSlice } from '@/slices';
-import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome, FontAwesome5 } from '@expo/vector-icons';
 import { IconButton } from 'react-native-paper';
+import { useEffect, useState } from 'react';
 
 export default function ProfileStackLayout() {
-  const navigation = useNavigation();
   const { isDark } = useColorScheme();
-  const { dispatch, RefreshGoldPrice } = usePreciousMetalSlice();
-
+  const { dispatch, loadingDataApi, loadingKeyApi, RefreshGoldPrice, RefreshKey, availableKey } =
+    usePreciousMetalSlice();
+  const [apiRestriction, setApiRestriction] = useState<boolean>(false);
+  const [keyRestriction, setKeyRestriction] = useState<boolean>(false);
+  function TimeApiRestriction(func: Function) {
+    const timeout = 2;
+    setApiRestriction(true);
+    func();
+    setTimeout(() => {
+      setApiRestriction(false);
+    }, timeout * 1_000);
+  }
+  function TimeKeyRestriction(func: Function) {
+    const timeout = 30;
+    setKeyRestriction(true);
+    func();
+    setTimeout(() => {
+      setKeyRestriction(false);
+    }, timeout * 1_000);
+  }
+  useEffect(() => {}, [apiRestriction, keyRestriction]);
   return (
     <Stack
       screenOptions={{
@@ -27,11 +44,51 @@ export default function ProfileStackLayout() {
           title: 'Precious Metal',
           headerTitle: () => <NavigationHeaderTitle />,
           headerLeft: () => (
-            <View>
-              <IconButton
-                icon={() => <FontAwesome name="refresh" size={24} color={colors.gray} />}
-                size={20}
-                onPress={() => dispatch(RefreshGoldPrice())}></IconButton>
+            <View style={{ flexDirection: 'row' }}>
+              {loadingDataApi ? (
+                <View style={{ width: 50, justifyContent: 'center' }}>
+                  <ActivityIndicator size="large" color={colors.white} />
+                </View>
+              ) : (
+                <View style={{ width: 50, justifyContent: 'center' }}>
+                  <IconButton
+                    icon={() => (
+                      <FontAwesome
+                        name="refresh"
+                        size={24}
+                        color={apiRestriction ? colors.darkGray : colors.lightGray}
+                      />
+                    )}
+                    size={20}
+                    onPress={() => {
+                      if (!apiRestriction) TimeApiRestriction(() => dispatch(RefreshGoldPrice()));
+                    }}
+                  />
+                </View>
+              )}
+              {loadingKeyApi ? (
+                <View style={{ width: 50, justifyContent: 'center' }}>
+                  <ActivityIndicator size="large" color={colors.white} />
+                </View>
+              ) : (
+                <View style={{ width: 50, justifyContent: 'center' }}>
+                  <IconButton
+                    icon={() => (
+                      <FontAwesome5
+                        name="key"
+                        size={24}
+                        color={
+                          availableKey && !keyRestriction ? colors.NavyBlueText : colors.darkGray
+                        }
+                      />
+                    )}
+                    size={20}
+                    onPress={() => {
+                      if (!keyRestriction) TimeKeyRestriction(() => dispatch(RefreshKey()));
+                    }}
+                  />
+                </View>
+              )}
             </View>
           ),
           headerTitleAlign: 'center',

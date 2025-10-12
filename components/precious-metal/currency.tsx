@@ -1,10 +1,8 @@
-import { fetchGoldPrice, GOLD_BRAND, refreshApiKey } from '@/services';
 import { colors } from '@/theme';
 import { MaterialIcons } from '@expo/vector-icons';
-import { router, useFocusEffect } from 'expo-router';
-import { useCallback, useEffect } from 'react';
+import { useFocusEffect } from 'expo-router';
+import { useCallback } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
-import { Button } from 'react-native-paper';
 const styles = StyleSheet.create({
   body: {
     width: '100%',
@@ -15,12 +13,6 @@ const styles = StyleSheet.create({
   },
 });
 const Currency = () => {
-  async function GetGoldPrice(brand: GOLD_BRAND) {
-    const res = await fetchGoldPrice(brand);
-    if (res) {
-      console.log(JSON.stringify(res));
-    }
-  }
   useFocusEffect(
     useCallback(() => {
       // GetGoldPrice(GOLD_BRAND.SJC);
@@ -29,7 +21,7 @@ const Currency = () => {
   return (
     <View style={[styles.body, { marginTop: 12 }]}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-        <MaterialIcons name="currency-exchange" size={24} color={colors.exchange} />
+        <MaterialIcons name="currency-exchange" size={24} color={colors.darkGreen} />
         <Text
           style={{
             color: colors.gray,
