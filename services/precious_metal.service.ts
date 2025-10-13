@@ -11,43 +11,80 @@ export enum GOLD_BRAND {
 }
 
 // Function to fetch gold price
-const fetchGoldPrice = async (brand: GOLD_BRAND) => {
+// const fetchGoldPriceVNAppMob = async (brand: GOLD_BRAND) => {
+//   try {
+//     const temp = await getFile(api_key_file);
+//     const API_KEY = temp?.replaceAll('"', '');
+//     const response = await axios.get(`https://vapi.vnappmob.com/api/v2/gold/${brand}`, {
+//       headers: {
+//         Authorization: `Bearer ${API_KEY}`,
+//         Accept: 'application/json',
+//       },
+//     });
+//     if (response.status === 200) {
+//       const result = response.data.results;
+//       return result;
+//     }
+//   } catch (error: any) {
+//     console.error('Error fetching gold price VNAppMob:', error);
+//   } finally {
+//   }
+// };
+
+// // Function to fetch gold price
+// const refreshApiKey = async () => {
+//   try {
+//     const response = await axios.get(`https://vapi.vnappmob.com/api/request_api_key?scope=gold`, {
+//       headers: {
+//         Accept: 'application/json',
+//       },
+//     });
+//     if (response.status === 200) {
+//       const result = response.data.results;
+//       API_KEY = JSON.stringify(result);
+//       setFile(API_KEY, api_key_file);
+//     } else {
+//       throw new Error(JSON.stringify(response));
+//     }
+//   } catch (error) {
+//     console.error('Error fetching API key:', error);
+//   }
+// };
+
+const fetchGoldPriceSJC = async () => {
   try {
-    const temp = await getFile(api_key_file);
-    const API_KEY = temp?.replaceAll('"', '');
-    const response = await axios.get(`https://vapi.vnappmob.com/api/v2/gold/${brand}`, {
+    const response = await axios.get(`https://sjc.com.vn/GoldPrice/Services/PriceService.ashx`, {
       headers: {
-        Authorization: `Bearer ${API_KEY}`,
         Accept: 'application/json',
       },
     });
     if (response.status === 200) {
-      const result = response.data.results;
+      const result = response.data;
       return result;
     }
   } catch (error: any) {
-    console.error('Error fetching gold price:', error);
+    console.error('Error fetching gold price SJC:', error);
   } finally {
   }
 };
 
-// Function to fetch gold price
-const refreshApiKey = async () => {
+const fetchGoldPricePNJ = async (zone = 11) => {
   try {
-    const response = await axios.get(`https://vapi.vnappmob.com/api/request_api_key?scope=gold`, {
-      headers: {
-        Accept: 'application/json',
+    const response = await axios.get(
+      `https://edge-api.pnj.io/ecom-frontend/v1/get-gold-price?zone=${zone}`,
+      {
+        headers: {
+          Accept: 'application/json',
+        },
       },
-    });
+    );
     if (response.status === 200) {
-      const result = response.data.results;
-      API_KEY = JSON.stringify(result);
-      setFile(API_KEY, api_key_file);
-    } else {
-      throw new Error(JSON.stringify(response));
+      const result = response.data;
+      return result;
     }
-  } catch (error) {
-    console.error('Error fetching API key:', error);
+  } catch (error: any) {
+    console.error('Error fetching gold price SJC:', error);
+  } finally {
   }
 };
 
@@ -86,4 +123,10 @@ async function getGoldPriceByMonth() {
   }
 }
 
-export { fetchGoldPrice, refreshApiKey, getGoldPriceByMonth };
+export {
+  // fetchGoldPriceVNAppMob,
+  // refreshApiKey,
+  getGoldPriceByMonth,
+  fetchGoldPriceSJC,
+  fetchGoldPricePNJ,
+};

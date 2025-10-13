@@ -4,17 +4,18 @@ const goldData: Gold[] = [
   {
     id: '1',
     own: 2,
-    category: 'nhan1c',
+    category: 1,
     priceAtBought: 180_000_000,
   },
   {
     id: '2',
     own: 1,
-    category: '5c',
+    category: 49,
     priceAtBought: 136_000_000,
   },
 ];
 
+// VNAppMob
 const goldCategories = ['1l', '5c', '1c', 'nhan1c', 'nutrang_9999', 'nutrang_99', 'nutrang_75'];
 function GetCategoryName(id: string): string {
   switch (id) {
@@ -42,9 +43,8 @@ function AddAsset(newAsset: Gold) {
 }
 function RemoveAsset(id: string) {
   const index = goldData.findIndex(item => item.id === id);
-  console.log(index);
   if (index > -1) {
     goldData.splice(index, 1);
   }
 }
-export { goldData, goldCategories, GetCategoryName, AddAsset, RemoveAsset };
+export { goldData, AddAsset, RemoveAsset };

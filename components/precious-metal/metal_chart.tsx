@@ -32,38 +32,46 @@ const styles = StyleSheet.create({
   },
 });
 const MetalChart = () => {
-  const { refreshGoldPrice } = usePreciousMetalSlice();
+  const { dispatch, refreshGoldPrice, DataApiLoading, DataApiLoaded } = usePreciousMetalSlice();
   const [chartData, setChartData] = useState<any>({ sellPrice: [], buyPrice: [] });
   const [chartOptions, setChartOption] = useState<any>({});
   const offset = 10_000_000;
   async function MapGoldPriceChart() {
-    const res = await getGoldPriceByMonth();
-    if (res) {
-      const temp: any = { sellPrice: [], buyPrice: [] };
-      res.xAxis.categories.forEach((item: string, index: number) => {
-        temp.buyPrice.push({
-          value: res.series[0].data[index] / offset,
-          labelComponent: index % 5 === 0 ? () => customLabel(item) : '',
+    try {
+      dispatch(DataApiLoading());
+      const res = await getGoldPriceByMonth();
+      if (res) {
+        const temp: any = { sellPrice: [], buyPrice: [] };
+        res.xAxis.categories.forEach((item: string, index: number) => {
+          temp.buyPrice.push({
+            value: res.series[0].data[index] / offset,
+            labelComponent: index % 5 === 0 ? () => customLabel(item) : '',
+          });
+          temp.sellPrice.push({
+            value: res.series[1].data[index] / offset,
+            labelComponent: index % 5 === 0 ? () => customLabel(item) : '',
+          });
         });
-        temp.sellPrice.push({
-          value: res.series[1].data[index] / offset,
-          labelComponent: index % 5 === 0 ? () => customLabel(item) : '',
+        setChartData(temp);
+        // SET CHART OPTIONS
+        const allValue = res.series[0].data.concat(res.series[1].data);
+        const maxValue = Math.max(...allValue) / offset;
+        const minValue = Math.min(...allValue) / offset;
+        const stepValue = 0.5;
+        const noOfSections = Math.ceil(maxValue - minValue) / stepValue;
+        setChartOption({
+          noOfSections,
+          stepValue,
+          yAxisOffset: Math.floor(minValue) + stepValue,
+          spacing: 9.5,
         });
-      });
-      setChartData(temp);
-      // SET CHART OPTIONS
-      const allValue = res.series[0].data.concat(res.series[1].data);
-      const maxValue = Math.max(...allValue) / offset;
-      const minValue = Math.min(...allValue) / offset;
-      const stepValue = 0.5;
-      const noOfSections = Math.ceil(maxValue - minValue) / stepValue;
-      setChartOption({
-        noOfSections,
-        stepValue,
-        yAxisOffset: Math.floor(minValue) + stepValue,
-        spacing: 9.5,
-      });
+        dispatch(DataApiLoaded());
+      }
+    } catch (error) {
+      console.log('Error fetching gold price data:', error);
+      dispatch(DataApiLoaded());
     }
+
     const customLabel = (val: string) => {
       return (
         <View style={{ marginLeft: 10, position: 'absolute', flexWrap: 'nowrap', width: 12 }}>
@@ -154,7 +162,7 @@ const MetalChart = () => {
           }}>
           <Text style={{ color: colors.lightGray, fontSize: 12, letterSpacing: 0.75 }}>
             Sell:
-            <Text style={{ color: colors.Negative }}>
+            <Text style={{ fontWeight: 700, color: colors.Negative }}>
               {' '}
               {chartData.sellPrice[chartData.buyPrice.length - 1] &&
                 formatCurrency(chartData.sellPrice[chartData.buyPrice.length - 1].value * offset)}
@@ -162,7 +170,7 @@ const MetalChart = () => {
           </Text>
           <Text style={{ color: colors.lightGray, fontSize: 12, letterSpacing: 0.75 }}>
             Buy:
-            <Text style={{ color: colors.Positive }}>
+            <Text style={{ fontWeight: 700, color: colors.Positive }}>
               {' '}
               {chartData.buyPrice[chartData.buyPrice.length - 1] &&
                 formatCurrency(chartData.buyPrice[chartData.buyPrice.length - 1].value * offset)}

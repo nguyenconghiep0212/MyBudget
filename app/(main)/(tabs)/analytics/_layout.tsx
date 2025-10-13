@@ -21,11 +21,9 @@ export default function AnaltylicsStackLayout() {
         options={{
           title: 'Analytics',
           headerTitle: () => <NavigationHeaderTitle />,
-          headerLeft: () => <NavigationHeaderLeft onPress={toggleDrawer} />,
           headerTitleAlign: 'center',
         }}
       />
-      <Stack.Screen name="details" options={{ title: 'Details' }} />
     </Stack>
   );
 }

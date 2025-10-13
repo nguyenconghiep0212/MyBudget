@@ -1,6 +1,5 @@
 import { colors } from '@/theme';
 import { View, Text, StyleSheet, StyleProp, ViewStyle } from 'react-native';
-import YearSummary from './year_summary_chart';
 const styles = StyleSheet.create({
   body: {
     width: '100%',
@@ -66,7 +65,7 @@ type AnalyticProps = {
 const Analytic = ({ style }: AnalyticProps) => {
   return (
     <View style={[style]}>
-      <YearSummary />
+      <Text>Analytic Screen</Text>
     </View>
   );
 };

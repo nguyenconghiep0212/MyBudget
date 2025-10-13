@@ -3,31 +3,15 @@ import useColorScheme from '@/hooks/useColorScheme';
 import Button from '@/components/_layouts/Button';
 import { useRouter } from 'expo-router';
 import { colors } from '@/theme';
+import Analytic from '@/components/analytics';
 
 const styles = StyleSheet.create({
   root: {
     flex: 1,
     flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     backgroundColor: colors.lightGrayPurple,
-  },
-  title: {
-    fontSize: 24,
-    marginBottom: 20,
-  },
-  buttonTitle: {
-    fontSize: 16,
-    color: colors.white,
-    textAlign: 'center',
-  },
-  button: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 22,
-    backgroundColor: colors.lightPurple,
-    height: 44,
-    width: '50%',
   },
 });
 
@@ -36,7 +20,7 @@ export default function Home() {
   const { isDark } = useColorScheme();
   return (
     <View style={[styles.root, isDark && { backgroundColor: colors.blackGray }]}>
-      <Text style={{ color: colors.lightGray }}>Anal</Text>
+      <Analytic />
     </View>
   );
 }

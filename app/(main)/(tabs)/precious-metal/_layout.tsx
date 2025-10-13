@@ -10,10 +10,8 @@ import { useEffect, useState } from 'react';
 
 export default function ProfileStackLayout() {
   const { isDark } = useColorScheme();
-  const { dispatch, loadingDataApi, loadingKeyApi, RefreshGoldPrice, RefreshKey, availableKey } =
-    usePreciousMetalSlice();
+  const { dispatch, loadingDataApi, RefreshGoldPrice } = usePreciousMetalSlice();
   const [apiRestriction, setApiRestriction] = useState<boolean>(false);
-  const [keyRestriction, setKeyRestriction] = useState<boolean>(false);
   function TimeApiRestriction(func: Function) {
     const timeout = 2;
     setApiRestriction(true);
@@ -22,15 +20,8 @@ export default function ProfileStackLayout() {
       setApiRestriction(false);
     }, timeout * 1_000);
   }
-  function TimeKeyRestriction(func: Function) {
-    const timeout = 30;
-    setKeyRestriction(true);
-    func();
-    setTimeout(() => {
-      setKeyRestriction(false);
-    }, timeout * 1_000);
-  }
-  useEffect(() => {}, [apiRestriction, keyRestriction]);
+
+  useEffect(() => {}, [apiRestriction]);
   return (
     <Stack
       screenOptions={{
@@ -62,29 +53,6 @@ export default function ProfileStackLayout() {
                     size={20}
                     onPress={() => {
                       if (!apiRestriction) TimeApiRestriction(() => dispatch(RefreshGoldPrice()));
-                    }}
-                  />
-                </View>
-              )}
-              {loadingKeyApi ? (
-                <View style={{ width: 50, justifyContent: 'center' }}>
-                  <ActivityIndicator size="large" color={colors.white} />
-                </View>
-              ) : (
-                <View style={{ width: 50, justifyContent: 'center' }}>
-                  <IconButton
-                    icon={() => (
-                      <FontAwesome5
-                        name="key"
-                        size={24}
-                        color={
-                          availableKey && !keyRestriction ? colors.NavyBlueText : colors.darkGray
-                        }
-                      />
-                    )}
-                    size={20}
-                    onPress={() => {
-                      if (!keyRestriction) TimeKeyRestriction(() => dispatch(RefreshKey()));
                     }}
                   />
                 </View>

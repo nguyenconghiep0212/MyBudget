@@ -24,6 +24,6 @@ export interface Category {
 export interface Gold {
   id: string;
   own: number;
-  category: string;
+  category: number;
   priceAtBought: number;
 }

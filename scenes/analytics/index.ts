@@ -1,1 +1,1 @@
-export { default } from './Analytic';
+export { default } from './analytic';
