@@ -55,14 +55,14 @@ const MetalChart = () => {
         setChartData(temp);
         // SET CHART OPTIONS
         const allValue = res.series[0].data.concat(res.series[1].data);
-        const maxValue = Math.max(...allValue) / offset;
-        const minValue = Math.min(...allValue) / offset;
+        const maxValue = Math.ceil(Math.max(...allValue) / offset);
+        const minValue = Math.floor(Math.min(...allValue) / offset);
         const stepValue = 0.5;
-        const noOfSections = Math.ceil(maxValue - minValue) / stepValue;
+        const noOfSections = (maxValue - minValue) / stepValue - 1;
         setChartOption({
           noOfSections,
           stepValue,
-          yAxisOffset: Math.floor(minValue) + stepValue,
+          yAxisOffset: minValue + stepValue,
           spacing: 9.5,
         });
         dispatch(DataApiLoaded());

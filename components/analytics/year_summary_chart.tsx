@@ -1,11 +1,12 @@
 import { colors } from '@/theme';
-import { GetToday } from '@/utils/helper';
+import { GetToday, months } from '@/utils/helper';
 import { View, Text, StyleSheet, StyleProp, ViewStyle } from 'react-native';
 import { GetCategoryById, budgetEvent, monthlyBudget } from '@/local_data/data';
 import { BarChart } from 'react-native-gifted-charts';
-import { useEffect, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useState } from 'react';
 import { BudgetEvent, MonthlyBudget } from '@/types/budget';
 import { Surface } from 'react-native-paper';
+import { useFocusEffect } from 'expo-router';
 const styles = StyleSheet.create({
   body: {
     width: '100%',
@@ -18,14 +19,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     alignContent: 'flex-start',
-    paddingHorizontal: 24,
   },
   superItemContainer: {
     display: 'flex',
     width: '50%', // 50% -> 2 columns | 33% -> 3 columns | 25% -> 4 columns
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: 12,
     paddingBottom: 4,
   },
   surface: {
@@ -52,131 +51,149 @@ const styles = StyleSheet.create({
 });
 type AnalyticProps = {
   style?: StyleProp<ViewStyle>;
+  selectedYear: number;
 };
-const YearSummary = ({ style }: AnalyticProps) => {
-  const [yearData, setYearData] = useState<any>([]);
+
+type YearSummary = {
+  year: number;
+  months: {
+    month: number;
+    income: number;
+    budget: number;
+    expense: number;
+  }[];
+};
+type ChartData = {
+  value: number;
+  label?: string;
+  spacing?: number;
+  labelWidth?: number;
+  labelTextStyle?: { color: string };
+  frontColor: string;
+  labelComponent?: Function;
+};
+const YearSummaryChart = ({ selectedYear, style }: AnalyticProps) => {
+  const [yearData, setYearData] = useState<YearSummary[]>([]);
+  const [chartData, setChartData] = useState<ChartData[]>([]);
+  const [chartOptions, setChartOption] = useState<any>({
+    noOfSections: 0,
+    stepValue: 0,
+  });
 
   function CombineBudgetsAndExpenses(budgetEvents: BudgetEvent[], monthlyBudgets: MonthlyBudget[]) {
-    const result: { year: number; month: { month: number; income: number; expense: number }[] }[] =
-      [];
+    const result: YearSummary[] = [];
 
     // Create a map to aggregate expenses
     const expenseMap: { [key: string]: number } = {};
 
     // Populate the expense map
-    budgetEvents.forEach(event => {
+    budgetEvents.forEach((event: BudgetEvent) => {
       const eventDate = new Date(event.date);
       const year = eventDate.getFullYear();
-      const month = eventDate.getMonth() + 1; // getMonth() returns 0-11
-
-      const key = `${year}-${month}`;
-      expenseMap[key] = (expenseMap[key] || 0) + event.amount;
+      if (year === selectedYear) {
+        const month = eventDate.getMonth() + 1; // getMonth() returns 0-11
+        const key = `${year}-${month}`;
+        expenseMap[key] = (expenseMap[key] || 0) + event.amount;
+      }
     });
-
     // Aggregate data into the result structure
-    monthlyBudgets.forEach(budget => {
-      const key = `${budget.year}-${budget.month}`;
-      const expenses = expenseMap[key] || 0;
+    monthlyBudgets.forEach((item: MonthlyBudget) => {
+      if (item.year === selectedYear) {
+        const key = `${item.year}-${item.month}`;
+        const expenses = expenseMap[key] || 0;
 
-      // Find or create the year entry
-      let yearEntry = result.find(y => y.year === budget.year);
-      if (!yearEntry) {
-        yearEntry = { year: budget.year, month: [] };
-        result.push(yearEntry);
-      }
+        // Find or create the year entry
+        let yearEntry = result.find(y => y.year === item.year);
+        if (!yearEntry) {
+          yearEntry = { year: item.year, months: [] };
+          result.push(yearEntry);
+        }
 
-      // Find or create the month entry
-      let monthEntry = yearEntry.month.find(m => m.month === budget.month);
-      if (!monthEntry) {
-        monthEntry = { month: budget.month, income: budget.amount, expense: expenses };
-        yearEntry.month.push(monthEntry);
-      } else {
-        monthEntry.income += budget.amount;
-        monthEntry.expense += expenses; // Add expenses if the month entry already exists
-      }
-    });
-
-    // Add months with expenses that may not have corresponding budgets
-    Object.keys(expenseMap).forEach(key => {
-      const [year, month] = key.split('-').map(Number);
-      let yearEntry = result.find(y => y.year === year);
-      if (!yearEntry) {
-        yearEntry = { year, month: [] };
-        result.push(yearEntry);
-      }
-
-      let monthEntry = yearEntry.month.find(m => m.month === month);
-      if (!monthEntry) {
-        monthEntry = { month, income: 0, expense: expenseMap[key] };
-        yearEntry.month.push(monthEntry);
-      } else {
-        monthEntry.expense += expenseMap[key]; // Add expenses if the month entry already exists
+        // Find or create the month entry
+        let monthEntry = yearEntry.months.find(m => m.month === item.month);
+        if (!monthEntry) {
+          monthEntry = {
+            month: item.month,
+            budget: item.amount,
+            income: item.salary,
+            expense: expenses,
+          };
+          yearEntry.months.push(monthEntry);
+        } else {
+          monthEntry.income += item.amount;
+          monthEntry.expense += expenses; // Add expenses if the month entry already exists
+        }
       }
     });
-
-    console.log('Combined Result:', JSON.stringify(result));
+    Object.assign(yearData, result);
+    setYearData(result);
     return result;
   }
-  const barData = [
-    {
-      value: 40,
-      label: 'Jan',
-      spacing: 2,
-      labelWidth: 30,
-      labelTextStyle: { color: 'gray' },
-      frontColor: '#177AD5',
-    },
-    { value: 20, frontColor: '#ED6665' },
-    {
-      value: 50,
-      label: 'Feb',
-      spacing: 2,
-      labelWidth: 30,
-      labelTextStyle: { color: 'gray' },
-      frontColor: '#177AD5',
-    },
-    { value: 40, frontColor: '#ED6665' },
-    {
-      value: 75,
-      label: 'Mar',
-      spacing: 2,
-      labelWidth: 30,
-      labelTextStyle: { color: 'gray' },
-      frontColor: '#177AD5',
-    },
-    { value: 25, frontColor: '#ED6665' },
-    {
-      value: 30,
-      label: 'Apr',
-      spacing: 2,
-      labelWidth: 30,
-      labelTextStyle: { color: 'gray' },
-      frontColor: '#177AD5',
-    },
-    { value: 20, frontColor: '#ED6665' },
-    {
-      value: 60,
-      label: 'May',
-      spacing: 2,
-      labelWidth: 30,
-      labelTextStyle: { color: 'gray' },
-      frontColor: '#177AD5',
-    },
-    { value: 40, frontColor: '#ED6665' },
-    {
-      value: 65,
-      label: 'Jun',
-      spacing: 2,
-      labelWidth: 30,
-      labelTextStyle: { color: 'gray' },
-      frontColor: '#177AD5',
-    },
-    { value: 30, frontColor: '#ED6665' },
-  ];
+  function SetChartData() {
+    const offset = 1_000;
+
+    const tempYearData = [];
+    for (let index = 1; index <= 12; index++) {
+      const findMonth = yearData[0].months.find(item => item.month === index);
+      if (findMonth) {
+        tempYearData.push(findMonth);
+      } else {
+        tempYearData.push({ month: index, budget: 0, income: 0, expense: 0 });
+      }
+    }
+
+    const temp: ChartData[] = [];
+    tempYearData.forEach((item: any) => {
+      const temp1: ChartData = {
+        value: item.budget / offset,
+        spacing: 2,
+        labelWidth: 30,
+        labelTextStyle: { color: colors.gray },
+        frontColor: colors.Positive,
+        labelComponent: () => customLabel(months[item.month - 1].slice(0, 3)),
+      };
+      const temp2: ChartData = {
+        value: item.expense / offset,
+        frontColor: colors.Negative,
+      };
+      temp.push(temp1);
+      temp.push(temp2);
+    });
+    setChartData(temp);
+
+    // Chart Option
+    const maxBudget: any = Math.max(...yearData[0].months.map((item: any) => item.budget)) / offset;
+    setChartOption({
+      noOfSections: Math.ceil(maxBudget / offset),
+      stepValue: offset,
+    });
+  }
 
   useEffect(() => {
     CombineBudgetsAndExpenses(budgetEvent, monthlyBudget);
-  }, []);
+    SetChartData();
+  }, [selectedYear]);
+  useEffect(() => {}, [chartData, chartOptions]);
+  useFocusEffect(
+    useCallback(() => {
+      CombineBudgetsAndExpenses(budgetEvent, monthlyBudget);
+      SetChartData();
+    }, []),
+  );
+  const customLabel = (val: string) => {
+    return (
+      <View style={{ width: 16 }}>
+        <Text
+          style={{
+            color: colors.lightGray,
+            fontWeight: 300,
+            fontSize: 8,
+          }}>
+          {val}
+        </Text>
+      </View>
+    );
+  };
   return (
     <View style={style}>
       <Surface
@@ -190,52 +207,66 @@ const YearSummary = ({ style }: AnalyticProps) => {
         <View style={{ flexDirection: 'row', gap: 6, marginBottom: 8 }}>
           <Text
             style={{
-              marginLeft: 12,
+              marginLeft: 8,
               paddingTop: 1,
-              color: colors.lightGray,
+              color: colors.gray,
               fontSize: 18,
               fontWeight: 800,
               letterSpacing: 0.75,
             }}>
-            Summary of {GetToday().getFullYear()}
+            {selectedYear} monthly
           </Text>
         </View>
-        <View style={[{ flexDirection: 'row', alignItems: 'center', gap: 4, paddingLeft: 12 }]}>
-          <View
-            style={{
-              width: 18,
-              borderRadius: 2,
-              height: 8,
-              backgroundColor: colors.Positive,
-            }}></View>
-          <Text style={{ color: colors.lightGray, fontSize: 12, letterSpacing: 0.75 }}>Income</Text>
-          <View
-            style={{
-              width: 18,
-              borderRadius: 2,
-              height: 8,
-              backgroundColor: colors.Negative,
-              marginLeft: 16,
-            }}></View>
-          <Text style={{ color: colors.lightGray, fontSize: 12, letterSpacing: 0.75 }}>
-            Expense
-          </Text>
+        <View style={styles.superContainer}>
+          <View style={[styles.superItemContainer, { paddingLeft: 8 }]}>
+            <View style={[{ flexDirection: 'row', alignItems: 'center', gap: 4 }]}>
+              <View
+                style={{
+                  width: 18,
+                  borderRadius: 2,
+                  height: 8,
+                  backgroundColor: colors.Positive,
+                }}></View>
+              <Text style={{ color: colors.lightGray, fontSize: 12, letterSpacing: 0.75 }}>
+                Budget
+              </Text>
+              <View
+                style={{
+                  width: 18,
+                  borderRadius: 2,
+                  height: 8,
+                  backgroundColor: colors.Negative,
+                  marginLeft: 16,
+                }}></View>
+              <Text style={{ color: colors.lightGray, fontSize: 12, letterSpacing: 0.75 }}>
+                Expense
+              </Text>
+            </View>
+          </View>
+          <View style={[styles.superItemContainer, { alignItems: 'flex-end', paddingRight: 18 }]}>
+            <Text style={{ color: colors.gray, fontSize: 10, letterSpacing: 0.75 }}>
+              Unit: 1,000 vnd
+            </Text>
+          </View>
         </View>
+
         <BarChart
-          data={barData}
-          barWidth={8}
-          spacing={24}
+          data={chartData}
+          barWidth={6}
+          spacing={9}
           // roundedTop
           // roundedBottom
           // hideRules
-          xAxisThickness={0}
-          yAxisThickness={0}
-          yAxisTextStyle={{ color: colors.lightGray }}
-          noOfSections={3}
+          rulesColor={colors.darkGray}
+          xAxisThickness={1}
+          yAxisThickness={1}
+          yAxisTextStyle={{ fontSize: 10, color: colors.gray }}
+          noOfSections={chartOptions.noOfSections}
+          stepValue={chartOptions.stepValue}
         />
       </Surface>
     </View>
   );
 };
 
-export default YearSummary;
+export default YearSummaryChart;

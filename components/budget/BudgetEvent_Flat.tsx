@@ -3,7 +3,7 @@ import React, { ReactNode, useEffect, useState } from 'react';
 import { Button, Divider, List } from 'react-native-paper';
 import { colors } from '@/theme';
 import { FontAwesome6, MaterialIcons } from '@expo/vector-icons';
-import { formatCurrency } from '@/utils/helper';
+import { formatCurrency, months } from '@/utils/helper';
 import { GetCategoryById, groupBudgetDataFlat, budgetEvent } from '@/local_data/data';
 import { BudgetEvent } from '@/types/budget';
 const styles = StyleSheet.create({
@@ -59,7 +59,7 @@ const BudgetEventFlat = ({ refreshFlag, style, onSelectBudgetEvent }: BudgetEven
             fontSize: FontSize,
             letterSpacing: 2,
           }}>
-          {Date.toUpperCase()}
+          {months[parseInt(Date)].toUpperCase()}
         </Text>
         <Text
           style={{

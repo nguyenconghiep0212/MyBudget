@@ -8,13 +8,19 @@ const monthlyBudget: MonthlyBudget[] = [
     month: 10,
     year: 2025,
     amount: 5_250_000,
-    salary: 10_000_000,
+    salary: 12_500_000,
   },
   {
     month: 9,
     year: 2025,
     amount: 4_000_000,
-    salary: 10_000_000,
+    salary: 12_000_000,
+  },
+  {
+    month: 3,
+    year: 2024,
+    amount: 6_550_000,
+    salary: 8_000_000,
   },
 ];
 const budgetEvent: BudgetEvent[] = [
@@ -71,8 +77,16 @@ const budgetEvent: BudgetEvent[] = [
     id: '32',
     name: 'Meat and Vegetables',
     description: 'For weekly groceries',
-    amount: 82_000,
+    amount: 1_082_000,
     date: new Date('2024-03-11'),
+  },
+  {
+    categoryId: 4,
+    id: '132',
+    name: 'Stuffs',
+    description: 'Groceries',
+    amount: 2_610_000,
+    date: new Date('2024-03-22'),
   },
 ];
 const expenseCategory: Category[] = [
@@ -197,7 +211,6 @@ function SetMonthlyBudget(newBudget: MonthlyBudget) {
       }
     });
   }
-  console.log('Update existing budget' + JSON.stringify(monthlyBudget));
 }
 function GetCategoryById(id: number): Category | undefined {
   return expenseCategory.find((i: Category) => i.id === id);
@@ -208,7 +221,7 @@ function groupBudgetDataFlat() {
   budgetEvent.forEach(item => {
     const date = new Date(item.date);
     const year = date.getFullYear();
-    const month = months[date.getMonth()];
+    const month = date.getMonth();
     const day = date.getDate();
 
     // Helper to get categoryId
@@ -245,9 +258,11 @@ function groupBudgetDataFlat() {
   // Convert nested objects to arrays for 'data' fields
   function convert(obj: any) {
     if (obj.data) {
-      obj.data = Object.entries(obj.data).map(([key, value]) => {
-        return { key, ...convert(value) };
-      });
+      obj.data = Object.entries(obj.data)
+        .sort(([keyA], [keyB]) => Number(keyB) - Number(keyA))
+        .map(([key, value]) => {
+          return { key, ...convert(value) };
+        });
     }
     return obj;
   }
@@ -260,7 +275,7 @@ function groupBudgetDataTree() {
   budgetEvent.forEach(item => {
     const date = new Date(item.date);
     const year = date.getFullYear();
-    const month = months[date.getMonth()];
+    const month = date.getMonth();
     const week = Math.ceil(date.getDate() / 7); // Week of month (simple)
     const day = date.getDate();
 
@@ -318,9 +333,11 @@ function groupBudgetDataTree() {
   // Convert nested objects to arrays for 'data' fields
   function convert(obj: any) {
     if (obj.data) {
-      obj.data = Object.entries(obj.data).map(([key, value]) => {
-        return { key, ...convert(value) };
-      });
+      obj.data = Object.entries(obj.data)
+        .sort(([keyA], [keyB]) => Number(keyB) - Number(keyA))
+        .map(([key, value]) => {
+          return { key, ...convert(value) };
+        });
     }
     return obj;
   }
