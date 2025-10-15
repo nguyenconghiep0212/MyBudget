@@ -60,8 +60,6 @@ type YearSummary = {
   months: {
     month: number;
     income: number;
-    budget: number;
-    expense: number;
   }[];
 };
 type ChartData = {
@@ -73,37 +71,21 @@ type ChartData = {
   frontColor: string;
   labelComponent?: Function;
 };
-const YearSummaryChart = ({ title, selectedYear, style }: AnalyticProps) => {
+const YearIncomeChart = ({ title, selectedYear, style }: AnalyticProps) => {
   const [yearData, setYearData] = useState<YearSummary[]>([]);
   const [chartData, setChartData] = useState<ChartData[]>([]);
-  const [monthExceedBudget, setMonthExceedBudget] = useState<number>(0);
-  const [monthWithinBudget, setMonthWithinBudget] = useState<number>(0);
   const [chartOptions, setChartOption] = useState<any>({
     noOfSections: 0,
     stepValue: 0,
   });
 
-  function CombineBudgetsAndExpenses(budgetEvents: BudgetEvent[], monthlyBudgets: MonthlyBudget[]) {
+  function CombineBudgetsAndExpenses(monthlyBudgets: MonthlyBudget[]) {
     const result: YearSummary[] = [];
 
-    // Create a map to aggregate expenses
-    const expenseMap: { [key: string]: number } = {};
-
-    // Populate the expense map
-    budgetEvents.forEach((event: BudgetEvent) => {
-      const eventDate = new Date(event.date);
-      const year = eventDate.getFullYear();
-      if (year === selectedYear) {
-        const month = eventDate.getMonth() + 1; // getMonth() returns 0-11
-        const key = `${year}-${month}`;
-        expenseMap[key] = (expenseMap[key] || 0) + event.amount;
-      }
-    });
     // Aggregate data into the result structure
     monthlyBudgets.forEach((item: MonthlyBudget) => {
       if (item.year === selectedYear) {
         const key = `${item.year}-${item.month}`;
-        const expenses = expenseMap[key] || 0;
 
         // Find or create the year entry
         let yearEntry = result.find(y => y.year === item.year);
@@ -117,14 +99,11 @@ const YearSummaryChart = ({ title, selectedYear, style }: AnalyticProps) => {
         if (!monthEntry) {
           monthEntry = {
             month: item.month,
-            budget: item.amount,
             income: item.salary,
-            expense: expenses,
           };
           yearEntry.months.push(monthEntry);
         } else {
           monthEntry.income += item.amount;
-          monthEntry.expense += expenses; // Add expenses if the month entry already exists
         }
       }
     });
@@ -136,18 +115,9 @@ const YearSummaryChart = ({ title, selectedYear, style }: AnalyticProps) => {
     const offset = 1_000_000;
 
     const tempYearData = [];
-    let localMonthWithinBudget = 0;
-    let localMonthExceedBudget = 0;
     for (let index = 1; index <= 12; index++) {
       const findMonth = yearData[0].months.find(item => item.month === index);
       if (findMonth) {
-        if (findMonth.expense < findMonth.budget) {
-          localMonthWithinBudget++;
-          setMonthWithinBudget(localMonthWithinBudget);
-        } else {
-          localMonthExceedBudget++;
-          setMonthExceedBudget(localMonthExceedBudget);
-        }
         tempYearData.push(findMonth);
       } else {
         tempYearData.push({ month: index, budget: 0, income: 0, expense: 0 });
@@ -157,24 +127,19 @@ const YearSummaryChart = ({ title, selectedYear, style }: AnalyticProps) => {
     const temp: ChartData[] = [];
     tempYearData.forEach((item: any) => {
       const temp1: ChartData = {
-        value: item.budget / offset,
-        spacing: 2,
+        value: item.income / offset,
+        spacing: 11,
         labelWidth: 30,
         labelTextStyle: { color: colors.gray },
-        frontColor: colors.Positive,
+        frontColor: colors.NavyBlueText,
         labelComponent: () => customLabel(months[item.month - 1].slice(0, 3)),
       };
-      const temp2: ChartData = {
-        value: item.expense / offset,
-        frontColor: colors.Negative,
-      };
       temp.push(temp1);
-      temp.push(temp2);
     });
     setChartData(temp);
 
     // Chart Option
-    const maxBudget: any = Math.max(...yearData[0].months.map((item: any) => item.budget)) / offset;
+    const maxBudget: any = Math.max(...yearData[0].months.map((item: any) => item.income)) / offset;
     setChartOption({
       noOfSections: Math.ceil(maxBudget),
       stepValue: 1,
@@ -182,19 +147,19 @@ const YearSummaryChart = ({ title, selectedYear, style }: AnalyticProps) => {
   }
 
   useEffect(() => {
-    CombineBudgetsAndExpenses(budgetEvent, monthlyBudget);
+    CombineBudgetsAndExpenses(monthlyBudget);
     SetChartData();
   }, [selectedYear]);
-  useEffect(() => {}, [chartData, chartOptions, monthWithinBudget, monthExceedBudget]);
+  useEffect(() => {}, [chartData, chartOptions]);
   useFocusEffect(
     useCallback(() => {
-      CombineBudgetsAndExpenses(budgetEvent, monthlyBudget);
+      CombineBudgetsAndExpenses(monthlyBudget);
       SetChartData();
     }, []),
   );
   const customLabel = (val: string) => {
     return (
-      <View style={{ width: 18, alignItems: 'center' }}>
+      <View style={{ width: 24, alignItems: 'center' }}>
         <Text
           style={{
             color: colors.lightGray,
@@ -216,7 +181,7 @@ const YearSummaryChart = ({ title, selectedYear, style }: AnalyticProps) => {
           paddingTop: 6,
           paddingBottom: 10,
         }}>
-        <View style={{ flexDirection: 'column', marginBottom: 8 }}>
+        <View style={{ flexDirection: 'row', gap: 6, marginBottom: 8 }}>
           {title || (
             <Text
               style={{
@@ -230,63 +195,9 @@ const YearSummaryChart = ({ title, selectedYear, style }: AnalyticProps) => {
               {selectedYear} monthly
             </Text>
           )}
-          <Text
-            style={{
-              ...styles.surfaceSubTitle,
-              fontWeight: 600,
-            }}>
-            Month exceed budget:{' '}
-            <Text
-              style={{
-                ...styles.surfaceSubTitle,
-                fontWeight: 800,
-                color: colors.Negative,
-              }}>
-              {monthExceedBudget}
-            </Text>
-          </Text>
-          <Text
-            style={{
-              ...styles.surfaceSubTitle,
-              fontWeight: 600,
-            }}>
-            Month within budget:{' '}
-            <Text
-              style={{
-                ...styles.surfaceSubTitle,
-                fontWeight: 800,
-                color: colors.Positive,
-              }}>
-              {monthWithinBudget}
-            </Text>
-          </Text>
         </View>
         <View style={styles.superContainer}>
-          <View style={[styles.superItemContainer, { paddingLeft: 8 }]}>
-            <View style={[{ flexDirection: 'row', alignItems: 'center', gap: 4 }]}>
-              <View
-                style={{
-                  width: 18,
-                  borderRadius: 2,
-                  height: 8,
-                  backgroundColor: colors.Positive,
-                }}></View>
-              <Text style={{ color: colors.lightGray, fontSize: 12, letterSpacing: 0.75 }}>
-                Budget
-              </Text>
-              <View
-                style={{
-                  width: 18,
-                  borderRadius: 2,
-                  height: 8,
-                  backgroundColor: colors.Negative,
-                  marginLeft: 16,
-                }}></View>
-              <Text style={{ color: colors.lightGray, fontSize: 12, letterSpacing: 0.75 }}>
-                Expense
-              </Text>
-            </View>
-          </View>
+          <View style={[styles.superItemContainer, { paddingLeft: 8 }]}></View>
           <View style={[styles.superItemContainer, { alignItems: 'flex-end', paddingRight: 18 }]}>
             <Text style={{ color: colors.gray, fontSize: 10, letterSpacing: 0.75 }}>
               Unit: 1,000,000 vnd
@@ -296,7 +207,7 @@ const YearSummaryChart = ({ title, selectedYear, style }: AnalyticProps) => {
 
         <BarChart
           data={chartData}
-          barWidth={6}
+          barWidth={12}
           spacing={9}
           // roundedTop
           // roundedBottom
@@ -313,4 +224,4 @@ const YearSummaryChart = ({ title, selectedYear, style }: AnalyticProps) => {
   );
 };
 
-export default YearSummaryChart;
+export default YearIncomeChart;

@@ -20,9 +20,7 @@ export default function Home() {
   const { isDark } = useColorScheme();
   return (
     <View style={[styles.root, isDark && { backgroundColor: colors.blackGray }]}>
-      <ScrollView style={{ width: '100%', marginBottom: 0, gap: 12 }}>
-        <Analytic />
-      </ScrollView>
+      <Analytic />
     </View>
   );
 }

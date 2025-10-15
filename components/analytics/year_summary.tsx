@@ -44,6 +44,7 @@ const styles = StyleSheet.create({
 type AnalyticProps = {
   style?: StyleProp<ViewStyle>;
   selectedYear: number;
+  title?: ReactNode;
 };
 
 type YearSummary = {
@@ -52,7 +53,7 @@ type YearSummary = {
   budget: number;
   expense: number;
 };
-const YearSummary = ({ selectedYear, style }: AnalyticProps) => {
+const YearSummary = ({ title, selectedYear, style }: AnalyticProps) => {
   const [yearData, setYearData] = useState<YearSummary>({
     year: 0,
     income: 0,
@@ -122,17 +123,19 @@ const YearSummary = ({ selectedYear, style }: AnalyticProps) => {
           paddingBottom: 10,
         }}>
         <View style={{ flexDirection: 'row', gap: 6, marginBottom: 8 }}>
-          <Text
-            style={{
-              marginLeft: 8,
-              paddingTop: 1,
-              color: colors.gray,
-              fontSize: 18,
-              fontWeight: 800,
-              letterSpacing: 0.75,
-            }}>
-            {`${selectedYear} summary`}
-          </Text>
+          {title || (
+            <Text
+              style={{
+                marginLeft: 8,
+                paddingTop: 1,
+                color: colors.gray,
+                fontSize: 18,
+                fontWeight: 800,
+                letterSpacing: 0.75,
+              }}>
+              {`${selectedYear} summary`}
+            </Text>
+          )}
         </View>
         <View>
           <View style={{ flexDirection: 'row', gap: 5, marginHorizontal: 16, marginBottom: 4 }}>

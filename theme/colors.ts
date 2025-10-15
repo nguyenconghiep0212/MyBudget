@@ -18,4 +18,16 @@ export const colors = {
   Positive: '#7eff9dff',
   gold: '#ffee00b9',
   darkGreen: '#2d8241ff',
+
+  // Color Palette
+  marianBlue: '#1E3888',
+  biceBlue: '#3370A3',
+  moonStone: '#47A8BD',
+  pistachino: '#9EC790',
+  straw: '#CAD77A',
+  maize: '#F5E663',
+  saffron: '#FACA66',
+  sandyBrown: '#FFAD69',
+  burntSenna: '#CE7359',
+  cordovan: '#9C3848',
 };

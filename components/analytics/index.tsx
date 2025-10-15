@@ -1,44 +1,14 @@
 import { colors } from '@/theme';
-import { View, Text, StyleSheet, StyleProp, ViewStyle } from 'react-native';
+import { View, Text, StyleSheet, StyleProp, ViewStyle, ScrollView } from 'react-native';
 import YearSummaryChart from './year_summary_chart';
 import YearSummary from './year_summary';
 import { Dropdown } from 'react-native-element-dropdown';
 import { GetAvailableYear } from '@/local_data/data';
 import { GetToday } from '@/utils/helper';
 import { useEffect, useState } from 'react';
+import YearIncomeChart from './year_income_chart';
+import CategoryChart from './categories_summary_chart';
 const styles = StyleSheet.create({
-  body: {
-    width: '100%',
-    display: 'flex',
-    alignItems: 'flex-start',
-    justifyContent: 'flex-start',
-    paddingHorizontal: 12,
-  },
-  superContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    alignContent: 'flex-start',
-    paddingHorizontal: 24,
-  },
-  superItemContainer: {
-    display: 'flex',
-    width: '50%', // 50% -> 2 columns | 33% -> 3 columns | 25% -> 4 columns
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingTop: 12,
-    paddingBottom: 4,
-  },
-  priceText: {
-    fontSize: 10,
-    fontWeight: 700,
-    letterSpacing: 0.75,
-  },
-  surface: {
-    backgroundColor: colors.darkerGray,
-    borderRadius: 6,
-    paddingBottom: 10,
-    paddingHorizontal: 4,
-  },
   surfaceTitle: {
     color: colors.gray,
     fontSize: 18,
@@ -52,16 +22,6 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     fontSize: 12,
     fontWeight: 400,
-  },
-  TableTitle: {
-    color: colors.lightGray,
-    fontSize: 14,
-    fontWeight: 800,
-  },
-  tabTitle: {
-    letterSpacing: 1,
-    fontSize: 16,
-    fontWeight: 700,
   },
   inputField: {
     width: '25%',
@@ -110,7 +70,7 @@ const Analytic = ({ style }: AnalyticProps) => {
     );
   };
   return (
-    <View style={[style, { width: '100%', paddingHorizontal: 12 }]}>
+    <View style={[style, { width: '100%', height: '100%', paddingHorizontal: 12 }]}>
       <View
         style={{
           flexDirection: 'row',
@@ -141,9 +101,73 @@ const Analytic = ({ style }: AnalyticProps) => {
       <Text style={{ ...styles.surfaceSubTitle, marginTop: -12, color: colors.darkGray }}>
         *Make sure a month in a year have a budget for it to appear in summary
       </Text>
-      <View style={{ marginTop: 12 }}>
-        <YearSummaryChart selectedYear={selectedYear} />
-        <YearSummary selectedYear={selectedYear} />
+      <View style={{ flex: 1, width: '100%' }}>
+        <ScrollView style={{ marginTop: 12 }}>
+          <YearSummary
+            selectedYear={selectedYear}
+            title={
+              <Text
+                style={{
+                  marginLeft: 8,
+                  paddingTop: 1,
+                  color: colors.gray,
+                  fontSize: 18,
+                  fontWeight: 800,
+                  letterSpacing: 0.75,
+                }}>
+                Summary
+              </Text>
+            }
+          />
+          <CategoryChart
+            selectedYear={selectedYear}
+            title={
+              <Text
+                style={{
+                  marginLeft: 8,
+                  paddingTop: 1,
+                  color: colors.gray,
+                  fontSize: 18,
+                  fontWeight: 800,
+                  letterSpacing: 0.75,
+                }}>
+                Categories
+              </Text>
+            }
+          />
+          <YearSummaryChart
+            selectedYear={selectedYear}
+            title={
+              <Text
+                style={{
+                  marginLeft: 8,
+                  paddingTop: 1,
+                  color: colors.gray,
+                  fontSize: 18,
+                  fontWeight: 800,
+                  letterSpacing: 0.75,
+                }}>
+                Monthly spending
+              </Text>
+            }
+          />
+          <YearIncomeChart
+            selectedYear={selectedYear}
+            title={
+              <Text
+                style={{
+                  marginLeft: 8,
+                  paddingTop: 1,
+                  color: colors.gray,
+                  fontSize: 18,
+                  fontWeight: 800,
+                  letterSpacing: 0.75,
+                }}>
+                Monthly income
+              </Text>
+            }
+          />
+        </ScrollView>
       </View>
     </View>
   );

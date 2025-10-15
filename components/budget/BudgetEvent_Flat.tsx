@@ -59,7 +59,7 @@ const BudgetEventFlat = ({ refreshFlag, style, onSelectBudgetEvent }: BudgetEven
             fontSize: FontSize,
             letterSpacing: 2,
           }}>
-          {months[parseInt(Date)].toUpperCase()}
+          {Date.toUpperCase()}
         </Text>
         <Text
           style={{
@@ -117,66 +117,73 @@ const BudgetEventFlat = ({ refreshFlag, style, onSelectBudgetEvent }: BudgetEven
     );
   }
   function YearlyView(data: any) {
-    return Object.entries(data).map(([key, value]: any) => {
-      return (
-        <List.Section
-          key={key}
-          style={{ width: '100%', backgroundColor: colors.blackGray, padding: 0 }}>
-          <List.Accordion
-            title={ListAccordionNode(key, value.total, value.categoriesId)}
-            left={props => (
-              <List.Icon
-                {...props}
-                icon={() => (
-                  <MaterialIcons name="calendar-month" size={24} color={colors.lightGray} />
-                )}
-              />
-            )}
-            style={{ backgroundColor: colors.blackGray, padding: 0 }} // Add this line
-          >
-            {Object.entries(value.data)
-              .reverse()
-              .map((item2: any, index2: number) => {
-                return (
-                  <View key={index2}>
-                    <View
-                      style={{ flexDirection: 'row', gap: 5, alignItems: 'center', marginTop: 12 }}>
-                      <MaterialIcons name="today" size={18} color={colors.lightGray} />
-                      <Text
-                        style={[
-                          styles.text,
-                          { color: colors.lightGray, fontSize: 16, letterSpacing: 2 },
-                        ]}>
-                        {item2[0]}
-                      </Text>
+    return Object.entries(data)
+      .reverse()
+      .map(([key, value]: any) => {
+        return (
+          <List.Section
+            key={key}
+            style={{ width: '100%', backgroundColor: colors.blackGray, padding: 0 }}>
+            <List.Accordion
+              title={ListAccordionNode(months[key - 1], value.total, value.categoriesId)}
+              left={props => (
+                <List.Icon
+                  {...props}
+                  icon={() => (
+                    <MaterialIcons name="calendar-month" size={24} color={colors.lightGray} />
+                  )}
+                />
+              )}
+              style={{ backgroundColor: colors.blackGray, padding: 0 }} // Add this line
+            >
+              {Object.entries(value.data)
+                .reverse()
+                .map((item2: any, index2: number) => {
+                  return (
+                    <View key={index2}>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          gap: 5,
+                          alignItems: 'center',
+                          marginTop: 12,
+                        }}>
+                        <MaterialIcons name="today" size={18} color={colors.lightGray} />
+                        <Text
+                          style={[
+                            styles.text,
+                            { color: colors.lightGray, fontSize: 16, letterSpacing: 2 },
+                          ]}>
+                          {item2[0]}
+                        </Text>
+                      </View>
+                      {item2[1].data.map((item3: any, index3: number) => {
+                        return (
+                          <View key={index3}>
+                            <List.Item
+                              style={{
+                                marginVertical: 0,
+                                paddingVertical: 0,
+                              }} // outer margin/padding
+                              contentStyle={{ paddingVertical: 1 }} // inner padding
+                              title={IndividualEvent(item3)}
+                            />
+                            <Divider
+                              style={{
+                                backgroundColor: colors.darkGray,
+                                marginRight: 48,
+                                marginTop: 12,
+                              }}></Divider>
+                          </View>
+                        );
+                      })}
                     </View>
-                    {item2[1].data.map((item3: any, index3: number) => {
-                      return (
-                        <View key={index3}>
-                          <List.Item
-                            style={{
-                              marginVertical: 0,
-                              paddingVertical: 0,
-                            }} // outer margin/padding
-                            contentStyle={{ paddingVertical: 1 }} // inner padding
-                            title={IndividualEvent(item3)}
-                          />
-                          <Divider
-                            style={{
-                              backgroundColor: colors.darkGray,
-                              marginRight: 48,
-                              marginTop: 12,
-                            }}></Divider>
-                        </View>
-                      );
-                    })}
-                  </View>
-                );
-              })}
-          </List.Accordion>
-        </List.Section>
-      );
-    });
+                  );
+                })}
+            </List.Accordion>
+          </List.Section>
+        );
+      });
   }
   return (
     <View style={[styles.body, style]}>

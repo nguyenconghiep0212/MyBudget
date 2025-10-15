@@ -1,7 +1,13 @@
 import { colors } from '@/theme';
 import { Category, BudgetEvent, MonthlyBudget } from '@/types/budget';
 import { GetToday, months } from '@/utils/helper';
-import { FontAwesome, Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
+import {
+  FontAwesome,
+  FontAwesome6,
+  Ionicons,
+  MaterialCommunityIcons,
+  MaterialIcons,
+} from '@expo/vector-icons';
 
 const monthlyBudget: MonthlyBudget[] = [
   {
@@ -120,7 +126,7 @@ const expenseCategory: Category[] = [
   {
     id: 7,
     name: 'Healthcare',
-    icon: <MaterialIcons name="health-and-safety" size={24} color={colors.Negative} />,
+    icon: <FontAwesome6 name="pills" size={24} color={colors.Negative} />,
   },
   {
     id: 8,
@@ -135,21 +141,20 @@ const expenseCategory: Category[] = [
 ];
 function AddExpense(newExpense: BudgetEvent) {
   budgetEvent.unshift(newExpense);
-  console.log(JSON.stringify(budgetEvent));
+  console.log('Add: ' + JSON.stringify(budgetEvent));
 }
 function EditExpense(expense: BudgetEvent) {
   budgetEvent.forEach(item => {
     if (item.id === expense.id) {
       Object.assign(item, expense);
-      console.log(JSON.stringify(expense));
-      console.log(JSON.stringify(item));
+      console.log('Edit: ' + JSON.stringify(item));
     }
   });
 }
 function DeleteExpense(expenseId: string) {
   const index = budgetEvent.findIndex(item => item.id === expenseId);
   budgetEvent.splice(index, 1);
-  console.log(JSON.stringify(budgetEvent));
+  console.log('Remove: ' + JSON.stringify(budgetEvent));
 }
 function GetAvailableYear(): number[] {
   const years: number[] = [];
@@ -221,7 +226,7 @@ function groupBudgetDataFlat() {
   budgetEvent.forEach(item => {
     const date = new Date(item.date);
     const year = date.getFullYear();
-    const month = date.getMonth();
+    const month = date.getMonth() + 1;
     const day = date.getDate();
 
     // Helper to get categoryId
@@ -255,19 +260,7 @@ function groupBudgetDataFlat() {
     }
     result[year].data[month].data[day].data.push(item);
   });
-  // Convert nested objects to arrays for 'data' fields
-  function convert(obj: any) {
-    if (obj.data) {
-      obj.data = Object.entries(obj.data)
-        .sort(([keyA], [keyB]) => Number(keyB) - Number(keyA))
-        .map(([key, value]) => {
-          return { key, ...convert(value) };
-        });
-    }
-    return obj;
-  }
-
-  return convert(result);
+  return result;
 }
 function groupBudgetDataTree() {
   const result: any = {};
@@ -275,7 +268,7 @@ function groupBudgetDataTree() {
   budgetEvent.forEach(item => {
     const date = new Date(item.date);
     const year = date.getFullYear();
-    const month = date.getMonth();
+    const month = date.getMonth() + 1;
     const week = Math.ceil(date.getDate() / 7); // Week of month (simple)
     const day = date.getDate();
 
@@ -330,19 +323,7 @@ function groupBudgetDataTree() {
     result[year].data[month].data[week].data[day].data.push(item);
   });
 
-  // Convert nested objects to arrays for 'data' fields
-  function convert(obj: any) {
-    if (obj.data) {
-      obj.data = Object.entries(obj.data)
-        .sort(([keyA], [keyB]) => Number(keyB) - Number(keyA))
-        .map(([key, value]) => {
-          return { key, ...convert(value) };
-        });
-    }
-    return obj;
-  }
-
-  return convert(result);
+  return result;
 }
 export {
   budgetEvent,
