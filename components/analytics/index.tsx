@@ -122,17 +122,29 @@ const Analytic = ({ style }: AnalyticProps) => {
           <CategoryChart
             selectedYear={selectedYear}
             title={
-              <Text
-                style={{
-                  marginLeft: 8,
-                  paddingTop: 1,
-                  color: colors.gray,
-                  fontSize: 18,
-                  fontWeight: 800,
-                  letterSpacing: 0.75,
-                }}>
-                Categories
-              </Text>
+              <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
+                <Text
+                  style={{
+                    marginLeft: 8,
+                    paddingTop: 1,
+                    color: colors.gray,
+                    fontSize: 18,
+                    fontWeight: 800,
+                    letterSpacing: 0.75,
+                  }}>
+                  Categories
+                </Text>
+                <Text
+                  style={{
+                    marginLeft: 8,
+                    color: colors.gray,
+                    fontSize: 14,
+                    fontWeight: 600,
+                    letterSpacing: 0.75,
+                  }}>
+                  / expense
+                </Text>
+              </View>
             }
           />
           <YearSummaryChart

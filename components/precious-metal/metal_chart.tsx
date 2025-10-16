@@ -58,11 +58,11 @@ const MetalChart = () => {
         const maxValue = Math.ceil(Math.max(...allValue) / offset);
         const minValue = Math.floor(Math.min(...allValue) / offset);
         const stepValue = 0.5;
-        const noOfSections = (maxValue - minValue) / stepValue - 1;
+        const noOfSections = (maxValue - minValue) / stepValue + 1;
         setChartOption({
           noOfSections,
           stepValue,
-          yAxisOffset: minValue + stepValue,
+          yAxisOffset: minValue - stepValue,
           spacing: 9.5,
         });
         dispatch(DataApiLoaded());
