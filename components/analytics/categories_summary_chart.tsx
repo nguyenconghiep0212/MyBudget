@@ -44,8 +44,8 @@ const CategoryChart = ({ title, selectedYear, style }: AnalyticProps) => {
   function getMonthlyCategorySpending(events: BudgetEvent[], year: number) {
     const totals: { [month: number]: { [key: number]: number } } = {};
     events.forEach(event => {
-      const year = event.date.getFullYear();
-      const month = event.date.getMonth();
+      const year = new Date(event.date).getFullYear();
+      const month = new Date(event.date).getMonth();
       if (year === selectedYear) {
         if (totals[month] === undefined) {
           totals[month] = {};
@@ -89,7 +89,7 @@ const CategoryChart = ({ title, selectedYear, style }: AnalyticProps) => {
   function getTotalCategorySpending(events: BudgetEvent[], selectedYear: number) {
     const totals: { [key: number]: number } = {};
     events.forEach(event => {
-      const year = event.date.getFullYear();
+      const year = new Date(event.date).getFullYear();
       if (year === selectedYear) {
         // Aggregate spending by categoryId
         if (!totals[event.categoryId]) {

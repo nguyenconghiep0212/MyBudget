@@ -60,7 +60,10 @@ const MainBudget = ({ style }: MainBudgetProps) => {
   function CalculateThisMonthExpense() {
     let total = 0;
     budgetEvent.forEach(item => {
-      if (thisMonth === item.date.getMonth() + 1 && thisYear === item.date.getFullYear()) {
+      if (
+        thisMonth === new Date(item.date).getMonth() + 1 &&
+        thisYear === new Date(item.date).getFullYear()
+      ) {
         total += item.amount;
       }
     });

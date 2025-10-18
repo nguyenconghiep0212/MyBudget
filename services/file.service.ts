@@ -6,10 +6,20 @@ const expenseFileName = 'expense_data.json';
 const goldFileName = 'gold_data.json';
 const monthlyBudgetFileName = 'monthly_budget_data.json';
 
-function InitFiles() {
-  CheckAndCreateFile(expenseFileName);
-  CheckAndCreateFile(goldFileName);
-  CheckAndCreateFile(monthlyBudgetFileName);
+async function InitFiles() {
+  await Promise.all([
+    CheckAndCreateFile(expenseFileName),
+    CheckAndCreateFile(goldFileName),
+    CheckAndCreateFile(monthlyBudgetFileName),
+  ]);
+
+  // CheckAndCreateFile(expenseFileName);
+  // CheckAndCreateFile(goldFileName);
+  // CheckAndCreateFile(monthlyBudgetFileName);
+
+  CopyFileToExternalStorage(expenseFileName);
+  CopyFileToExternalStorage(goldFileName);
+  CopyFileToExternalStorage(monthlyBudgetFileName);
 }
 const CheckAndCreateFile = async (fileName: string) => {
   try {
@@ -105,6 +115,16 @@ async function RemoveFile(fileName: string) {
   } catch (error) {
     console.error('Unable to delete file: ' + error);
   }
+}
+
+async function CopyFileToExternalStorage(fileName: string) {
+  // Copy the file to the external storage (Downloads folder)
+  const filePath = `${FileSystem.documentDirectory}${fileName}`;
+  const externalFilePath = `${FileSystem.documentDirectory}../Downloads/${fileName}`;
+  await FileSystem.copyAsync({
+    from: filePath,
+    to: externalFilePath,
+  });
 }
 export {
   InitFiles,

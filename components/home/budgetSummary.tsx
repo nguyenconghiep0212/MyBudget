@@ -62,13 +62,13 @@ const BudgetSummary = ({ style }: BudgetSummaryProps) => {
         const temp = displayData.find(
           i =>
             i.date ===
-            days[item.date.getDay()].slice(0, 3) +
+            days[new Date(item.date).getDay()].slice(0, 3) +
               ' ' +
-              item.date.getDate() +
+              new Date(item.date).getDate() +
               ' - ' +
-              (item.date.getMonth() + 1) +
+              (new Date(item.date).getMonth() + 1) +
               ' - ' +
-              item.date.getFullYear(),
+              new Date(item.date).getFullYear(),
         );
         if (temp !== undefined) {
           temp.expense += item.amount;
@@ -81,13 +81,13 @@ const BudgetSummary = ({ style }: BudgetSummaryProps) => {
         } else {
           displayData.push({
             date:
-              days[item.date.getDay()].slice(0, 3) +
+              days[new Date(item.date).getDay()].slice(0, 3) +
               ' ' +
-              item.date.getDate() +
+              new Date(item.date).getDate() +
               ' - ' +
-              (item.date.getMonth() + 1) +
+              (new Date(item.date).getMonth() + 1) +
               ' - ' +
-              item.date.getFullYear(),
+              new Date(item.date).getFullYear(),
             expense: item.amount,
             expenseCategories:
               item.categoryId !== undefined ? [GetCategoryById(item.categoryId)!] : [],
@@ -98,7 +98,12 @@ const BudgetSummary = ({ style }: BudgetSummaryProps) => {
     if (filter === 'week') {
       budgetEvent.forEach((item, index) => {
         const temp = displayData.find(
-          i => i.date === 'Week ' + getWeekOfYear(item.date) + ' - ' + item.date.getFullYear(),
+          i =>
+            i.date ===
+            'Week ' +
+              getWeekOfYear(new Date(item.date)) +
+              ' - ' +
+              new Date(item.date).getFullYear(),
         );
         if (temp !== undefined) {
           temp.expense += item.amount;
@@ -110,7 +115,11 @@ const BudgetSummary = ({ style }: BudgetSummaryProps) => {
           }
         } else {
           displayData.push({
-            date: 'Week ' + getWeekOfYear(item.date) + ' - ' + item.date.getFullYear(),
+            date:
+              'Week ' +
+              getWeekOfYear(new Date(item.date)) +
+              ' - ' +
+              new Date(item.date).getFullYear(),
             expense: item.amount,
 
             expenseCategories:
@@ -122,7 +131,12 @@ const BudgetSummary = ({ style }: BudgetSummaryProps) => {
     if (filter === 'month') {
       budgetEvent.forEach((item, index) => {
         const temp = displayData.find(
-          i => i.date === 'Month ' + (item.date.getMonth() + 1) + ' - ' + item.date.getFullYear(),
+          i =>
+            i.date ===
+            'Month ' +
+              (new Date(item.date).getMonth() + 1) +
+              ' - ' +
+              new Date(item.date).getFullYear(),
         );
         if (temp !== undefined) {
           temp.expense += item.amount;
@@ -134,7 +148,11 @@ const BudgetSummary = ({ style }: BudgetSummaryProps) => {
           }
         } else {
           displayData.push({
-            date: 'Month ' + (item.date.getMonth() + 1) + ' - ' + item.date.getFullYear(),
+            date:
+              'Month ' +
+              (new Date(item.date).getMonth() + 1) +
+              ' - ' +
+              new Date(item.date).getFullYear(),
             expense: item.amount,
             expenseCategories:
               item.categoryId !== undefined ? [GetCategoryById(item.categoryId)!] : [],

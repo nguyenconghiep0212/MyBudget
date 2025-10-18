@@ -189,8 +189,8 @@ function GetAvailableYear(getTrueYear = false): number[] {
     return years;
   }
   budgetEvent.forEach((item: BudgetEvent, index: number) => {
-    if (!years.includes(item.date.getFullYear())) {
-      years.unshift(item.date.getFullYear());
+    if (!years.includes(new Date(item.date).getFullYear())) {
+      years.unshift(new Date(item.date).getFullYear());
     }
   });
   if (!getTrueYear) {
@@ -225,8 +225,8 @@ function GetMonthlyBudgetByYear(year: number) {
     }
   });
   budgetEvent.forEach(item => {
-    if (item.date.getFullYear() === year) {
-      const temp = result.find(resItem => resItem.month === item.date.getMonth() + 1);
+    if (new Date(item.date).getFullYear() === year) {
+      const temp = result.find(resItem => resItem.month === new Date(item.date).getMonth() + 1);
       if (temp) {
         temp.expense += item.amount;
         if (!temp.categories.includes(item.categoryId)) {
