@@ -71,7 +71,8 @@ type ChartData = {
   labelWidth?: number;
   labelTextStyle?: { color: string };
   frontColor: string;
-  labelComponent?: Function;
+  labelComponent?: () => ReactNode;
+  topLabelComponent?: () => ReactNode;
 };
 const YearSummaryChart = ({ title, selectedYear, style }: AnalyticProps) => {
   const [yearData, setYearData] = useState<YearSummary[]>([]);
@@ -141,7 +142,7 @@ const YearSummaryChart = ({ title, selectedYear, style }: AnalyticProps) => {
     for (let index = 1; index <= 12; index++) {
       const findMonth = yearData[0].months.find(item => item.month === index);
       if (findMonth) {
-        if (findMonth.expense < findMonth.budget) {
+        if (findMonth.expense <= findMonth.budget) {
           localMonthWithinBudget++;
           setMonthWithinBudget(localMonthWithinBudget);
         } else {
@@ -163,10 +164,38 @@ const YearSummaryChart = ({ title, selectedYear, style }: AnalyticProps) => {
         labelTextStyle: { color: colors.gray },
         frontColor: colors.Positive,
         labelComponent: () => customLabel(months[item.month - 1].slice(0, 3)),
+        topLabelComponent: () => (
+          <Text
+            style={{
+              color: colors.lightGray,
+              fontSize: 6,
+              position: 'absolute',
+              width: 12,
+              textAlign: 'center',
+              marginTop: -4,
+              letterSpacing: -0.5,
+            }}>
+            {(item.budget / offset).toFixed(1)}
+          </Text>
+        ),
       };
       const temp2: ChartData = {
         value: item.expense / offset,
         frontColor: colors.Negative,
+        topLabelComponent: () => (
+          <Text
+            style={{
+              color: colors.lightGray,
+              fontSize: 6,
+              position: 'absolute',
+              width: 12,
+              textAlign: 'center',
+              letterSpacing: -0.5,
+              marginTop: -4,
+            }}>
+            {(item.expense / offset).toFixed(1)}
+          </Text>
+        ),
       };
       temp.push(temp1);
       temp.push(temp2);
@@ -174,10 +203,13 @@ const YearSummaryChart = ({ title, selectedYear, style }: AnalyticProps) => {
     setChartData(temp);
 
     // Chart Option
-    const maxBudget: any = Math.max(...yearData[0].months.map((item: any) => item.budget)) / offset;
+    const noOfSections = 5;
+    const stepValue = Math.ceil(
+      Math.max(...yearData[0].months.map((item: any) => item.budget)) / offset / noOfSections,
+    );
     setChartOption({
-      noOfSections: Math.ceil(maxBudget),
-      stepValue: 1,
+      noOfSections,
+      stepValue,
     });
   }
 
@@ -304,7 +336,7 @@ const YearSummaryChart = ({ title, selectedYear, style }: AnalyticProps) => {
           rulesColor={colors.darkGray}
           xAxisThickness={1}
           yAxisThickness={1}
-          yAxisTextStyle={{ fontSize: 10, color: colors.gray }}
+          yAxisTextStyle={{ fontSize: 10, color: colors.lightGray }}
           noOfSections={chartOptions.noOfSections}
           stepValue={chartOptions.stepValue}
         />

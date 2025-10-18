@@ -4,7 +4,7 @@ import { DataTable } from 'react-native-paper';
 import { colors } from '@/theme';
 import { Dropdown } from 'react-native-element-dropdown';
 import { formatCurrency, GetToday, months } from '@/utils/helper';
-import { GetAvailableYear, GetCategoryById, GetMonthlyBudget } from '@/local_data/data';
+import { GetAvailableYear, GetCategoryById, GetMonthlyBudgetByYear } from '@/local_data/data';
 import { MonthlyBudget as MonthlyBudgetType } from '@/types/budget';
 import MonthEdit from './monthly_Edit';
 import { useFocusEffect } from 'expo-router';
@@ -53,7 +53,7 @@ const MonthlyBudget = ({ style }: MonthlyBudgetProps) => {
   const [tableData, setTableData] = useState<TableDataType[]>([]);
   const [refreshFlag, setRefreshFlag] = useState<boolean>(false);
   function GetMonthBudgetByYear(selectedYear: number) {
-    const temp = GetMonthlyBudget(selectedYear);
+    const temp = GetMonthlyBudgetByYear(selectedYear);
     setTableData(temp.reverse());
   }
   function GetYear() {

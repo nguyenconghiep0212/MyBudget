@@ -59,8 +59,9 @@ const MetalTable = () => {
   const [confirmVisible, setConfirmVisible] = useState<boolean>(false);
   const [refreshTable, setRefreshTable] = useState<boolean>(false);
 
-  function MapTableData() {
+  async function MapTableData() {
     const result: TableData[] = [];
+    console.log('Got gold data from file');
     goldData.forEach((item: Gold) => {
       const temp = goldPrice.data.find((item2: SJC, index: number) => item2.Id === item.category);
       const priceCurrent = temp ? temp.BuyValue : 0;
@@ -92,15 +93,16 @@ const MetalTable = () => {
       console.error(error);
     }
   }
-  function onDeleteGold(id: string) {
-    RemoveAsset(id);
+  async function onDeleteGold(id: string) {
+    await RemoveAsset(id);
     setRefreshTable(!refreshTable);
   }
   useEffect(() => {
+    console.log('======================================');
     GetGoldPrice();
-    MapTableData();
   }, [refreshGoldPrice]);
   useEffect(() => {
+    console.log('---------------------');
     MapTableData();
   }, [goldPrice, refreshTable]);
   return (
@@ -255,7 +257,10 @@ const MetalTable = () => {
                 color: colors.NavyBlueText,
               }}>
               {formatCurrency(
-                tableData.reduce((total, current) => total + current.priceAtBought, 0),
+                tableData.reduce(
+                  (total, current) => total + current.priceAtBought * current.own,
+                  0,
+                ),
               )}
             </Text>
           </DataTable.Cell>
@@ -268,7 +273,7 @@ const MetalTable = () => {
                 color: colors.Positive,
               }}>
               {formatCurrency(
-                tableData.reduce((total, current) => total + current.priceCurrent, 0),
+                tableData.reduce((total, current) => total + current.priceCurrent * current.own, 0),
               )}
             </Text>
           </DataTable.Cell>
@@ -279,11 +284,28 @@ const MetalTable = () => {
                 fontSize: 9,
                 letterSpacing: 0.5,
                 color:
-                  tableData.reduce((total, current) => total + current.discrepancy, 0) > 0
+                  tableData.reduce(
+                    (total, current) => total + current.priceCurrent * current.own,
+                    0,
+                  ) -
+                    tableData.reduce(
+                      (total, current) => total + current.priceAtBought * current.own,
+                      0,
+                    ) >
+                  0
                     ? colors.Positive
                     : colors.Negative,
               }}>
-              {formatCurrency(tableData.reduce((total, current) => total + current.discrepancy, 0))}
+              {formatCurrency(
+                tableData.reduce(
+                  (total, current) => total + current.priceCurrent * current.own,
+                  0,
+                ) -
+                  tableData.reduce(
+                    (total, current) => total + current.priceAtBought * current.own,
+                    0,
+                  ),
+              )}
             </Text>
           </DataTable.Cell>
           <DataTable.Cell style={{ maxWidth: 12, justifyContent: 'center' }}>

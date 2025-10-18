@@ -83,13 +83,13 @@ const MetalTableAdd = ({
   function resetNewGold() {
     setNewGold({ id: '', own: 0, category: 0, priceAtBought: 0 });
   }
-  function AddToAsset() {
+  async function AddToAsset() {
     if (isUseCurrentPrice) {
       const temp = dataGoldPriceAPI.find((item: SJC) => item.Id === newGold.category);
       newGold.id = GetToday().getTime().toString();
       newGold.priceAtBought = temp ? temp.SellValue : 0;
     }
-    AddAsset(newGold);
+    await AddAsset(newGold);
 
     resetNewGold();
     onClose();

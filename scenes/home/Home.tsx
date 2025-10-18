@@ -3,10 +3,13 @@ import useColorScheme from '@/hooks/useColorScheme';
 import Button from '@/components/_layouts/Button';
 import { useRouter } from 'expo-router';
 import { colors } from '@/theme';
-import { Badge, Divider } from 'react-native-paper';
+import { ActivityIndicator, Badge, Divider } from 'react-native-paper';
 import MainBudget from '@/components/home/mainBudget';
 import BudgetSummary from '@/components/home/budgetSummary';
 import Today from '@/components/_common/date';
+import { GetExpenseFromFile, GetMonthlyBudgetFromFile } from '@/local_data/data';
+import { use, useEffect, useState } from 'react';
+import { GetGoldFromFile } from '@/local_data/assets';
 const styles = StyleSheet.create({
   root: {
     flex: 1,
@@ -20,22 +23,41 @@ const styles = StyleSheet.create({
 });
 
 export default function Home() {
-  const router = useRouter();
+  const [initFinish, setInitFinish] = useState<boolean>(false);
   const { isDark } = useColorScheme();
+  async function InitData() {
+    await Promise.all([GetMonthlyBudgetFromFile(), GetExpenseFromFile(), GetGoldFromFile()]);
+    setInitFinish(true);
+  }
+  useEffect(() => {
+    InitData();
+  }, []);
+
   return (
     <View style={[styles.root, isDark && { backgroundColor: colors.blackGray }]}>
-      <Today></Today>
-      <MainBudget style={{ paddingTop: 20 }} />
-      <Divider
-        style={{
-          width: '100%',
-          marginTop: 20,
-          marginBottom: 15,
-          height: 2,
-          backgroundColor: colors.lightGray,
-        }}
-      />
-      <BudgetSummary />
+      {initFinish ? (
+        <>
+          <Today></Today>
+          <MainBudget style={{ paddingTop: 20 }} />
+          <Divider
+            style={{
+              width: '100%',
+              marginTop: 20,
+              marginBottom: 15,
+              height: 2,
+              backgroundColor: colors.lightGray,
+            }}
+          />
+          <BudgetSummary />
+        </>
+      ) : (
+        <View style={{ flex: 1, justifyContent: 'center', alignContent: 'center' }}>
+          <ActivityIndicator size="large" color={colors.white} />
+          <Text style={{ color: colors.gray, fontSize: 24, marginTop: 12, fontWeight: 600 }}>
+            Fetching data...
+          </Text>
+        </View>
+      )}
     </View>
   );
 }

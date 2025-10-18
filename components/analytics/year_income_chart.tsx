@@ -1,10 +1,10 @@
 import { colors } from '@/theme';
-import { GetToday, months } from '@/utils/helper';
+import { months } from '@/utils/helper';
 import { View, Text, StyleSheet, StyleProp, ViewStyle } from 'react-native';
-import { GetCategoryById, budgetEvent, monthlyBudget } from '@/local_data/data';
+import { monthlyBudget } from '@/local_data/data';
 import { BarChart } from 'react-native-gifted-charts';
 import { ReactNode, useCallback, useEffect, useState } from 'react';
-import { BudgetEvent, MonthlyBudget } from '@/types/budget';
+import { MonthlyBudget } from '@/types/budget';
 import { Surface } from 'react-native-paper';
 import { useFocusEffect } from 'expo-router';
 const styles = StyleSheet.create({
@@ -69,7 +69,8 @@ type ChartData = {
   labelWidth?: number;
   labelTextStyle?: { color: string };
   frontColor: string;
-  labelComponent?: Function;
+  labelComponent?: () => ReactNode;
+  topLabelComponent?: () => ReactNode;
 };
 const YearIncomeChart = ({ title, selectedYear, style }: AnalyticProps) => {
   const [yearData, setYearData] = useState<YearSummary[]>([]);
@@ -133,16 +134,22 @@ const YearIncomeChart = ({ title, selectedYear, style }: AnalyticProps) => {
         labelTextStyle: { color: colors.gray },
         frontColor: colors.NavyBlueText,
         labelComponent: () => customLabel(months[item.month - 1].slice(0, 3)),
+        topLabelComponent: () => (
+          <Text style={{ color: colors.lightGray, fontSize: 6 }}>{item.income / offset}</Text>
+        ),
       };
       temp.push(temp1);
     });
     setChartData(temp);
 
     // Chart Option
-    const maxBudget: any = Math.max(...yearData[0].months.map((item: any) => item.income)) / offset;
+    const noOfSections = 5;
+    const stepValue: any = Math.ceil(
+      Math.max(...yearData[0].months.map((item: any) => item.income)) / offset / noOfSections,
+    );
     setChartOption({
-      noOfSections: Math.ceil(maxBudget),
-      stepValue: 1,
+      noOfSections,
+      stepValue,
     });
   }
 
@@ -215,7 +222,7 @@ const YearIncomeChart = ({ title, selectedYear, style }: AnalyticProps) => {
           rulesColor={colors.darkGray}
           xAxisThickness={1}
           yAxisThickness={1}
-          yAxisTextStyle={{ fontSize: 10, color: colors.gray }}
+          yAxisTextStyle={{ fontSize: 10, color: colors.lightGray }}
           noOfSections={chartOptions.noOfSections}
           stepValue={chartOptions.stepValue}
         />

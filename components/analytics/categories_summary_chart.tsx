@@ -148,11 +148,11 @@ const CategoryChart = ({ title, selectedYear, style }: AnalyticProps) => {
       getMonthlyCategorySpending(budgetEvent, selectedYear);
     }, []),
   );
-  (useEffect(() => {
+  useEffect(() => {
     getTotalCategorySpending(budgetEvent, selectedYear);
     getMonthlyCategorySpending(budgetEvent, selectedYear);
-  }, [selectedYear]),
-    useEffect(() => {}, [chartData, chartDataMonth]));
+  }, [selectedYear]);
+  useEffect(() => {}, [chartData, chartDataMonth]);
   return (
     <View style={[style]}>
       <Surface
@@ -203,18 +203,37 @@ const CategoryChart = ({ title, selectedYear, style }: AnalyticProps) => {
           ))}
         </View>
         <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: 6 }}>
-          <PieChart
-            showText
-            radius={60}
-            textSize={14}
-            fontWeight={'700'}
-            textColor={colors.black}
-            data={chartData}
-            onPress={() => {
-              OpenDetailChart(chartData, 'Year summary');
-            }}
-          />
-          <Text style={{ color: colors.gray, fontWeight: 700 }}>Year Summary</Text>
+          {chartData.length === 0 ? (
+            <>
+              <View
+                style={{
+                  height: 120,
+                  width: 120,
+                  borderRadius: 99,
+                  alignItems: 'center',
+                  backgroundColor: colors.darkGray,
+                  justifyContent: 'center',
+                }}>
+                <Text style={{ color: colors.gray, fontWeight: 600, fontSize: 12 }}>N/A</Text>
+              </View>
+              <Text style={{ color: colors.gray, fontWeight: 700 }}>Year Summary</Text>
+            </>
+          ) : (
+            <>
+              <PieChart
+                showText
+                radius={60}
+                textSize={14}
+                fontWeight={'700'}
+                textColor={colors.black}
+                data={chartData}
+                onPress={() => {
+                  OpenDetailChart(chartData, 'Year summary');
+                }}
+              />
+              <Text style={{ color: colors.gray, fontWeight: 700 }}>Year Summary</Text>
+            </>
+          )}
         </View>
         <Divider
           horizontalInset
@@ -230,57 +249,73 @@ const CategoryChart = ({ title, selectedYear, style }: AnalyticProps) => {
             alignItems: 'center',
             justifyContent: 'center',
           }}>
-          {chartDataMonth.map((item, index) => {
-            if (item.length === 0) {
-              return (
-                <View
-                  key={index}
-                  style={{ alignItems: 'center', justifyContent: 'center', marginTop: 6 }}>
+          {chartDataMonth.length === 0 ? (
+            <View style={{}}>
+              <Text style={{ color: colors.lightGray }}>No Data</Text>
+            </View>
+          ) : (
+            chartDataMonth.map((item, index) => {
+              if (item.length === 0) {
+                return (
                   <View
-                    style={{
-                      height: 56,
-                      width: 56,
-                      borderRadius: 99,
-                      alignItems: 'center',
-                      backgroundColor: colors.darkGray,
-                      justifyContent: 'center',
-                    }}>
-                    <Text style={{ color: colors.gray, fontWeight: 600, fontSize: 12 }}>N/A</Text>
+                    key={index}
+                    style={{ alignItems: 'center', justifyContent: 'center', marginTop: 6 }}>
+                    <View
+                      style={{
+                        height: 56,
+                        width: 56,
+                        borderRadius: 99,
+                        alignItems: 'center',
+                        backgroundColor: colors.darkGray,
+                        justifyContent: 'center',
+                      }}>
+                      <Text style={{ color: colors.gray, fontWeight: 600, fontSize: 12 }}>N/A</Text>
+                    </View>
+                    <Text
+                      style={{
+                        color: colors.gray,
+                        fontWeight: 600,
+                        fontSize: 10,
+                        letterSpacing: 1,
+                      }}>
+                      {months[index]}
+                    </Text>
                   </View>
-                  <Text
-                    style={{ color: colors.gray, fontWeight: 600, fontSize: 10, letterSpacing: 1 }}>
-                    {months[index]}
-                  </Text>
-                </View>
-              );
-            } else {
-              return (
-                <View
-                  key={index}
-                  style={{
-                    maxHeight: 56,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginTop: 6,
-                  }}>
-                  <PieChart
-                    showText
-                    textColor="black"
-                    radius={28}
-                    textSize={20}
-                    data={item}
-                    onPress={() => {
-                      OpenDetailChart(item, months[index]);
-                    }}
-                  />
-                  <Text
-                    style={{ color: colors.gray, fontWeight: 600, fontSize: 10, letterSpacing: 1 }}>
-                    {months[index]}
-                  </Text>
-                </View>
-              );
-            }
-          })}
+                );
+              } else {
+                return (
+                  <View
+                    key={index}
+                    style={{
+                      maxHeight: 56,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      marginTop: 6,
+                    }}>
+                    <PieChart
+                      showText
+                      textColor="black"
+                      radius={28}
+                      textSize={20}
+                      data={item}
+                      onPress={() => {
+                        OpenDetailChart(item, months[index]);
+                      }}
+                    />
+                    <Text
+                      style={{
+                        color: colors.gray,
+                        fontWeight: 600,
+                        fontSize: 10,
+                        letterSpacing: 1,
+                      }}>
+                      {months[index]}
+                    </Text>
+                  </View>
+                );
+              }
+            })
+          )}
         </View>
       </Surface>
       <CategoryChartDetail

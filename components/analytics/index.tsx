@@ -5,9 +5,10 @@ import YearSummary from './year_summary';
 import { Dropdown } from 'react-native-element-dropdown';
 import { GetAvailableYear } from '@/local_data/data';
 import { GetToday } from '@/utils/helper';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import YearIncomeChart from './year_income_chart';
 import CategoryChart from './categories_summary_chart';
+import { useFocusEffect } from 'expo-router';
 const styles = StyleSheet.create({
   surfaceTitle: {
     color: colors.gray,
@@ -45,7 +46,7 @@ const Analytic = ({ style }: AnalyticProps) => {
   const [selectedYear, setSelectedYear] = useState(GetToday().getFullYear());
   function GetYear() {
     const years: { value: number; label: string }[] = [];
-    GetAvailableYear()
+    GetAvailableYear(true)
       .reverse()
       .forEach((item, index) => {
         years.push({ value: item, label: item.toString() });
@@ -55,6 +56,11 @@ const Analytic = ({ style }: AnalyticProps) => {
   useEffect(() => {
     GetYear();
   }, []);
+  useFocusEffect(
+    useCallback(() => {
+      setSelectedYear(GetToday().getFullYear());
+    }, []),
+  );
   const renderItem = (item: any) => {
     return (
       <View

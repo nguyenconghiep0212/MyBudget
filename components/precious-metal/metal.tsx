@@ -4,7 +4,6 @@ import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 
 import ChartMonthGoldPrice from './metal_chart';
 import GoldDataTable from './metal_table';
-import { Divider, Snackbar } from 'react-native-paper';
 import { useState } from 'react';
 import MetalTabs from './metal_tabs';
 const styles = StyleSheet.create({

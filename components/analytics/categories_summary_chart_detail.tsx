@@ -1,12 +1,11 @@
-import { budgetEvent, expenseCategory, GetCategoryById, monthlyBudget } from '@/local_data/data';
+import { expenseCategory, GetCategoryById } from '@/local_data/data';
 import { colors } from '@/theme';
-import { BudgetEvent, Category, MonthlyBudget } from '@/types/budget';
-import { formatCurrency, months } from '@/utils/helper';
-import { useFocusEffect } from 'expo-router';
-import { ReactNode, useCallback, useEffect, useState } from 'react';
+import { Category } from '@/types/budget';
+import { formatCurrency } from '@/utils/helper';
+import { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, StyleProp, ViewStyle } from 'react-native';
-import { BarChart, PieChart } from 'react-native-gifted-charts';
-import { Button, Dialog, Divider, Portal, Surface } from 'react-native-paper';
+import { BarChart } from 'react-native-gifted-charts';
+import { Dialog, Portal } from 'react-native-paper';
 const styles = StyleSheet.create({
   portal: {
     fontSize: 28,
@@ -30,7 +29,7 @@ type AnalyticProps = {
 const CategoryChartDetail = ({ date, chartData, modalVisible, style, onClose }: AnalyticProps) => {
   const [chartDataDisplay, setChartDataDisplay] = useState<any[]>([]);
   const [chartOptions, setChartOptions] = useState<any>({});
-  const offset = 1_000;
+  const offset = 10_000;
   function MapChartData() {
     const temp: any = [];
     expenseCategory.forEach((item: Category) => {
@@ -42,10 +41,19 @@ const CategoryChartDetail = ({ date, chartData, modalVisible, style, onClose }: 
         labelTextStyle: { color: colors.gray },
         // labelWidth: 60,
         labelComponent: () => customLabel(GetCategoryById(item.id)?.name || 'N/A'),
+        topLabelComponent: () => (
+          <Text style={{ color: colors.lightGray, fontSize: 6 }}>
+            {temp2 ? (temp2.value / offset).toFixed(0) : 0}
+          </Text>
+        ),
       });
     });
+    const maxExpense = Math.max(...temp.map((o: any) => o.value));
+    const noOfSections = 5;
+    console.log('maxExpense', Math.ceil(maxExpense / noOfSections));
     const chartOption = {
-      noOfSections: 10,
+      noOfSections,
+      stepValue: Math.ceil(maxExpense / noOfSections),
     };
     setChartOptions(chartOption);
     setChartDataDisplay(temp);
@@ -67,6 +75,7 @@ const CategoryChartDetail = ({ date, chartData, modalVisible, style, onClose }: 
   useEffect(() => {
     MapChartData();
   }, [chartData]);
+
   return (
     <View style={[style]}>
       <Portal>
@@ -103,8 +112,8 @@ const CategoryChartDetail = ({ date, chartData, modalVisible, style, onClose }: 
                 xAxisThickness={1}
                 yAxisThickness={0}
                 yAxisTextStyle={{ fontSize: 10, color: colors.gray }}
-                // noOfSections={chartOptions.noOfSections}
-                stepValue={100}
+                noOfSections={chartOptions.noOfSections}
+                stepValue={chartOptions.stepValue}
               />
             </View>
           </Dialog.Content>

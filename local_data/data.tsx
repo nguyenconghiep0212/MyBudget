@@ -1,3 +1,9 @@
+import {
+  GetExpense,
+  GetMonthlyBudget,
+  SaveExpense,
+  SaveMonthlyBudget,
+} from '@/services/file.service';
 import { colors } from '@/theme';
 import { Category, BudgetEvent, MonthlyBudget } from '@/types/budget';
 import { GetToday, months } from '@/utils/helper';
@@ -10,90 +16,98 @@ import {
 } from '@expo/vector-icons';
 
 const monthlyBudget: MonthlyBudget[] = [
-  {
-    month: 10,
-    year: 2025,
-    amount: 5_250_000,
-    salary: 12_500_000,
-  },
-  {
-    month: 9,
-    year: 2025,
-    amount: 4_000_000,
-    salary: 12_000_000,
-  },
-  {
-    month: 3,
-    year: 2024,
-    amount: 6_550_000,
-    salary: 8_000_000,
-  },
+  // {
+  //   month: 10,
+  //   year: 2025,
+  //   amount: 5_250_000,
+  //   salary: 12_500_000,
+  // },
+  // {
+  //   month: 9,
+  //   year: 2025,
+  //   amount: 4_000_000,
+  //   salary: 12_000_000,
+  // },
+  // {
+  //   month: 3,
+  //   year: 2024,
+  //   amount: 6_550_000,
+  //   salary: 8_000_000,
+  // },
 ];
 const budgetEvent: BudgetEvent[] = [
-  {
-    categoryId: 2,
-    id: '412',
-    name: 'Gas',
-    description: 'Filling gas for motorcycle',
-    amount: 65_000,
-    date: new Date('2025-10-04'),
-  },
-  {
-    categoryId: 2,
-    id: '2',
-    name: 'Gas',
-    description: 'Filling gas for motorcycle',
-    amount: 70_000,
-    date: new Date('2025-09-24'),
-  },
-  {
-    categoryId: 1,
-    id: '3',
-    name: 'Takoyaki',
-    description: 'yum yum',
-    amount: 54_000,
-    date: new Date('2025-09-24'),
-  },
-  {
-    categoryId: 4,
-    id: '41',
-    name: 'Meat and Vegetables',
-    description: 'For weekly groceries',
-    amount: 82_000,
-    date: new Date('2025-09-21'),
-  },
-  {
-    categoryId: 1,
-    id: '21',
-    name: 'Lunch',
-    description: 'Lunch with friends',
-    amount: 50_000,
-    date: new Date('2025-09-20'),
-  },
-  {
-    categoryId: 1,
-    id: '11',
-    name: 'Lunch',
-    description: 'Lunch with friends',
-    amount: 50_000,
-    date: new Date('2025-04-10'),
-  },
-  {
-    categoryId: 4,
-    id: '32',
-    name: 'Meat and Vegetables',
-    description: 'For weekly groceries',
-    amount: 1_082_000,
-    date: new Date('2024-03-11'),
-  },
-  {
-    categoryId: 4,
-    id: '132',
-    name: 'Stuffs',
-    description: 'Groceries',
-    amount: 2_610_000,
-    date: new Date('2024-03-22'),
-  },
+  // {
+  //   categoryId: 2,
+  //   id: '412',
+  //   name: 'Gas',
+  //   description: 'Filling gas for motorcycle',
+  //   amount: 65_000,
+  //   date: new Date('2025-10-04'),
+  // },
+  // {
+  //   categoryId: 2,
+  //   id: '2',
+  //   name: 'Gas',
+  //   description: 'Filling gas for motorcycle',
+  //   amount: 70_000,
+  //   date: new Date('2025-09-24'),
+  // },
+  // {
+  //   categoryId: 1,
+  //   id: '3',
+  //   name: 'Takoyaki',
+  //   description: 'yum yum',
+  //   amount: 54_000,
+  //   date: new Date('2025-09-24'),
+  // },
+  // {
+  //   categoryId: 4,
+  //   id: '41',
+  //   name: 'Meat and Vegetables',
+  //   description: 'For weekly groceries',
+  //   amount: 82_000,
+  //   date: new Date('2025-09-21'),
+  // },
+  // {
+  //   categoryId: 1,
+  //   id: '21',
+  //   name: 'Lunch',
+  //   description: 'Lunch with friends',
+  //   amount: 50_000,
+  //   date: new Date('2025-09-20'),
+  // },
+  // {
+  //   categoryId: 1,
+  //   id: '11',
+  //   name: 'Lunch',
+  //   description: 'Lunch with friends',
+  //   amount: 50_000,
+  //   date: new Date('2025-04-10'),
+  // },
+  // {
+  //   categoryId: 4,
+  //   id: '32',
+  //   name: 'Meat and Vegetables',
+  //   description: 'For weekly groceries',
+  //   amount: 1_082_000,
+  //   date: new Date('2024-03-11'),
+  // },
+  // {
+  //   categoryId: 4,
+  //   id: '132',
+  //   name: 'Stuffs',
+  //   description: 'Groceries',
+  //   amount: 2_610_000,
+  //   date: new Date('2024-03-22'),
+  // },
+  // {
+  //   categoryId: 1,
+  //   id: '13111',
+  //   name: 'aaaaa',
+  //   description: 'Groceries',
+  //   amount: 110_000,
+  //   date: new Date('2024-03-30'),
+  // },
 ];
 const expenseCategory: Category[] = [
   { id: 0, name: 'Misc', icon: <FontAwesome name="list" size={24} color={colors.Negative} /> },
@@ -139,24 +153,36 @@ const expenseCategory: Category[] = [
     icon: <MaterialIcons name="family-restroom" size={24} color={colors.Negative} />,
   },
 ];
-function AddExpense(newExpense: BudgetEvent) {
+
+async function GetExpenseFromFile() {
+  const res = await GetExpense();
+  if (res) {
+    Object.assign(budgetEvent, res);
+  }
+}
+async function AddExpense(newExpense: BudgetEvent) {
   budgetEvent.unshift(newExpense);
   console.log('Add: ' + JSON.stringify(budgetEvent));
+  await SaveExpense(budgetEvent);
 }
-function EditExpense(expense: BudgetEvent) {
+async function EditExpense(expense: BudgetEvent) {
   budgetEvent.forEach(item => {
     if (item.id === expense.id) {
       Object.assign(item, expense);
       console.log('Edit: ' + JSON.stringify(item));
     }
   });
+  await SaveExpense(budgetEvent);
 }
-function DeleteExpense(expenseId: string) {
+async function DeleteExpense(expenseId: string) {
   const index = budgetEvent.findIndex(item => item.id === expenseId);
-  budgetEvent.splice(index, 1);
-  console.log('Remove: ' + JSON.stringify(budgetEvent));
+  if (index > -1) {
+    budgetEvent.splice(index, 1);
+    console.log('Remove: ' + JSON.stringify(budgetEvent));
+    await SaveExpense(budgetEvent);
+  }
 }
-function GetAvailableYear(): number[] {
+function GetAvailableYear(getTrueYear = false): number[] {
   const years: number[] = [];
   if (budgetEvent.length === 0) {
     years.push(GetToday().getFullYear());
@@ -167,10 +193,18 @@ function GetAvailableYear(): number[] {
       years.unshift(item.date.getFullYear());
     }
   });
-  years.push(years[years.length - 1] + 1);
+  if (!getTrueYear) {
+    years.push(years[years.length - 1] + 1);
+  }
   return years;
 }
-function GetMonthlyBudget(year: number) {
+async function GetMonthlyBudgetFromFile() {
+  const res = await GetMonthlyBudget();
+  if (res) {
+    Object.assign(monthlyBudget, res);
+  }
+}
+function GetMonthlyBudgetByYear(year: number) {
   const result: any[] = [];
   for (let month = 1; month <= 12; month++) {
     result.push({
@@ -203,7 +237,7 @@ function GetMonthlyBudget(year: number) {
   });
   return result;
 }
-function SetMonthlyBudget(newBudget: MonthlyBudget) {
+async function SetMonthlyBudget(newBudget: MonthlyBudget) {
   if (
     monthlyBudget.find(i => i.month === newBudget.month && i.year === newBudget.year) === undefined
   ) {
@@ -216,6 +250,7 @@ function SetMonthlyBudget(newBudget: MonthlyBudget) {
       }
     });
   }
+  await SaveMonthlyBudget(monthlyBudget);
 }
 function GetCategoryById(id: number): Category | undefined {
   return expenseCategory.find((i: Category) => i.id === id);
@@ -329,11 +364,13 @@ export {
   budgetEvent,
   expenseCategory,
   monthlyBudget,
+  GetExpenseFromFile,
   AddExpense,
   EditExpense,
   DeleteExpense,
   GetAvailableYear,
-  GetMonthlyBudget,
+  GetMonthlyBudgetFromFile,
+  GetMonthlyBudgetByYear,
   SetMonthlyBudget,
   GetCategoryById,
   groupBudgetDataFlat,
