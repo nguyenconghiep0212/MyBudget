@@ -1,12 +1,16 @@
 {
   "expo": {
-    "name": "react-native-boilerplate",
-    "slug": "react-native-boilerplate",
-    "scheme": "react-native-boilerplate",
-    "version": "3.0.0",
-    "owner": "wataru",
+    "name": "My Budget",
+    "slug": "my-budget",
+    "scheme": "my-budget",
+    "version": "1.0.0",
+    "owner": "kenjihunter",
     "newArchEnabled": true,
-    "platforms": ["ios", "android", "web"],
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
     "orientation": "portrait",
     "icon": "./assets/images/logo-lg.png",
     "userInterfaceStyle": "automatic",
@@ -32,6 +36,14 @@
     },
     "runtimeVersion": {
       "policy": "sdkVersion"
+    },
+    "extra": {
+      "env": "development",
+      "apiUrl": "https://example.com",
+      "router": {},
+      "eas": {
+        "projectId": "45c3932b-bd50-495b-9c68-e3730033d7c7"
+      }
     }
   }
 }
