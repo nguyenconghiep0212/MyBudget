@@ -8,6 +8,7 @@ import { GetAvailableYear, GetCategoryById, GetMonthlyBudgetByYear } from '@/loc
 import { MonthlyBudget as MonthlyBudgetType } from '@/types/budget';
 import MonthEdit from './monthly_Edit';
 import { useFocusEffect } from 'expo-router';
+import { useBudgetSlice } from '@/slices';
 const styles = StyleSheet.create({
   body: {
     width: '100%',
@@ -52,6 +53,7 @@ const MonthlyBudget = ({ style }: MonthlyBudgetProps) => {
   const [selectedYear, setSelectedYear] = useState(GetToday().getFullYear());
   const [tableData, setTableData] = useState<TableDataType[]>([]);
   const [refreshFlag, setRefreshFlag] = useState<boolean>(false);
+
   function GetMonthBudgetByYear(selectedYear: number) {
     const temp = GetMonthlyBudgetByYear(selectedYear);
     setTableData(temp.reverse());
@@ -71,14 +73,13 @@ const MonthlyBudget = ({ style }: MonthlyBudgetProps) => {
   }
   useEffect(() => {
     GetYear();
-    UpdateData(selectedYear);
   }, []);
   useEffect(() => {
     UpdateData(selectedYear);
   }, [refreshFlag]);
   useFocusEffect(
     useCallback(() => {
-      GetMonthBudgetByYear(selectedYear);
+      UpdateData(selectedYear);
     }, []),
   );
   const renderItem = (item: any) => {

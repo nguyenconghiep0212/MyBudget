@@ -7,6 +7,7 @@ import { ReactNode, useCallback, useEffect, useState } from 'react';
 import { MonthlyBudget } from '@/types/budget';
 import { Surface } from 'react-native-paper';
 import { useFocusEffect } from 'expo-router';
+import { useBudgetSlice } from '@/slices';
 const styles = StyleSheet.create({
   body: {
     width: '100%',
@@ -73,7 +74,8 @@ type ChartData = {
   topLabelComponent?: () => ReactNode;
 };
 const YearIncomeChart = ({ title, selectedYear, style }: AnalyticProps) => {
-  const [yearData, setYearData] = useState<YearSummary[]>([]);
+  const { refreshDataFiles } = useBudgetSlice();
+  let [yearData, setYearData] = useState<YearSummary[]>([]);
   const [chartData, setChartData] = useState<ChartData[]>([]);
   const [chartOptions, setChartOption] = useState<any>({
     noOfSections: 0,
@@ -86,8 +88,6 @@ const YearIncomeChart = ({ title, selectedYear, style }: AnalyticProps) => {
     // Aggregate data into the result structure
     monthlyBudgets.forEach((item: MonthlyBudget) => {
       if (item.year === selectedYear) {
-        const key = `${item.year}-${item.month}`;
-
         // Find or create the year entry
         let yearEntry = result.find(y => y.year === item.year);
         if (!yearEntry) {
@@ -108,7 +108,7 @@ const YearIncomeChart = ({ title, selectedYear, style }: AnalyticProps) => {
         }
       }
     });
-    Object.assign(yearData, result);
+    yearData = result;
     setYearData(result);
     return result;
   }
@@ -117,7 +117,8 @@ const YearIncomeChart = ({ title, selectedYear, style }: AnalyticProps) => {
 
     const tempYearData = [];
     for (let index = 1; index <= 12; index++) {
-      const findMonth = yearData[0].months.find(item => item.month === index);
+      const findMonth =
+        yearData.length > 0 ? yearData[0].months.find(item => item.month === index) : false;
       if (findMonth) {
         tempYearData.push(findMonth);
       } else {
@@ -144,9 +145,12 @@ const YearIncomeChart = ({ title, selectedYear, style }: AnalyticProps) => {
 
     // Chart Option
     const noOfSections = 5;
-    const stepValue: any = Math.ceil(
-      Math.max(...yearData[0].months.map((item: any) => item.income)) / offset / noOfSections,
-    );
+    const stepValue: any =
+      yearData.length > 0
+        ? Math.ceil(
+            Math.max(...yearData[0].months.map((item: any) => item.income)) / offset / noOfSections,
+          )
+        : 5;
     setChartOption({
       noOfSections,
       stepValue,
@@ -156,7 +160,7 @@ const YearIncomeChart = ({ title, selectedYear, style }: AnalyticProps) => {
   useEffect(() => {
     CombineBudgetsAndExpenses(monthlyBudget);
     SetChartData();
-  }, [selectedYear]);
+  }, [selectedYear, refreshDataFiles]);
   useEffect(() => {}, [chartData, chartOptions]);
   useFocusEffect(
     useCallback(() => {

@@ -6,7 +6,7 @@ import {
 } from '@/services/file.service';
 import { colors } from '@/theme';
 import { Category, BudgetEvent, MonthlyBudget } from '@/types/budget';
-import { GetToday, months } from '@/utils/helper';
+import { GetToday } from '@/utils/helper';
 import {
   FontAwesome,
   FontAwesome6,
@@ -15,7 +15,7 @@ import {
   MaterialIcons,
 } from '@expo/vector-icons';
 
-const monthlyBudget: MonthlyBudget[] = [
+let monthlyBudget: MonthlyBudget[] = [
   // {
   //   month: 10,
   //   year: 2025,
@@ -35,7 +35,7 @@ const monthlyBudget: MonthlyBudget[] = [
   //   salary: 8_000_000,
   // },
 ];
-const budgetEvent: BudgetEvent[] = [
+let budgetEvent: BudgetEvent[] = [
   // {
   //   categoryId: 2,
   //   id: '412',
@@ -157,6 +157,7 @@ const expenseCategory: Category[] = [
 async function GetExpenseFromFile() {
   const res = await GetExpense();
   if (res) {
+    budgetEvent = res;
     Object.assign(budgetEvent, res);
   }
 }
@@ -201,7 +202,8 @@ function GetAvailableYear(getTrueYear = false): number[] {
 async function GetMonthlyBudgetFromFile() {
   const res = await GetMonthlyBudget();
   if (res) {
-    Object.assign(monthlyBudget, res);
+    // Object.assign(monthlyBudget, res);
+    monthlyBudget = res;
   }
 }
 function GetMonthlyBudgetByYear(year: number) {

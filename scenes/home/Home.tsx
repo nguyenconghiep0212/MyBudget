@@ -1,15 +1,14 @@
 import { Text, View, StyleSheet } from 'react-native';
 import useColorScheme from '@/hooks/useColorScheme';
-import Button from '@/components/_layouts/Button';
-import { useRouter } from 'expo-router';
 import { colors } from '@/theme';
-import { ActivityIndicator, Badge, Divider } from 'react-native-paper';
+import { ActivityIndicator, Divider } from 'react-native-paper';
 import MainBudget from '@/components/home/mainBudget';
 import BudgetSummary from '@/components/home/budgetSummary';
 import Today from '@/components/_common/date';
 import { GetExpenseFromFile, GetMonthlyBudgetFromFile } from '@/local_data/data';
-import { use, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { GetGoldFromFile } from '@/local_data/assets';
+import { useBudgetSlice } from '@/slices';
 const styles = StyleSheet.create({
   root: {
     flex: 1,
@@ -24,14 +23,19 @@ const styles = StyleSheet.create({
 
 export default function Home() {
   const [initFinish, setInitFinish] = useState<boolean>(false);
+  const { refreshDataFiles } = useBudgetSlice();
+
   const { isDark } = useColorScheme();
   async function InitData() {
     await Promise.all([GetMonthlyBudgetFromFile(), GetExpenseFromFile(), GetGoldFromFile()]);
     setInitFinish(true);
   }
   useEffect(() => {
-    InitData();
-  }, []);
+    setInitFinish(false);
+    setTimeout(() => {
+      InitData();
+    }, 1000);
+  }, [refreshDataFiles]);
 
   return (
     <View style={[styles.root, isDark && { backgroundColor: colors.blackGray }]}>

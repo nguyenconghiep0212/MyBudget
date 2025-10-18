@@ -4,6 +4,7 @@ import { State, Dispatch } from '@/utils/store';
 
 const initialState = {
   viewMode: 'detail', // summary | detail
+  refreshDataFiles: false,
 };
 export const slice = createSlice({
   name: 'budget',
@@ -15,6 +16,9 @@ export const slice = createSlice({
       } else if (state.viewMode === 'detail') {
         state.viewMode = 'summary';
       }
+    },
+    RefreshDataFiles(state) {
+      state.refreshDataFiles = !state.refreshDataFiles;
     },
   },
 });

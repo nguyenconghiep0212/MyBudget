@@ -1,11 +1,13 @@
 import { Text, View, StyleSheet, StyleProp, ViewStyle, ScrollView } from 'react-native';
-import React, { ReactNode, useEffect, useState } from 'react';
+import React, { ReactNode, useCallback, useEffect, useState } from 'react';
 import { Button, Divider, List } from 'react-native-paper';
 import { colors } from '@/theme';
 import { FontAwesome6, MaterialIcons } from '@expo/vector-icons';
 import { formatCurrency, months } from '@/utils/helper';
 import { GetCategoryById, groupBudgetDataFlat, budgetEvent } from '@/local_data/data';
 import { BudgetEvent } from '@/types/budget';
+import { useBudgetSlice } from '@/slices';
+import { useFocusEffect } from 'expo-router';
 const styles = StyleSheet.create({
   body: {
     width: '100%',
@@ -40,10 +42,15 @@ type BudgetEventFlatProps = {
 
 const BudgetEventFlat = ({ refreshFlag, style, onSelectBudgetEvent }: BudgetEventFlatProps) => {
   const [groupedData, setGroupedData] = useState(groupBudgetDataFlat());
+
   useEffect(() => {
     setGroupedData(groupBudgetDataFlat());
   }, [refreshFlag]);
-
+  useFocusEffect(
+    useCallback(() => {
+      setGroupedData(groupBudgetDataFlat());
+    }, []),
+  );
   function ListAccordionNode(
     Date: string,
     Amount: number,

@@ -1,7 +1,7 @@
 import { GetGold, SaveGold } from '@/services/file.service';
 import { Gold } from '@/types/budget';
 
-const goldData: Gold[] = [
+let goldData: Gold[] = [
   // {
   //   id: '1',
   //   own: 2,
@@ -56,7 +56,8 @@ async function RemoveAsset(id: string) {
 async function GetGoldFromFile() {
   const res = await GetGold();
   if (res) {
-    Object.assign(goldData, res);
+    goldData = res;
+    // Object.assign(goldData, res);
   }
 }
 export { goldData, AddAsset, RemoveAsset, GetGoldFromFile };

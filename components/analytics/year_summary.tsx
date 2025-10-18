@@ -1,12 +1,13 @@
 import { colors } from '@/theme';
-import { formatCurrency, GetToday, months } from '@/utils/helper';
+import { formatCurrency } from '@/utils/helper';
 import { View, Text, StyleSheet, StyleProp, ViewStyle } from 'react-native';
-import { GetCategoryById, budgetEvent, monthlyBudget } from '@/local_data/data';
-import { BarChart, PieChart } from 'react-native-gifted-charts';
-import { ReactNode, use, useCallback, useEffect, useState } from 'react';
+import { budgetEvent, monthlyBudget } from '@/local_data/data';
+import { PieChart } from 'react-native-gifted-charts';
+import { ReactNode, useCallback, useEffect, useState } from 'react';
 import { BudgetEvent, MonthlyBudget } from '@/types/budget';
-import { Divider, MD3Colors, ProgressBar, Surface } from 'react-native-paper';
+import { Divider, Surface } from 'react-native-paper';
 import { useFocusEffect } from 'expo-router';
+import { useBudgetSlice } from '@/slices';
 const styles = StyleSheet.create({
   superContainer: {
     flexDirection: 'row',
@@ -47,14 +48,16 @@ type AnalyticProps = {
   title?: ReactNode;
 };
 
-type YearSummary = {
+type YearSummaryType = {
   year: number;
   income: number;
   budget: number;
   expense: number;
 };
 const YearSummary = ({ title, selectedYear, style }: AnalyticProps) => {
-  const [yearData, setYearData] = useState<YearSummary>({
+  const { refreshDataFiles } = useBudgetSlice();
+
+  const [yearData, setYearData] = useState<YearSummaryType>({
     year: 0,
     income: 0,
     budget: 0,
@@ -62,7 +65,7 @@ const YearSummary = ({ title, selectedYear, style }: AnalyticProps) => {
   });
 
   function CombineBudgetsAndExpenses(budgetEvents: BudgetEvent[], monthlyBudgets: MonthlyBudget[]) {
-    const result: YearSummary = {
+    const result: YearSummaryType = {
       year: selectedYear,
       income: 0,
       budget: 0,
@@ -104,7 +107,7 @@ const YearSummary = ({ title, selectedYear, style }: AnalyticProps) => {
   useEffect(() => {
     CombineBudgetsAndExpenses(budgetEvent, monthlyBudget);
     CalculateRemainBudget();
-  }, [selectedYear]);
+  }, [selectedYear, refreshDataFiles]);
   useEffect(() => {}, [yearData]);
   useFocusEffect(
     useCallback(() => {

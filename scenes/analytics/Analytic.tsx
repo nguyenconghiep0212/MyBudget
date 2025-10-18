@@ -1,7 +1,5 @@
-import { Text, View, StyleSheet, ScrollView } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import useColorScheme from '@/hooks/useColorScheme';
-import Button from '@/components/_layouts/Button';
-import { useRouter } from 'expo-router';
 import { colors } from '@/theme';
 import Analytic from '@/components/analytics';
 
@@ -16,7 +14,6 @@ const styles = StyleSheet.create({
 });
 
 export default function Home() {
-  const router = useRouter();
   const { isDark } = useColorScheme();
   return (
     <View style={[styles.root, isDark && { backgroundColor: colors.blackGray }]}>

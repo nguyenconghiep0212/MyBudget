@@ -1,34 +1,15 @@
-import { budgetEvent, expenseCategory, GetCategoryById, monthlyBudget } from '@/local_data/data';
+import { budgetEvent, expenseCategory } from '@/local_data/data';
 import { colors } from '@/theme';
-import { BudgetEvent, MonthlyBudget } from '@/types/budget';
+import { BudgetEvent } from '@/types/budget';
 import { months } from '@/utils/helper';
 import { useFocusEffect } from 'expo-router';
 import { ReactNode, useCallback, useEffect, useState } from 'react';
-import { View, Text, StyleSheet, StyleProp, ViewStyle } from 'react-native';
+import { View, Text, StyleProp, ViewStyle } from 'react-native';
 import { PieChart } from 'react-native-gifted-charts';
 import { Divider, Surface } from 'react-native-paper';
 import CategoryChartDetail from './categories_summary_chart_detail';
-const styles = StyleSheet.create({
-  body: {
-    width: '100%',
-    display: 'flex',
-    alignItems: 'flex-start',
-    justifyContent: 'flex-start',
-    paddingHorizontal: 12,
-  },
-  superContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    alignContent: 'flex-start',
-  },
-  superItemContainer: {
-    display: 'flex',
-    width: '50%', // 50% -> 2 columns | 33% -> 3 columns | 25% -> 4 columns
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingBottom: 4,
-  },
-});
+import { useBudgetSlice } from '@/slices';
+
 type AnalyticProps = {
   style?: StyleProp<ViewStyle>;
   selectedYear: number;
@@ -36,6 +17,8 @@ type AnalyticProps = {
 };
 
 const CategoryChart = ({ title, selectedYear, style }: AnalyticProps) => {
+  const { refreshDataFiles } = useBudgetSlice();
+
   const [chartData, setChartData] = useState<any[]>([{ value: 54, color: '#177AD5', text: '54%' }]);
   const [chartDataMonth, setChartDataMonth] = useState<any[]>([]);
   const [detailData, setDetailData] = useState<any[]>([]);
@@ -151,7 +134,7 @@ const CategoryChart = ({ title, selectedYear, style }: AnalyticProps) => {
   useEffect(() => {
     getTotalCategorySpending(budgetEvent, selectedYear);
     getMonthlyCategorySpending(budgetEvent, selectedYear);
-  }, [selectedYear]);
+  }, [selectedYear, refreshDataFiles]);
   useEffect(() => {}, [chartData, chartDataMonth]);
   return (
     <View style={[style]}>

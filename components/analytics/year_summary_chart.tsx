@@ -1,12 +1,13 @@
 import { colors } from '@/theme';
-import { GetToday, months } from '@/utils/helper';
+import { months } from '@/utils/helper';
 import { View, Text, StyleSheet, StyleProp, ViewStyle } from 'react-native';
-import { GetCategoryById, budgetEvent, monthlyBudget } from '@/local_data/data';
+import { budgetEvent, monthlyBudget } from '@/local_data/data';
 import { BarChart } from 'react-native-gifted-charts';
 import { ReactNode, useCallback, useEffect, useState } from 'react';
 import { BudgetEvent, MonthlyBudget } from '@/types/budget';
 import { Surface } from 'react-native-paper';
 import { useFocusEffect } from 'expo-router';
+import { useBudgetSlice } from '@/slices';
 const styles = StyleSheet.create({
   body: {
     width: '100%',
@@ -75,7 +76,9 @@ type ChartData = {
   topLabelComponent?: () => ReactNode;
 };
 const YearSummaryChart = ({ title, selectedYear, style }: AnalyticProps) => {
-  const [yearData, setYearData] = useState<YearSummary[]>([]);
+  const { refreshDataFiles } = useBudgetSlice();
+
+  let [yearData, setYearData] = useState<YearSummary[]>([]);
   const [chartData, setChartData] = useState<ChartData[]>([]);
   const [monthExceedBudget, setMonthExceedBudget] = useState<number>(0);
   const [monthWithinBudget, setMonthWithinBudget] = useState<number>(0);
@@ -129,7 +132,7 @@ const YearSummaryChart = ({ title, selectedYear, style }: AnalyticProps) => {
         }
       }
     });
-    Object.assign(yearData, result);
+    yearData = result;
     setYearData(result);
     return result;
   }
@@ -140,7 +143,8 @@ const YearSummaryChart = ({ title, selectedYear, style }: AnalyticProps) => {
     let localMonthWithinBudget = 0;
     let localMonthExceedBudget = 0;
     for (let index = 1; index <= 12; index++) {
-      const findMonth = yearData[0].months.find(item => item.month === index);
+      const findMonth =
+        yearData.length > 0 ? yearData[0].months.find(item => item.month === index) : false;
       if (findMonth) {
         if (findMonth.expense <= findMonth.budget) {
           localMonthWithinBudget++;
@@ -204,9 +208,12 @@ const YearSummaryChart = ({ title, selectedYear, style }: AnalyticProps) => {
 
     // Chart Option
     const noOfSections = 5;
-    const stepValue = Math.ceil(
-      Math.max(...yearData[0].months.map((item: any) => item.budget)) / offset / noOfSections,
-    );
+    const stepValue =
+      yearData.length > 0
+        ? Math.ceil(
+            Math.max(...yearData[0].months.map((item: any) => item.budget)) / offset / noOfSections,
+          )
+        : 5;
     setChartOption({
       noOfSections,
       stepValue,
@@ -216,7 +223,7 @@ const YearSummaryChart = ({ title, selectedYear, style }: AnalyticProps) => {
   useEffect(() => {
     CombineBudgetsAndExpenses(budgetEvent, monthlyBudget);
     SetChartData();
-  }, [selectedYear]);
+  }, [selectedYear, refreshDataFiles]);
   useEffect(() => {}, [chartData, chartOptions, monthWithinBudget, monthExceedBudget]);
   useFocusEffect(
     useCallback(() => {
