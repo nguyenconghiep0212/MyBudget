@@ -21,6 +21,7 @@ export default function HomeStackLayout() {
         options={{
           title: 'Home',
           headerTitle: () => <NavigationHeaderTitle />,
+          headerLeft: () => <NavigationHeaderLeft onPress={toggleDrawer} />,
           headerTitleAlign: 'center',
         }}
       />

@@ -1,6 +1,7 @@
 import * as FileSystem from 'expo-file-system/legacy';
 import { BudgetEvent, MonthlyBudget } from '@/types/budget';
 import { Gold } from '@/types/budget';
+import * as Sharing from 'expo-sharing';
 
 const expenseFileName = 'expense_data.json';
 const goldFileName = 'gold_data.json';
@@ -12,14 +13,6 @@ async function InitFiles() {
     CheckAndCreateFile(goldFileName),
     CheckAndCreateFile(monthlyBudgetFileName),
   ]);
-
-  // CheckAndCreateFile(expenseFileName);
-  // CheckAndCreateFile(goldFileName);
-  // CheckAndCreateFile(monthlyBudgetFileName);
-
-  CopyFileToExternalStorage(expenseFileName);
-  CopyFileToExternalStorage(goldFileName);
-  CopyFileToExternalStorage(monthlyBudgetFileName);
 }
 const CheckAndCreateFile = async (fileName: string) => {
   try {
@@ -117,14 +110,21 @@ async function RemoveFile(fileName: string) {
   }
 }
 
+function CopyExpenseFileToExternalStorage() {
+  CopyFileToExternalStorage(expenseFileName);
+}
+function CopyGoldFileToExternalStorage() {
+  CopyFileToExternalStorage(goldFileName);
+}
+function CopyBudgetFileToExternalStorage() {
+  CopyFileToExternalStorage(monthlyBudgetFileName);
+}
 async function CopyFileToExternalStorage(fileName: string) {
-  // Copy the file to the external storage (Downloads folder)
   const filePath = `${FileSystem.documentDirectory}${fileName}`;
-  const externalFilePath = `${FileSystem.documentDirectory}../Downloads/${fileName}`;
-  await FileSystem.copyAsync({
-    from: filePath,
-    to: externalFilePath,
-  });
+  const shareAvailable = await Sharing.isAvailableAsync();
+  if (shareAvailable) {
+    Sharing.shareAsync(filePath);
+  }
 }
 export {
   InitFiles,
@@ -136,4 +136,7 @@ export {
   GetGold,
   SaveMonthlyBudget,
   GetMonthlyBudget,
+  CopyExpenseFileToExternalStorage,
+  CopyGoldFileToExternalStorage,
+  CopyBudgetFileToExternalStorage,
 };
