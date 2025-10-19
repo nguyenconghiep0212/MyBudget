@@ -190,7 +190,12 @@ const BudgetSummary = ({ style }: BudgetSummaryProps) => {
             </Text>
           </View>
         </View>
-        <View style={[styles.superItemContainer, styles.superContainer]}>
+        <View
+          style={[
+            styles.superItemContainer,
+            styles.superContainer,
+            { marginLeft: 8, marginVertical: 4 },
+          ]}>
           {item.expenseCategories.map((cat, idx) => (
             <View
               key={idx}
@@ -199,7 +204,8 @@ const BudgetSummary = ({ style }: BudgetSummaryProps) => {
                 {
                   borderColor: colors.Negative,
                   transform: [{ scale: 0.6 }],
-                  marginLeft: idx > 0 ? -10 : 0,
+                  marginLeft: -12,
+                  marginTop: -12,
                 },
               ]}>
               {cat.icon}

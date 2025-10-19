@@ -39,7 +39,6 @@ const CategoryChart = ({ title, selectedYear, style }: AnalyticProps) => {
         totals[month][event.categoryId] = totals[month][event.categoryId] + event.amount;
       }
     });
-    const temp = sortObjectKeys(totals);
 
     const temp2: any = [];
     for (let index = 0; index < 12; index++) {
@@ -50,24 +49,13 @@ const CategoryChart = ({ title, selectedYear, style }: AnalyticProps) => {
           temp2[index].push({
             value: total,
             color: MapCatWithColor(parseInt(categoryId)),
-            text: ((total / totalSpending) * 100).toFixed(0) + '%',
+            text: ((total / totalSpending) * 100).toFixed(0),
             categoryId,
           });
         });
       }
     }
     setChartDataMonth(temp2);
-
-    function sortObjectKeys(obj: any) {
-      const sortedKeys = Object.keys(obj).sort((a, b) => Number(a) - Number(b)); // Sort keys in ascending order
-      const sortedObject: any = {};
-
-      sortedKeys.forEach(key => {
-        sortedObject[key] = obj[key]; // Rebuild the object with sorted keys
-      });
-
-      return sortedObject;
-    }
   }
   function getTotalCategorySpending(events: BudgetEvent[], selectedYear: number) {
     const totals: { [key: number]: number } = {};
@@ -87,7 +75,7 @@ const CategoryChart = ({ title, selectedYear, style }: AnalyticProps) => {
       temp.push({
         value: total,
         color: MapCatWithColor(parseInt(categoryId)),
-        text: ((total / totalSpending) * 100).toFixed(0) + '%',
+        text: ((total / totalSpending) * 100).toFixed(0),
         categoryId,
       });
     });

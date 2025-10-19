@@ -91,12 +91,12 @@ const YearSummary = ({ title, selectedYear, style }: AnalyticProps) => {
     if (yearData.expense > yearData.budget) {
       result =
         'You have exceeded your budget by ' +
-        ((yearData.expense / yearData.budget) * 100).toFixed(0) +
+        (yearData.budget === 0 ? '100' : ((yearData.expense / yearData.budget) * 100).toFixed(0)) +
         '%';
     } else {
       result =
         'You have spent ' +
-        ((yearData.expense / yearData.budget) * 100).toFixed(0) +
+        (yearData.budget && ((yearData.expense / yearData.budget) * 100).toFixed(0)) +
         '% of your budget';
     }
     return result;
@@ -212,25 +212,40 @@ const YearSummary = ({ title, selectedYear, style }: AnalyticProps) => {
             </View>
           </View>
           <View style={{ alignItems: 'center', marginTop: 4, paddingHorizontal: 16 }}>
-            <PieChart
-              showText
-              fontWeight={'700'}
-              textColor={colors.black}
-              radius={40}
-              textSize={18}
-              data={[
-                {
-                  value: yearData.budget - yearData.expense,
-                  color: colors.Positive,
-                  text: 100 - parseInt(CalculateBudgetProgress()) + '%',
-                },
-                {
-                  value: yearData.expense,
-                  color: colors.Negative,
-                  text: CalculateBudgetProgress() + '%',
-                },
-              ]}
-            />
+            {yearData.budget > 0 ? (
+              <PieChart
+                showText
+                fontWeight={'700'}
+                textColor={colors.black}
+                radius={40}
+                textSize={18}
+                data={[
+                  {
+                    value: yearData.budget - yearData.expense,
+                    color: colors.Positive,
+                    text: 100 - parseInt(CalculateBudgetProgress()) + '%',
+                  },
+                  {
+                    value: yearData.expense,
+                    color: colors.Negative,
+                    text: CalculateBudgetProgress() + '%',
+                  },
+                ]}
+              />
+            ) : (
+              <View
+                style={{
+                  height: 120,
+                  width: 120,
+                  borderRadius: 99,
+                  alignItems: 'center',
+                  backgroundColor: colors.darkGray,
+                  justifyContent: 'center',
+                }}>
+                <Text style={{ color: colors.gray, fontWeight: 600, fontSize: 12 }}>N/A</Text>
+              </View>
+            )}
+
             <Text
               style={[
                 {

@@ -3,7 +3,7 @@
     "name": "My Budget",
     "slug": "my-budget",
     "scheme": "my-budget",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "owner": "kenjihunter",
     "newArchEnabled": true,
     "platforms": [
@@ -15,9 +15,9 @@
     "icon": "./assets/images/logo-lg.png",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "backgroundColor": "#ffffff",
+      "backgroundColor": "#299574",
       "dark": {
-        "backgroundColor": "#101212"
+        "backgroundColor": "#1A332C"
       },
       "image": "./assets/images/logo-lg.png",
       "resizeMode": "contain"
@@ -27,8 +27,8 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/logo-sm.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/images/new_logo-sm.png",
+        "backgroundColor": "#299574"
       }
     },
     "web": {

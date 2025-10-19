@@ -184,17 +184,35 @@ const MonthlyBudget = ({ style }: MonthlyBudgetProps) => {
                 </View>
               </DataTable.Cell>
               <DataTable.Cell numeric>
-                <Text style={{ fontWeight: 200, fontSize: 10, color: colors.Negative }}>
+                <Text
+                  style={{
+                    fontWeight: 800,
+                    fontSize: 9,
+                    letterSpacing: 0.25,
+                    color: colors.Negative,
+                  }}>
                   {item.expense ? '-' + formatCurrency(item.expense) : '-'}
                 </Text>
               </DataTable.Cell>
               <DataTable.Cell numeric>
-                <Text style={{ fontWeight: 200, fontSize: 10, color: colors.Positive }}>
+                <Text
+                  style={{
+                    fontWeight: 800,
+                    fontSize: 9,
+                    letterSpacing: 0.25,
+                    color: colors.Positive,
+                  }}>
                   {item.budget ? formatCurrency(item.budget) : '-'}
                 </Text>
               </DataTable.Cell>
               <DataTable.Cell numeric>
-                <Text style={{ fontWeight: 200, fontSize: 10, color: colors.NavyBlueText }}>
+                <Text
+                  style={{
+                    fontWeight: 800,
+                    fontSize: 9,
+                    letterSpacing: 0.25,
+                    color: colors.NavyBlueText,
+                  }}>
                   {item.salary ? formatCurrency(item.salary) : '-'}
                 </Text>
               </DataTable.Cell>

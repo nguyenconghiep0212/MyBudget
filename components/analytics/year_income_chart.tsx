@@ -136,7 +136,9 @@ const YearIncomeChart = ({ title, selectedYear, style }: AnalyticProps) => {
         frontColor: colors.NavyBlueText,
         labelComponent: () => customLabel(months[item.month - 1].slice(0, 3)),
         topLabelComponent: () => (
-          <Text style={{ color: colors.lightGray, fontSize: 6 }}>{item.income / offset}</Text>
+          <Text style={{ color: colors.lightGray, fontSize: 6 }}>
+            {(item.income / offset).toFixed(1)}
+          </Text>
         ),
       };
       temp.push(temp1);

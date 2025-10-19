@@ -81,7 +81,7 @@ const BudgetEventTree = ({ refreshFlag, style, onSelectBudgetEvent }: BudgetEven
           return (
             <View
               key={index}
-              style={{ transform: [{ scale: 0.5 }], marginLeft: index > 0 ? -8 : 0 }}>
+              style={{ transform: [{ scale: 0.4 }], marginLeft: index > 0 ? -10 : 0 }}>
               {GetCategoryById(item)?.icon}
             </View>
           );
@@ -132,7 +132,7 @@ const BudgetEventTree = ({ refreshFlag, style, onSelectBudgetEvent }: BudgetEven
             key={key}
             style={{ width: '100%', backgroundColor: colors.blackGray, padding: 0 }}>
             <List.Accordion
-              title={ListAccordionNode(months[key - 1], value.total, value.categoriesId)}
+              title={ListAccordionNode(months[key - 1], value.total, [])}
               left={props => (
                 <List.Icon
                   {...props}

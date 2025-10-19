@@ -61,11 +61,10 @@ const MetalTable = () => {
 
   async function MapTableData() {
     const result: TableData[] = [];
-    console.log('Got gold data from file');
     goldData.forEach((item: Gold) => {
       const temp = goldPrice.data.find((item2: SJC, index: number) => item2.Id === item.category);
-      const priceCurrent = temp ? temp.BuyValue : 0;
-      const discrepancy = priceCurrent - item.priceAtBought;
+      const priceCurrent = temp ? Math.round(temp.BuyValue) : 0;
+      const discrepancy = priceCurrent - Math.round(item.priceAtBought);
       result.push({
         ...item,
         priceCurrent,
@@ -98,11 +97,9 @@ const MetalTable = () => {
     setRefreshTable(!refreshTable);
   }
   useEffect(() => {
-    console.log('======================================');
     GetGoldPrice();
   }, [refreshGoldPrice]);
   useEffect(() => {
-    console.log('---------------------');
     MapTableData();
   }, [goldPrice, refreshTable]);
   return (
@@ -170,7 +167,7 @@ const MetalTable = () => {
                 style={{
                   fontWeight: 200,
                   fontSize: 9,
-                  letterSpacing: 0.75,
+                  letterSpacing: 0.25,
                   color: colors.NavyBlueText,
                 }}>
                 {formatCurrency(item.priceAtBought)}
@@ -181,7 +178,7 @@ const MetalTable = () => {
                 style={{
                   fontWeight: 200,
                   fontSize: 9,
-                  letterSpacing: 0.75,
+                  letterSpacing: 0.25,
                   color: colors.Positive,
                 }}>
                 {formatCurrency(item.priceCurrent)}
@@ -192,7 +189,7 @@ const MetalTable = () => {
                 style={{
                   fontWeight: 200,
                   fontSize: 9,
-                  letterSpacing: 0.75,
+                  letterSpacing: 0.25,
                   color: item.discrepancy > 0 ? colors.Positive : colors.Negative,
                 }}>
                 {formatCurrency(item.discrepancy)}
@@ -252,14 +249,16 @@ const MetalTable = () => {
             <Text
               style={{
                 fontWeight: 800,
-                fontSize: 9,
-                letterSpacing: 0.5,
+                fontSize: 8,
+                letterSpacing: 0.25,
                 color: colors.NavyBlueText,
               }}>
               {formatCurrency(
-                tableData.reduce(
-                  (total, current) => total + current.priceAtBought * current.own,
-                  0,
+                Math.round(
+                  tableData.reduce(
+                    (total, current) => total + current.priceAtBought * current.own,
+                    0,
+                  ),
                 ),
               )}
             </Text>
@@ -268,12 +267,17 @@ const MetalTable = () => {
             <Text
               style={{
                 fontWeight: 800,
-                fontSize: 9,
-                letterSpacing: 0.5,
+                fontSize: 8,
+                letterSpacing: 0.25,
                 color: colors.Positive,
               }}>
               {formatCurrency(
-                tableData.reduce((total, current) => total + current.priceCurrent * current.own, 0),
+                Math.round(
+                  tableData.reduce(
+                    (total, current) => total + current.priceCurrent * current.own,
+                    0,
+                  ),
+                ),
               )}
             </Text>
           </DataTable.Cell>
@@ -281,8 +285,8 @@ const MetalTable = () => {
             <Text
               style={{
                 fontWeight: 800,
-                fontSize: 9,
-                letterSpacing: 0.5,
+                fontSize: 8,
+                letterSpacing: 0.25,
                 color:
                   tableData.reduce(
                     (total, current) => total + current.priceCurrent * current.own,
@@ -297,14 +301,16 @@ const MetalTable = () => {
                     : colors.Negative,
               }}>
               {formatCurrency(
-                tableData.reduce(
-                  (total, current) => total + current.priceCurrent * current.own,
-                  0,
-                ) -
+                Math.round(
                   tableData.reduce(
-                    (total, current) => total + current.priceAtBought * current.own,
+                    (total, current) => total + current.priceCurrent * current.own,
                     0,
-                  ),
+                  ) -
+                    tableData.reduce(
+                      (total, current) => total + current.priceAtBought * current.own,
+                      0,
+                    ),
+                ),
               )}
             </Text>
           </DataTable.Cell>

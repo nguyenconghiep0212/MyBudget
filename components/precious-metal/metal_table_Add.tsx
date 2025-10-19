@@ -87,7 +87,7 @@ const MetalTableAdd = ({
     if (isUseCurrentPrice) {
       const temp = dataGoldPriceAPI.find((item: SJC) => item.Id === newGold.category);
       newGold.id = GetToday().getTime().toString();
-      newGold.priceAtBought = temp ? temp.SellValue : 0;
+      newGold.priceAtBought = temp ? Math.round(temp.SellValue) : 0;
     }
     await AddAsset(newGold);
 
@@ -191,7 +191,9 @@ const MetalTableAdd = ({
                             fontWeight: 700,
                             letterSpacing: 1,
                           }}>
-                          {formatCurrency(parseInt(GetGoldCategoryFromId(newGold.category).price))}
+                          {formatCurrency(
+                            Math.round(parseInt(GetGoldCategoryFromId(newGold.category).price)),
+                          )}
                         </Text>
                         <Text
                           style={{

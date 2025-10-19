@@ -77,7 +77,7 @@ const BudgetEventFlat = ({ refreshFlag, style, onSelectBudgetEvent }: BudgetEven
           }}>
           {'     ' + formatCurrency(Amount)}
         </Text>
-        {Categories.map((item, index: number) => {
+        {/* {Categories.map((item, index: number) => {
           return (
             <View
               key={index}
@@ -85,7 +85,7 @@ const BudgetEventFlat = ({ refreshFlag, style, onSelectBudgetEvent }: BudgetEven
               {GetCategoryById(item)?.icon}
             </View>
           );
-        })}
+        })} */}
       </View>
     );
   }

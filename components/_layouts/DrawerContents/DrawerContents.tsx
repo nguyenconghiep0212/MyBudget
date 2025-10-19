@@ -255,10 +255,21 @@ export default function DrawerContents() {
   };
   return (
     <SafeAreaView>
-      <View style={[styles.root, { padding: 24, height: '100%', gap: 32 }]}>
-        <DownloadView />
-        <UploadView />
-        <ResetView />
+      <View style={[styles.root]}>
+        <View
+          style={{
+            width: '100%',
+            alignItems: 'flex-end',
+            justifyContent: 'flex-end',
+            paddingHorizontal: 24,
+          }}>
+          <Text style={{ fontSize: 12, color: colors.darkGray }}>v1.0.1</Text>
+        </View>
+        <View style={{ paddingHorizontal: 24, height: '100%', width: '100%', gap: 32 }}>
+          <DownloadView />
+          <UploadView />
+          <ResetView />
+        </View>
       </View>
     </SafeAreaView>
   );

@@ -88,13 +88,15 @@ const AddExpenseModal = ({
       setIsEdit(false);
     }
   }
-  function onEditExpense() {
-    if (newExpense) EditExpense(newExpense);
+  async function onEditExpense() {
+    await EditExpense(newExpense);
+    setNewExpense(defaultExpense);
     onClose();
     onRefreshData();
   }
-  function onAddExpense() {
-    if (newExpense) AddExpense(newExpense);
+  async function onAddExpense() {
+    await AddExpense(newExpense);
+    setNewExpense(defaultExpense);
     onClose();
     onRefreshData();
   }
@@ -155,7 +157,7 @@ const AddExpenseModal = ({
                 },
               ]}>
               <Text style={[styles.text, { color: colors.lightGray, fontSize: 18 }]}>
-                {newExpense.date.toDateString()}
+                {new Date(newExpense.date).toDateString()}
               </Text>
               <Button onPress={OpenTimePicker}>
                 <FontAwesome name="calendar" size={20} color={colors.lightGray} />

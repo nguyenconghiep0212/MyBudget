@@ -152,13 +152,19 @@ const expenseCategory: Category[] = [
     name: 'Family',
     icon: <MaterialIcons name="family-restroom" size={24} color={colors.Negative} />,
   },
+  {
+    id: 10,
+    name: 'Mobile',
+    icon: <MaterialCommunityIcons name="sim-outline" size={24} color={colors.Negative} />,
+  },
 ];
-
 async function GetExpenseFromFile() {
   const res = await GetExpense();
   if (res) {
-    budgetEvent = res;
-    Object.assign(budgetEvent, res);
+    const sortedData = res.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    budgetEvent = sortedData;
+    console.log(JSON.stringify(budgetEvent));
+    // Object.assign(budgetEvent, res);
   }
 }
 async function AddExpense(newExpense: BudgetEvent) {
