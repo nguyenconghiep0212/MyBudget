@@ -6,20 +6,16 @@
     "version": "1.0.1",
     "owner": "kenjihunter",
     "newArchEnabled": true,
-    "platforms": [
-      "ios",
-      "android",
-      "web"
-    ],
+    "platforms": ["ios", "android", "web"],
     "orientation": "portrait",
-    "icon": "./assets/images/logo-lg.png",
+    "icon": "./assets/images/ic_launcher.png",
     "userInterfaceStyle": "automatic",
     "splash": {
       "backgroundColor": "#299574",
       "dark": {
         "backgroundColor": "#1A332C"
       },
-      "image": "./assets/images/logo-lg.png",
+      "image": "./assets/images/ic_launcher.png",
       "resizeMode": "contain"
     },
     "ios": {
@@ -27,12 +23,12 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/new_logo-sm.png",
+        "foregroundImage": "./assets/images/ic_launcher.png",
         "backgroundColor": "#299574"
       }
     },
     "web": {
-      "favicon": "./assets/images/logo-sm.png"
+      "favicon": "./assets/images/ic_launcher.png"
     },
     "runtimeVersion": {
       "policy": "sdkVersion"

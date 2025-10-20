@@ -19,7 +19,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       ...config.web,
       bundler: 'metro',
       output: 'static',
-      favicon: './assets/images/logo-sm.png',
+      favicon: './assets/images/ic-launcher.png',
     },
     updates: {
       url: `https://u.expo.dev/${expoProjectId}`,
@@ -40,7 +40,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
           dark: {
             backgroundColor: '#101212',
           },
-          image: './assets/images/logo-lg.png',
+          image: './assets/images/ic_launcher.png',
           imageWidth: 200,
           resizeMode: 'contain',
         },
