@@ -221,7 +221,7 @@ export default function DrawerContents() {
             buttonColor={colors.darkerGray}
             onLongPress={ResetData}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-              <MaterialCommunityIcons name="archive-refresh" size={24} color={colors.cordovan} />
+              <MaterialCommunityIcons name="gesture-tap-hold" size={24} color={colors.cordovan} />
               <Text
                 style={{
                   color: colors.cordovan,
