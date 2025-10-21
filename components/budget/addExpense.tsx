@@ -107,7 +107,7 @@ const AddExpenseModal = ({
   }
   function OpenTimePicker() {
     DateTimePickerAndroid.open({
-      value: newExpense.date,
+      value: new Date(newExpense.date),
       onChange: (event, selectedDate) => {
         if (selectedDate) {
           setNewExpense({ ...newExpense, date: selectedDate });

@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "dev:raw": "npx expo start",
+    "build:android:prod": "eas build --platform android --profile production",
     "dev": "set EXPO_NO_DOTENV=1 dotenvx run -f .env.dev -- expo start -c",
     "dev:ios": "EXPO_NO_DOTENV=1 dotenvx run -f .env.dev -- expo start --ios -c",
     "dev:android": "set EXPO_NO_DOTENV=1 dotenvx run -f .env.dev -- expo start --android -c",
