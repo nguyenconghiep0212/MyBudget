@@ -3,7 +3,7 @@
     "name": "My Budget",
     "slug": "my-budget",
     "scheme": "my-budget",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "owner": "kenjihunter",
     "newArchEnabled": true,
     "platforms": ["ios", "android", "web"],
