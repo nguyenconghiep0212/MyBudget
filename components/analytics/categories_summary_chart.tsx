@@ -49,7 +49,7 @@ const CategoryChart = ({ title, selectedYear, style }: AnalyticProps) => {
           temp2[index].push({
             value: total,
             color: MapCatWithColor(parseInt(categoryId)),
-            text: ((total / totalSpending) * 100).toFixed(0),
+            text: (total / totalSpending) * 100 > 5 && ((total / totalSpending) * 100).toFixed(0),
             categoryId,
           });
         });
@@ -75,7 +75,7 @@ const CategoryChart = ({ title, selectedYear, style }: AnalyticProps) => {
       temp.push({
         value: total,
         color: MapCatWithColor(parseInt(categoryId)),
-        text: ((total / totalSpending) * 100).toFixed(0),
+        text: (total / totalSpending) * 100 > 5 && ((total / totalSpending) * 100).toFixed(0),
         categoryId,
       });
     });

@@ -58,34 +58,40 @@ const BudgetEventFlat = ({ refreshFlag, style, onSelectBudgetEvent }: BudgetEven
     FontSize = 14,
   ): ReactNode {
     return (
-      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          overflow: 'hidden',
+          width: 225,
+        }}>
         <Text
           style={{
             color: colors.lightGray,
-            fontWeight: 300,
-            fontSize: FontSize,
-            letterSpacing: 2,
+            fontWeight: 500,
+            fontSize: FontSize + 2,
+            letterSpacing: 0.75,
           }}>
           {Date.toUpperCase()}
         </Text>
         <Text
           style={{
-            color: Amount > 0 ? colors.Positive : colors.Negative,
+            color: colors.Negative,
             fontSize: FontSize,
-            letterSpacing: 2,
-            fontWeight: 200,
+            letterSpacing: 1.2,
+            fontWeight: 400,
           }}>
           {'     ' + formatCurrency(Amount)}
         </Text>
-        {/* {Categories.map((item, index: number) => {
+        {Categories.map((item, index: number) => {
           return (
             <View
               key={index}
-              style={{ transform: [{ scale: 0.5 }], marginLeft: index > 0 ? -8 : 0 }}>
+              style={{ transform: [{ scale: 0.4 }], marginLeft: index > 0 ? -11.5 : 0 }}>
               {GetCategoryById(item)?.icon}
             </View>
           );
-        })} */}
+        })}
       </View>
     );
   }
@@ -113,7 +119,7 @@ const BudgetEventFlat = ({ refreshFlag, style, onSelectBudgetEvent }: BudgetEven
             }}>
             -{formatCurrency(data.amount)}
           </Text>
-          <View style={[styles.icon, { transform: [{ scale: 0.5 }] }]}>
+          <View style={[styles.icon, { transform: [{ scale: 0.5 }], marginTop: -1.5 }]}>
             {GetCategoryById(data.categoryId)?.icon}
           </View>
         </View>
@@ -132,7 +138,7 @@ const BudgetEventFlat = ({ refreshFlag, style, onSelectBudgetEvent }: BudgetEven
             key={key}
             style={{ width: '100%', backgroundColor: colors.blackGray, padding: 0 }}>
             <List.Accordion
-              title={ListAccordionNode(months[key - 1], value.total, value.categoriesId)}
+              title={ListAccordionNode(months[key - 1], value.total, [])}
               left={props => (
                 <List.Icon
                   {...props}

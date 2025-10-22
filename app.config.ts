@@ -36,11 +36,11 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       [
         'expo-splash-screen',
         {
-          backgroundColor: '#ffffff',
+          backgroundColor: '#299574',
           dark: {
             backgroundColor: '#101212',
           },
-          image: './assets/images/ic_launcher.png',
+          image: './assets/images/ic_launcher_foreground.png',
           imageWidth: 200,
           resizeMode: 'contain',
         },

@@ -161,7 +161,6 @@ const MainBudget = ({ style }: MainBudgetProps) => {
                 letterSpacing: 2,
                 color: thisMonthBudget >= thisMonthExpense ? colors.Positive : colors.Negative,
               }}>
-              {thisMonthBudget < thisMonthExpense && '-'}
               {formatCurrency(thisMonthBudget - thisMonthExpense)}
             </Text>
           </>

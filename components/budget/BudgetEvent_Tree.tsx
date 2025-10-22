@@ -58,22 +58,28 @@ const BudgetEventTree = ({ refreshFlag, style, onSelectBudgetEvent }: BudgetEven
     FontSize = 14,
   ): ReactNode {
     return (
-      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          overflow: 'hidden',
+          width: 225,
+        }}>
         <Text
           style={{
             color: colors.lightGray,
-            fontWeight: 300,
-            fontSize: FontSize,
-            letterSpacing: 2,
+            fontWeight: 500,
+            fontSize: FontSize + 2,
+            letterSpacing: 0.75,
           }}>
           {Date.toUpperCase()}
         </Text>
         <Text
           style={{
-            color: Amount > 0 ? colors.Positive : colors.Negative,
+            color: colors.Negative,
             fontSize: FontSize,
-            letterSpacing: 2,
-            fontWeight: 200,
+            letterSpacing: 1.2,
+            fontWeight: 400,
           }}>
           {'     ' + formatCurrency(Amount)}
         </Text>
@@ -81,7 +87,7 @@ const BudgetEventTree = ({ refreshFlag, style, onSelectBudgetEvent }: BudgetEven
           return (
             <View
               key={index}
-              style={{ transform: [{ scale: 0.4 }], marginLeft: index > 0 ? -10 : 0 }}>
+              style={{ transform: [{ scale: 0.4 }], marginLeft: index > 0 ? -11.5 : 0 }}>
               {GetCategoryById(item)?.icon}
             </View>
           );
@@ -113,12 +119,12 @@ const BudgetEventTree = ({ refreshFlag, style, onSelectBudgetEvent }: BudgetEven
             }}>
             -{formatCurrency(data.amount)}
           </Text>
-          <View style={[styles.icon, { transform: [{ scale: 0.5 }] }]}>
+          <View style={[styles.icon, { transform: [{ scale: 0.5 }], marginTop: -1.5 }]}>
             {GetCategoryById(data.categoryId)?.icon}
           </View>
         </View>
         <Text style={{ color: colors.gray, fontSize: 12, fontWeight: 300 }}>
-          {data.description ? data.description : 'NaN'}
+          {data.description ? data.description : '-- No description --'}
         </Text>
       </View>
     );
@@ -153,7 +159,7 @@ const BudgetEventTree = ({ refreshFlag, style, onSelectBudgetEvent }: BudgetEven
                         'Week ' + key1,
                         value1.total,
                         value1.categoriesId,
-                        12,
+                        10,
                       )}
                       left={props => (
                         <List.Icon

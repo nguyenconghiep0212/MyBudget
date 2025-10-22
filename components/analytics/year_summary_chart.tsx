@@ -211,7 +211,9 @@ const YearSummaryChart = ({ title, selectedYear, style }: AnalyticProps) => {
     const stepValue =
       yearData.length > 0
         ? Math.ceil(
-            Math.max(...yearData[0].months.map((item: any) => item.budget)) / offset / noOfSections,
+            Math.max(...yearData[0].months.map((item: any) => item.expense)) /
+              offset /
+              noOfSections,
           )
         : 5;
     setChartOption({
