@@ -41,7 +41,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
             backgroundColor: '#101212',
           },
           image: './assets/images/ic_launcher_foreground.png',
-          imageWidth: 200,
+          imageWidth: 300,
           resizeMode: 'contain',
         },
       ],
