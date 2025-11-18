@@ -3,7 +3,7 @@ import { colors } from '@/theme';
 import { Category } from '@/types/budget';
 import { formatCurrency } from '@/utils/helper';
 import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, StyleProp, ViewStyle } from 'react-native';
+import { View, Text, StyleSheet, StyleProp, ViewStyle, ScrollView } from 'react-native';
 import { BarChart } from 'react-native-gifted-charts';
 import { Dialog, Portal } from 'react-native-paper';
 const styles = StyleSheet.create({
@@ -38,11 +38,9 @@ const CategoryChartDetail = ({ date, chartData, modalVisible, style, onClose }: 
         value: temp2 ? temp2.value / offset : 0,
         frontColor: temp2 ? temp2.color : colors.white,
         label: GetCategoryById(item.id)?.name || 'N/A',
-        labelTextStyle: { color: colors.gray },
-        // labelWidth: 60,
         labelComponent: () => customLabel(GetCategoryById(item.id)?.name || 'N/A'),
         topLabelComponent: () => (
-          <Text style={{ color: colors.lightGray, fontSize: 6 }}>
+          <Text style={{ color: colors.lightGray, fontSize: 5.5 }}>
             {temp2 ? (temp2.value / offset).toFixed(0) : 0}
           </Text>
         ),
@@ -60,12 +58,12 @@ const CategoryChartDetail = ({ date, chartData, modalVisible, style, onClose }: 
   }
   const customLabel = (val: string) => {
     return (
-      <View style={{ marginLeft: -38, width: 60, alignItems: 'flex-end' }}>
+      <View style={{ marginLeft: -38, width: 60, alignItems: 'flex-end', marginTop: 3 }}>
         <Text
           style={{
             color: colors.lightGray,
             fontWeight: 600,
-            fontSize: 11,
+            fontSize: 8,
           }}>
           {val}
         </Text>
@@ -106,7 +104,7 @@ const CategoryChartDetail = ({ date, chartData, modalVisible, style, onClose }: 
                 horizontal
                 barBorderRadius={0}
                 data={chartDataDisplay}
-                barWidth={16}
+                barWidth={13}
                 spacing={10}
                 rulesColor={colors.darkGray}
                 xAxisThickness={1}

@@ -1,5 +1,5 @@
 import { budgetEvent, expenseCategory } from '@/local_data/data';
-import { colors } from '@/theme';
+import { cateroryColors, colors } from '@/theme';
 import { BudgetEvent } from '@/types/budget';
 import { months } from '@/utils/helper';
 import { useFocusEffect } from 'expo-router';
@@ -88,30 +88,12 @@ const CategoryChart = ({ title, selectedYear, style }: AnalyticProps) => {
     setModalVisible(true);
   }
   function MapCatWithColor(id: number) {
-    switch (id) {
-      case 1:
-        return colors.marianBlue;
-      case 2:
-        return colors.biceBlue;
-      case 3:
-        return colors.moonStone;
-      case 4:
-        return colors.pistachino;
-      case 5:
-        return colors.straw;
-      case 6:
-        return colors.maize;
-      case 7:
-        return colors.saffron;
-      case 8:
-        return colors.sandyBrown;
-      case 9:
-        return colors.burntSenna;
-      case 10:
-        return colors.cordovan;
-      default:
-        return colors.white;
+    let returnColor;
+    returnColor = Object.values(cateroryColors)[id - 1];
+    if (returnColor === undefined) {
+      returnColor = colors.white;
     }
+    return returnColor;
   }
   useFocusEffect(
     useCallback(() => {
