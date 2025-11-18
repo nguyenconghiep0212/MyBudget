@@ -8,6 +8,7 @@ import { colors } from '@/theme';
 import { Category, BudgetEvent, MonthlyBudget } from '@/types/budget';
 import { GetToday } from '@/utils/helper';
 import {
+  Feather,
   FontAwesome,
   FontAwesome6,
   Ionicons,
@@ -22,18 +23,6 @@ let monthlyBudget: MonthlyBudget[] = [
   //   amount: 5_250_000,
   //   salary: 12_500_000,
   // },
-  // {
-  //   month: 9,
-  //   year: 2025,
-  //   amount: 4_000_000,
-  //   salary: 12_000_000,
-  // },
-  // {
-  //   month: 3,
-  //   year: 2024,
-  //   amount: 6_550_000,
-  //   salary: 8_000_000,
-  // },
 ];
 let budgetEvent: BudgetEvent[] = [
   // {
@@ -43,70 +32,6 @@ let budgetEvent: BudgetEvent[] = [
   //   description: 'Filling gas for motorcycle',
   //   amount: 65_000,
   //   date: new Date('2025-10-04'),
-  // },
-  // {
-  //   categoryId: 2,
-  //   id: '2',
-  //   name: 'Gas',
-  //   description: 'Filling gas for motorcycle',
-  //   amount: 70_000,
-  //   date: new Date('2025-09-24'),
-  // },
-  // {
-  //   categoryId: 1,
-  //   id: '3',
-  //   name: 'Takoyaki',
-  //   description: 'yum yum',
-  //   amount: 54_000,
-  //   date: new Date('2025-09-24'),
-  // },
-  // {
-  //   categoryId: 4,
-  //   id: '41',
-  //   name: 'Meat and Vegetables',
-  //   description: 'For weekly groceries',
-  //   amount: 82_000,
-  //   date: new Date('2025-09-21'),
-  // },
-  // {
-  //   categoryId: 1,
-  //   id: '21',
-  //   name: 'Lunch',
-  //   description: 'Lunch with friends',
-  //   amount: 50_000,
-  //   date: new Date('2025-09-20'),
-  // },
-  // {
-  //   categoryId: 1,
-  //   id: '11',
-  //   name: 'Lunch',
-  //   description: 'Lunch with friends',
-  //   amount: 50_000,
-  //   date: new Date('2025-04-10'),
-  // },
-  // {
-  //   categoryId: 4,
-  //   id: '32',
-  //   name: 'Meat and Vegetables',
-  //   description: 'For weekly groceries',
-  //   amount: 1_082_000,
-  //   date: new Date('2024-03-11'),
-  // },
-  // {
-  //   categoryId: 4,
-  //   id: '132',
-  //   name: 'Stuffs',
-  //   description: 'Groceries',
-  //   amount: 2_610_000,
-  //   date: new Date('2024-03-22'),
-  // },
-  // {
-  //   categoryId: 1,
-  //   id: '13111',
-  //   name: 'aaaaa',
-  //   description: 'Groceries',
-  //   amount: 110_000,
-  //   date: new Date('2024-03-30'),
   // },
 ];
 const expenseCategory: Category[] = [
@@ -119,7 +44,7 @@ const expenseCategory: Category[] = [
   },
   {
     id: 3,
-    name: 'Game',
+    name: 'Entertainment',
     icon: <Ionicons name="game-controller" size={24} color={colors.Negative} />,
   },
   {
@@ -156,6 +81,16 @@ const expenseCategory: Category[] = [
     id: 10,
     name: 'Mobile',
     icon: <MaterialCommunityIcons name="sim-outline" size={24} color={colors.Negative} />,
+  },
+  {
+    id: 11,
+    name: 'Electronic',
+    icon: <FontAwesome6 name="microchip" size={24} color={colors.Negative} />,
+  },
+  {
+    id: 12,
+    name: 'Hobby',
+    icon: <Feather name="slack" size={24} color={colors.Negative} />,
   },
 ];
 async function GetExpenseFromFile() {
