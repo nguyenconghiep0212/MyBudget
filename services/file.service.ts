@@ -139,6 +139,7 @@ function CopyGoldFileToExternalStorage() {
 function CopyBudgetFileToExternalStorage() {
   CopyFileToExternalStorage(monthlyBudgetFileName);
 }
+function CopyDataToExternalStorage() {}
 
 async function ReadExpenseFileFromExternalStorage() {
   try {
@@ -230,6 +231,8 @@ async function ReadBudgetFileFromExternalStorage() {
   }
 }
 
+async function ReadDataFromExternalStorage() {}
+
 async function ResetAllData(): Promise<boolean> {
   let res = false;
   await Promise.all([SaveExpense([]), SaveGold([]), SaveMonthlyBudget([])])
@@ -259,11 +262,13 @@ export {
   GetGold,
   SaveMonthlyBudget,
   GetMonthlyBudget,
-  ReadExpenseFileFromExternalStorage,
-  ReadGoldFileFromExternalStorage,
-  ReadBudgetFileFromExternalStorage,
-  CopyExpenseFileToExternalStorage,
-  CopyGoldFileToExternalStorage,
-  CopyBudgetFileToExternalStorage,
+  // ReadExpenseFileFromExternalStorage,
+  // ReadGoldFileFromExternalStorage,
+  // ReadBudgetFileFromExternalStorage,
+  ReadDataFromExternalStorage,
+  // CopyExpenseFileToExternalStorage,
+  // CopyGoldFileToExternalStorage,
+  // CopyBudgetFileToExternalStorage,
+  CopyDataToExternalStorage,
   ResetAllData,
 };

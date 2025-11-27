@@ -4,13 +4,15 @@ import { cateroryColors, colors } from '@/theme';
 import { Button, Checkbox } from 'react-native-paper';
 import { AntDesign, FontAwesome, FontAwesome6, MaterialCommunityIcons } from '@expo/vector-icons';
 import {
-  CopyBudgetFileToExternalStorage,
-  CopyExpenseFileToExternalStorage,
-  CopyGoldFileToExternalStorage,
-  ReadExpenseFileFromExternalStorage,
-  ReadGoldFileFromExternalStorage,
-  ReadBudgetFileFromExternalStorage,
+  // CopyBudgetFileToExternalStorage,
+  // CopyExpenseFileToExternalStorage,
+  // CopyGoldFileToExternalStorage,
+  // ReadExpenseFileFromExternalStorage,
+  // ReadGoldFileFromExternalStorage,
+  // ReadBudgetFileFromExternalStorage,
   ResetAllData,
+  ReadDataFromExternalStorage,
+  CopyDataToExternalStorage,
 } from '@/services/file.service';
 import { useState } from 'react';
 import { useBudgetSlice } from '@/slices';
@@ -53,42 +55,13 @@ export default function DrawerContents() {
         <View style={{ marginTop: 12, ...styles.root, width: '100%' }}>
           <Button
             style={{ width: '100%' }}
-            mode="contained"
-            buttonColor={colors.darkGray}
-            onPress={CopyExpenseFileToExternalStorage}>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                gap: 8,
-              }}>
-              <FontAwesome6 name="money-bill-transfer" size={24} color={colors.Negative} />
-              <Text style={{ color: colors.Negative, fontWeight: 700, letterSpacing: 1 }}>
-                Expenses File
-              </Text>
-            </View>
-          </Button>
-          <Button
-            style={{ width: '100%' }}
             mode="contained-tonal"
             buttonColor={colors.darkGray}
-            onPress={CopyGoldFileToExternalStorage}>
+            onPress={CopyDataToExternalStorage}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-              <AntDesign name="gold" size={24} color={colors.gold} />
-              <Text style={{ color: colors.gold, fontWeight: 700, letterSpacing: 1 }}>
-                Assets File
-              </Text>
-            </View>
-          </Button>
-          <Button
-            style={{ width: '100%' }}
-            mode="contained-tonal"
-            buttonColor={colors.darkGray}
-            onPress={CopyBudgetFileToExternalStorage}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-              <AntDesign name="wallet" size={24} color={colors.NavyBlueText} />
+              <FontAwesome name="download" size={24} color={colors.NavyBlueText} />
               <Text style={{ color: colors.NavyBlueText, fontWeight: 700, letterSpacing: 1 }}>
-                Budget File
+                Export data
               </Text>
             </View>
           </Button>
@@ -97,20 +70,26 @@ export default function DrawerContents() {
     );
   };
   const UploadView = () => {
-    async function SaveExpenseFromFile() {
-      const res = await ReadExpenseFileFromExternalStorage();
-      if (res) {
-        dispatch(RefreshDataFiles());
-      }
-    }
-    async function SaveGoldFromFile() {
-      const res = await ReadGoldFileFromExternalStorage();
-      if (res) {
-        dispatch(RefreshDataFiles());
-      }
-    }
-    async function SaveBudgetFromFile() {
-      const res = await ReadBudgetFileFromExternalStorage();
+    // async function SaveExpenseFromFile() {
+    //   const res = await ReadExpenseFileFromExternalStorage();
+    //   if (res) {
+    //     dispatch(RefreshDataFiles());
+    //   }
+    // }
+    // async function SaveGoldFromFile() {
+    //   const res = await ReadGoldFileFromExternalStorage();
+    //   if (res) {
+    //     dispatch(RefreshDataFiles());
+    //   }
+    // }
+    // async function SaveBudgetFromFile() {
+    //   const res = await ReadBudgetFileFromExternalStorage();
+    //   if (res) {
+    //     dispatch(RefreshDataFiles());
+    //   }
+    // }
+    async function SaveDataFromFile() {
+      const res = await ReadDataFromExternalStorage();
       if (res) {
         dispatch(RefreshDataFiles());
       }
@@ -139,42 +118,13 @@ export default function DrawerContents() {
         <View style={{ marginTop: 12, ...styles.root, width: '100%' }}>
           <Button
             style={{ width: '100%' }}
-            mode="contained"
-            buttonColor={colors.darkGray}
-            onPress={SaveExpenseFromFile}>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                gap: 8,
-              }}>
-              <FontAwesome6 name="money-bill-transfer" size={24} color={colors.Negative} />
-              <Text style={{ color: colors.Negative, fontWeight: 700, letterSpacing: 1 }}>
-                Expenses File
-              </Text>
-            </View>
-          </Button>
-          <Button
-            style={{ width: '100%' }}
             mode="contained-tonal"
             buttonColor={colors.darkGray}
-            onPress={SaveGoldFromFile}>
+            onPress={SaveDataFromFile}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-              <AntDesign name="gold" size={24} color={colors.gold} />
-              <Text style={{ color: colors.gold, fontWeight: 700, letterSpacing: 1 }}>
-                Assets File
-              </Text>
-            </View>
-          </Button>
-          <Button
-            style={{ width: '100%' }}
-            mode="contained-tonal"
-            buttonColor={colors.darkGray}
-            onPress={SaveBudgetFromFile}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-              <AntDesign name="wallet" size={24} color={colors.NavyBlueText} />
-              <Text style={{ color: colors.NavyBlueText, fontWeight: 700, letterSpacing: 1 }}>
-                Budget File
+              <MaterialCommunityIcons name="content-save-edit" size={24} color={colors.Positive} />
+              <Text style={{ color: colors.Positive, fontWeight: 700, letterSpacing: 1 }}>
+                Import data
               </Text>
             </View>
           </Button>
