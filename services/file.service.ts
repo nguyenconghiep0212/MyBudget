@@ -231,7 +231,9 @@ async function ReadBudgetFileFromExternalStorage() {
   }
 }
 
-async function ReadDataFromExternalStorage() {}
+async function ReadDataFromExternalStorage() {
+  return null;
+}
 
 async function ResetAllData(): Promise<boolean> {
   let res = false;
