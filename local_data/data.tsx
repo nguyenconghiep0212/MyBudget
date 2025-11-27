@@ -98,20 +98,20 @@ async function GetExpenseFromFile() {
   if (res) {
     const sortedData = res.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     budgetEvent = sortedData;
-    console.log(JSON.stringify(budgetEvent));
+    // console.log(JSON.stringify(budgetEvent));
     // Object.assign(budgetEvent, res);
   }
 }
 async function AddExpense(newExpense: BudgetEvent) {
   budgetEvent.unshift(newExpense);
-  console.log('Add: ' + JSON.stringify(budgetEvent));
+  // console.log('Add: ' + JSON.stringify(budgetEvent));
   await SaveExpense(budgetEvent);
 }
 async function EditExpense(expense: BudgetEvent) {
   budgetEvent.forEach(item => {
     if (item.id === expense.id) {
       Object.assign(item, expense);
-      console.log('Edit: ' + JSON.stringify(item));
+      // console.log('Edit: ' + JSON.stringify(item));
     }
   });
   await SaveExpense(budgetEvent);
@@ -120,7 +120,7 @@ async function DeleteExpense(expenseId: string) {
   const index = budgetEvent.findIndex(item => item.id === expenseId);
   if (index > -1) {
     budgetEvent.splice(index, 1);
-    console.log('Remove: ' + JSON.stringify(budgetEvent));
+    // console.log('Remove: ' + JSON.stringify(budgetEvent));
     await SaveExpense(budgetEvent);
   }
 }

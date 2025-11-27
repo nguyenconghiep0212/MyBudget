@@ -1,6 +1,6 @@
 import { StyleSheet, View, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { colors } from '@/theme';
+import { cateroryColors, colors } from '@/theme';
 import { Button, Checkbox } from 'react-native-paper';
 import { AntDesign, FontAwesome, FontAwesome6, MaterialCommunityIcons } from '@expo/vector-icons';
 import {
@@ -196,10 +196,14 @@ export default function DrawerContents() {
     return (
       <View style={{ width: '100%' }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-          <MaterialCommunityIcons name="file-document-refresh" size={24} color={colors.cordovan} />
+          <MaterialCommunityIcons
+            name="file-document-refresh"
+            size={24}
+            color={cateroryColors.cordovan}
+          />
           <Text
             style={{
-              color: colors.cordovan,
+              color: cateroryColors.cordovan,
               fontSize: 18,
               fontWeight: 800,
               letterSpacing: 1.5,
@@ -211,7 +215,7 @@ export default function DrawerContents() {
               flexGrow: 1,
               marginRight: 4,
               height: 1.5,
-              backgroundColor: colors.cordovan,
+              backgroundColor: cateroryColors.cordovan,
             }}></View>
         </View>
         <View style={{ marginTop: 12, ...styles.root, width: '100%' }}>
@@ -221,10 +225,14 @@ export default function DrawerContents() {
             buttonColor={colors.darkerGray}
             onLongPress={ResetData}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-              <MaterialCommunityIcons name="gesture-tap-hold" size={24} color={colors.cordovan} />
+              <MaterialCommunityIcons
+                name="gesture-tap-hold"
+                size={24}
+                color={cateroryColors.cordovan}
+              />
               <Text
                 style={{
-                  color: colors.cordovan,
+                  color: cateroryColors.cordovan,
                   fontWeight: 800,
                   textDecorationLine: 'underline',
                   letterSpacing: 1,
@@ -236,14 +244,14 @@ export default function DrawerContents() {
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
             <Checkbox
               status={checked ? 'checked' : 'unchecked'}
-              color={colors.cordovan}
+              color={cateroryColors.cordovan}
               onPress={() => {
                 setChecked(!checked);
               }}
             />
             <Text
               style={{
-                color: colors.cordovan,
+                color: cateroryColors.cordovan,
                 fontWeight: 800,
                 textDecorationLine: 'underline',
                 letterSpacing: 1,

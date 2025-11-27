@@ -74,7 +74,7 @@ async function setFile(fileName: string, content: string) {
       encoding: FileSystem.EncodingType.UTF8,
     });
     console.log('Write file: ' + fileUri + ' success');
-    console.log('Content: ' + content);
+    // console.log('Content: ' + content);
   } catch (error) {
     console.error(error);
   }
@@ -86,7 +86,7 @@ async function getFile(fileName: string) {
       encoding: FileSystem.EncodingType.UTF8,
     });
     console.log('Read file: ' + fileUri + ' success');
-    console.log('Content: ' + res);
+    // console.log('Content: ' + res);
     return res;
   } catch (error) {
     console.error(error);
@@ -175,22 +175,22 @@ async function ReadGoldFileFromExternalStorage() {
   try {
     const res = await PickExternalFile();
     const parsed = JSON.parse(res);
-    if (isBudgetEventArray(parsed)) {
+    if (isGoldArray(parsed)) {
       const result: Gold[] = parsed;
       await SaveGold(result);
       return true;
     } else {
-      console.error('❌ Parsed data is not a valid BudgetEvent array.');
+      console.error('❌ Parsed data is not a valid GoldFile array.');
       return false;
     }
   } catch (error) {
     console.error(error);
     return false;
   }
-  function isBudgetEventArray(data: any): data is Gold[] {
-    return Array.isArray(data) && data.every(isBudgetEvent);
+  function isGoldArray(data: any): data is Gold[] {
+    return Array.isArray(data) && data.every(isGold);
   }
-  function isBudgetEvent(obj: any): obj is Gold {
+  function isGold(obj: any): obj is Gold {
     return (
       typeof obj === 'object' &&
       typeof obj.id === 'string' &&
@@ -204,22 +204,22 @@ async function ReadBudgetFileFromExternalStorage() {
   try {
     const res = await PickExternalFile();
     const parsed = JSON.parse(res);
-    if (isBudgetEventArray(parsed)) {
+    if (isMonthlyBudgetArray(parsed)) {
       const result: MonthlyBudget[] = parsed;
       await SaveMonthlyBudget(result);
       return true;
     } else {
-      console.error('❌ Parsed data is not a valid BudgetEvent array.');
+      console.error('❌ Parsed data is not a valid MonthlyBudget array.');
       return false;
     }
   } catch (error) {
     console.error(error);
     return false;
   }
-  function isBudgetEventArray(data: any): data is MonthlyBudget[] {
-    return Array.isArray(data) && data.every(isBudgetEvent);
+  function isMonthlyBudgetArray(data: any): data is MonthlyBudget[] {
+    return Array.isArray(data) && data.every(isMonthlyBudget);
   }
-  function isBudgetEvent(obj: any): obj is MonthlyBudget {
+  function isMonthlyBudget(obj: any): obj is MonthlyBudget {
     return (
       typeof obj === 'object' &&
       typeof obj.month === 'number' &&
