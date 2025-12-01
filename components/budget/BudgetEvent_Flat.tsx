@@ -108,7 +108,9 @@ const BudgetEventFlat = ({ refreshFlag, style, onSelectBudgetEvent }: BudgetEven
               <FontAwesome6 name="edit" size={16} color={colors.gray} />
             </Button>
           </View>
-          <Text style={{ color: colors.lightGray }}>{data.name}</Text>
+          <View style={{ maxWidth: 130 }}>
+            <Text style={{ color: colors.lightGray }}>{data.name}</Text>
+          </View>
           <Text
             style={{
               color: colors.Negative,

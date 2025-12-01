@@ -4,9 +4,8 @@ import { Button, Divider, List } from 'react-native-paper';
 import { colors } from '@/theme';
 import { FontAwesome6, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { formatCurrency, months } from '@/utils/helper';
-import { GetCategoryById, groupBudgetDataTree, budgetEvent } from '@/local_data/data';
+import { GetCategoryById, groupBudgetDataTree } from '@/local_data/data';
 import { BudgetEvent } from '@/types/budget';
-import { useBudgetSlice } from '@/slices';
 import { useFocusEffect } from 'expo-router';
 const styles = StyleSheet.create({
   body: {
@@ -108,7 +107,9 @@ const BudgetEventTree = ({ refreshFlag, style, onSelectBudgetEvent }: BudgetEven
               <FontAwesome6 name="edit" size={16} color={colors.gray} />
             </Button>
           </View>
-          <Text style={{ color: colors.lightGray }}>{data.name}</Text>
+          <View style={{ maxWidth: 130 }}>
+            <Text style={{ color: colors.lightGray }}>{data.name}</Text>
+          </View>
           <Text
             style={{
               color: colors.Negative,
