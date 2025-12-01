@@ -27,3 +27,9 @@ export interface Gold {
   category: number;
   priceAtBought: number;
 }
+
+export interface MergeData {
+  budgetEvents: BudgetEvent[];
+  monthlyBudgets: MonthlyBudget[];
+  gold: Gold[];
+}

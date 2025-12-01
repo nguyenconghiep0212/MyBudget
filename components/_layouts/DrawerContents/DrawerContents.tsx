@@ -2,14 +2,8 @@ import { StyleSheet, View, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { cateroryColors, colors } from '@/theme';
 import { Button, Checkbox } from 'react-native-paper';
-import { AntDesign, FontAwesome, FontAwesome6, MaterialCommunityIcons } from '@expo/vector-icons';
+import { FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
 import {
-  // CopyBudgetFileToExternalStorage,
-  // CopyExpenseFileToExternalStorage,
-  // CopyGoldFileToExternalStorage,
-  // ReadExpenseFileFromExternalStorage,
-  // ReadGoldFileFromExternalStorage,
-  // ReadBudgetFileFromExternalStorage,
   ResetAllData,
   ReadDataFromExternalStorage,
   CopyDataToExternalStorage,
@@ -70,24 +64,6 @@ export default function DrawerContents() {
     );
   };
   const UploadView = () => {
-    // async function SaveExpenseFromFile() {
-    //   const res = await ReadExpenseFileFromExternalStorage();
-    //   if (res) {
-    //     dispatch(RefreshDataFiles());
-    //   }
-    // }
-    // async function SaveGoldFromFile() {
-    //   const res = await ReadGoldFileFromExternalStorage();
-    //   if (res) {
-    //     dispatch(RefreshDataFiles());
-    //   }
-    // }
-    // async function SaveBudgetFromFile() {
-    //   const res = await ReadBudgetFileFromExternalStorage();
-    //   if (res) {
-    //     dispatch(RefreshDataFiles());
-    //   }
-    // }
     async function SaveDataFromFile() {
       const res = await ReadDataFromExternalStorage();
       if (res) {

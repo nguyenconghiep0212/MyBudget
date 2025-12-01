@@ -1,18 +1,17 @@
 import * as FileSystem from 'expo-file-system/legacy';
-import { BudgetEvent, MonthlyBudget, Gold } from '@/types/budget';
+import { BudgetEvent, MonthlyBudget, Gold, MergeData } from '@/types/budget';
 import * as DocumentPicker from 'expo-document-picker';
 import * as Sharing from 'expo-sharing';
 
-const expenseFileName = 'expense_data.json';
-const goldFileName = 'gold_data.json';
-const monthlyBudgetFileName = 'monthly_budget_data.json';
+const mergeDataFileName = 'merge_data.json';
+const mergeContent: MergeData = {
+  budgetEvents: [],
+  monthlyBudgets: [],
+  gold: [],
+};
 
 async function InitFiles() {
-  await Promise.all([
-    CheckAndCreateFile(expenseFileName),
-    CheckAndCreateFile(goldFileName),
-    CheckAndCreateFile(monthlyBudgetFileName),
-  ]);
+  await Promise.all([CheckAndCreateFile(mergeDataFileName)]);
 }
 const CheckAndCreateFile = async (fileName: string) => {
   try {
@@ -34,47 +33,63 @@ const CheckAndCreateFile = async (fileName: string) => {
 };
 
 async function SaveExpense(content: BudgetEvent[]) {
-  await setFile(expenseFileName, JSON.stringify(content));
+  mergeContent.budgetEvents = content;
+  SaveMergeData();
 }
 async function GetExpense() {
   let res: BudgetEvent[] = [];
-  const temp = await getFile(expenseFileName);
+  const temp = await GetMergeData();
   if (temp) {
-    res = JSON.parse(temp);
+    res = temp.budgetEvents;
   }
   return res;
 }
 async function SaveGold(content: Gold[]) {
-  await setFile(goldFileName, JSON.stringify(content));
+  mergeContent.gold = content;
+  SaveMergeData();
 }
 async function GetGold() {
   let res: Gold[] = [];
-  const temp = await getFile(goldFileName);
+  const temp = await GetMergeData();
   if (temp) {
-    res = JSON.parse(temp);
+    res = temp.gold;
   }
   return res;
 }
 async function SaveMonthlyBudget(content: MonthlyBudget[]) {
-  await setFile(monthlyBudgetFileName, JSON.stringify(content));
+  mergeContent.monthlyBudgets = content;
+  SaveMergeData();
 }
 async function GetMonthlyBudget() {
   let res: MonthlyBudget[] = [];
-  const temp = await getFile(monthlyBudgetFileName);
+  const temp = await GetMergeData();
+  if (temp) {
+    res = temp.monthlyBudgets;
+  }
+  return res;
+}
+
+async function SaveMergeData() {
+  await setFile(mergeDataFileName, JSON.stringify(mergeContent));
+}
+async function GetMergeData() {
+  let res: MergeData = {
+    budgetEvents: [],
+    monthlyBudgets: [],
+    gold: [],
+  };
+  const temp = await getFile(mergeDataFileName);
   if (temp) {
     res = JSON.parse(temp);
   }
   return res;
 }
-
 async function setFile(fileName: string, content: string) {
   try {
     const fileUri = `${FileSystem.documentDirectory}${fileName}`;
     await FileSystem.writeAsStringAsync(fileUri, content, {
       encoding: FileSystem.EncodingType.UTF8,
     });
-    console.log('Write file: ' + fileUri + ' success');
-    // console.log('Content: ' + content);
   } catch (error) {
     console.error(error);
   }
@@ -92,23 +107,23 @@ async function getFile(fileName: string) {
     console.error(error);
   }
 }
-async function getAllFiles() {
-  if (FileSystem.documentDirectory) {
-    const files = await FileSystem.readDirectoryAsync(FileSystem.documentDirectory);
-    console.log('All files: ' + JSON.stringify(files));
-  }
-}
-async function RemoveFile(fileName: string) {
-  try {
-    if (fileName) {
-      const path = `${FileSystem.documentDirectory}${fileName}`;
-      const res = await FileSystem.getInfoAsync(path);
-      if (res.exists) FileSystem.deleteAsync(path);
-    }
-  } catch (error) {
-    console.error('Unable to delete file: ' + error);
-  }
-}
+// async function getAllFiles() {
+//   if (FileSystem.documentDirectory) {
+//     const files = await FileSystem.readDirectoryAsync(FileSystem.documentDirectory);
+//     console.log('All files: ' + JSON.stringify(files));
+//   }
+// }
+// async function RemoveFile(fileName: string) {
+//   try {
+//     if (fileName) {
+//       const path = `${FileSystem.documentDirectory}${fileName}`;
+//       const res = await FileSystem.getInfoAsync(path);
+//       if (res.exists) FileSystem.deleteAsync(path);
+//     }
+//   } catch (error) {
+//     console.error('Unable to delete file: ' + error);
+//   }
+// }
 
 async function PickExternalFile(): Promise<string> {
   const result = await DocumentPicker.getDocumentAsync({
@@ -129,30 +144,37 @@ async function PickExternalFile(): Promise<string> {
   });
   return content;
 }
+async function CopyDataToExternalStorage() {
+  await SaveMergeData();
+  CopyFileToExternalStorage(mergeDataFileName);
+}
 
-function CopyExpenseFileToExternalStorage() {
-  CopyFileToExternalStorage(expenseFileName);
-}
-function CopyGoldFileToExternalStorage() {
-  CopyFileToExternalStorage(goldFileName);
-}
-function CopyBudgetFileToExternalStorage() {
-  CopyFileToExternalStorage(monthlyBudgetFileName);
-}
-function CopyDataToExternalStorage() {}
-
-async function ReadExpenseFileFromExternalStorage() {
+async function ReadDataFromExternalStorage() {
   try {
     const res = await PickExternalFile();
-    const parsed = JSON.parse(res);
-    if (isBudgetEventArray(parsed)) {
-      const result: BudgetEvent[] = parsed;
-      await SaveExpense(result);
-      return true;
-    } else {
+
+    const parsed: MergeData = JSON.parse(res);
+    const { budgetEvents, gold, monthlyBudgets } = parsed;
+    if (!isBudgetEventArray(budgetEvents)) {
       console.error('❌ Parsed data is not a valid BudgetEvent array.');
       return false;
     }
+    if (!isGoldArray(gold)) {
+      console.error('❌ Parsed data is not a valid Gold array.');
+      return false;
+    }
+    if (!isMonthlyBudgetArray(monthlyBudgets)) {
+      console.error('❌ Parsed data is not a valid MonthlyBudget array.');
+      return false;
+    }
+    await SaveExpense(budgetEvents as BudgetEvent[]);
+    await SaveGold(gold as Gold[]);
+    await SaveMonthlyBudget(monthlyBudgets as MonthlyBudget[]);
+
+    // console.log('--------------------SaveExpense: ' + budgetEvents);
+    // console.log('--------------------SaveGold: ' + gold);
+    // console.log('--------------------SaveMonthlyBudget: ' + monthlyBudgets);
+    return true;
   } catch (error) {
     console.error(error);
     return false;
@@ -171,23 +193,6 @@ async function ReadExpenseFileFromExternalStorage() {
       typeof obj.date === 'string'
     );
   }
-}
-async function ReadGoldFileFromExternalStorage() {
-  try {
-    const res = await PickExternalFile();
-    const parsed = JSON.parse(res);
-    if (isGoldArray(parsed)) {
-      const result: Gold[] = parsed;
-      await SaveGold(result);
-      return true;
-    } else {
-      console.error('❌ Parsed data is not a valid GoldFile array.');
-      return false;
-    }
-  } catch (error) {
-    console.error(error);
-    return false;
-  }
   function isGoldArray(data: any): data is Gold[] {
     return Array.isArray(data) && data.every(isGold);
   }
@@ -199,23 +204,6 @@ async function ReadGoldFileFromExternalStorage() {
       typeof obj.category === 'number' &&
       typeof obj.priceAtBought === 'number'
     );
-  }
-}
-async function ReadBudgetFileFromExternalStorage() {
-  try {
-    const res = await PickExternalFile();
-    const parsed = JSON.parse(res);
-    if (isMonthlyBudgetArray(parsed)) {
-      const result: MonthlyBudget[] = parsed;
-      await SaveMonthlyBudget(result);
-      return true;
-    } else {
-      console.error('❌ Parsed data is not a valid MonthlyBudget array.');
-      return false;
-    }
-  } catch (error) {
-    console.error(error);
-    return false;
   }
   function isMonthlyBudgetArray(data: any): data is MonthlyBudget[] {
     return Array.isArray(data) && data.every(isMonthlyBudget);
@@ -229,10 +217,6 @@ async function ReadBudgetFileFromExternalStorage() {
       typeof obj.salary === 'number'
     );
   }
-}
-
-async function ReadDataFromExternalStorage() {
-  return null;
 }
 
 async function ResetAllData(): Promise<boolean> {
@@ -259,18 +243,13 @@ export {
   getFile,
   setFile,
   SaveExpense,
-  GetExpense,
   SaveGold,
-  GetGold,
   SaveMonthlyBudget,
+  GetExpense,
+  GetGold,
   GetMonthlyBudget,
-  // ReadExpenseFileFromExternalStorage,
-  // ReadGoldFileFromExternalStorage,
-  // ReadBudgetFileFromExternalStorage,
+  GetMergeData,
   ReadDataFromExternalStorage,
-  // CopyExpenseFileToExternalStorage,
-  // CopyGoldFileToExternalStorage,
-  // CopyBudgetFileToExternalStorage,
   CopyDataToExternalStorage,
   ResetAllData,
 };
