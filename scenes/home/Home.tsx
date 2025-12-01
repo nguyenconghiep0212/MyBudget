@@ -34,7 +34,7 @@ export default function Home() {
     setInitFinish(false);
     setTimeout(() => {
       InitData();
-    }, 1000);
+    }, 500);
   }, [refreshDataFiles]);
 
   return (

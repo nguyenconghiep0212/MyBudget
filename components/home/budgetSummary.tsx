@@ -4,8 +4,9 @@ import { GetCategoryById, budgetEvent } from '@/local_data/data';
 import React, { useCallback, useEffect } from 'react';
 import { colors } from '@/theme';
 import { days, formatCurrency, getWeekOfYear, months } from '@/utils/helper';
-import { Category } from '@/types/budget';
+import { BudgetEvent, Category } from '@/types/budget';
 import { useFocusEffect } from 'expo-router';
+import { useBudgetSlice } from '@/slices';
 const styles = StyleSheet.create({
   body: {
     flex: 1,
@@ -52,13 +53,24 @@ type SummaryDataDisplay = {
 };
 
 const BudgetSummary = ({ style }: BudgetSummaryProps) => {
+  const { yearSummery } = useBudgetSlice();
+  const [budgetEventByYear, setBudgetEventByYear] = React.useState<BudgetEvent[]>([]);
   const [data, setData] = React.useState<SummaryDataDisplay[]>([]);
   const [summaryTime, setSummaryTime] = React.useState('day');
+  function GetYearSummeryData() {
+    console.log('Year Summery: ', yearSummery);
+
+    const temp = budgetEvent.filter(item => {
+      return new Date(item.date).getFullYear() === yearSummery;
+    });
+    // console.log('Year Summery Data: ', temp);
+    setBudgetEventByYear(temp);
+  }
   function OnChangeTimeSummary(filter: string) {
     const displayData: SummaryDataDisplay[] = [];
     setSummaryTime(filter);
     if (filter === 'day') {
-      budgetEvent.forEach((item, index) => {
+      budgetEventByYear.forEach((item, index) => {
         const temp = displayData.find(
           i =>
             i.date ===
@@ -96,7 +108,7 @@ const BudgetSummary = ({ style }: BudgetSummaryProps) => {
       });
     }
     if (filter === 'week') {
-      budgetEvent.forEach((item, index) => {
+      budgetEventByYear.forEach((item, index) => {
         const temp = displayData.find(
           i =>
             i.date ===
@@ -129,7 +141,7 @@ const BudgetSummary = ({ style }: BudgetSummaryProps) => {
       });
     }
     if (filter === 'month') {
-      budgetEvent.forEach((item, index) => {
+      budgetEventByYear.forEach((item, index) => {
         const temp = displayData.find(
           i =>
             i.date ===
@@ -163,12 +175,20 @@ const BudgetSummary = ({ style }: BudgetSummaryProps) => {
     setData(displayData);
   }
   useEffect(() => {
+    GetYearSummeryData();
     OnChangeTimeSummary(summaryTime);
   }, []);
   useFocusEffect(
     useCallback(() => {
+      GetYearSummeryData();
       OnChangeTimeSummary(summaryTime);
     }, []),
+  );
+  useFocusEffect(
+    useCallback(() => {
+      GetYearSummeryData();
+      OnChangeTimeSummary(summaryTime);
+    }, [yearSummery]),
   );
   const DataCard = data.map((item, index) => (
     <Surface style={[styles.surface]} key={index}>
