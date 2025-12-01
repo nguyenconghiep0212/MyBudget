@@ -179,7 +179,7 @@ const YearSummaryChart = ({ title, selectedYear, style }: AnalyticProps) => {
               marginTop: -4,
               letterSpacing: -0.5,
             }}>
-            {(item.budget / offset).toFixed(1)}
+            {(item.budget / offset).toString().substring(0, 3)}
           </Text>
         ),
       };
@@ -197,7 +197,7 @@ const YearSummaryChart = ({ title, selectedYear, style }: AnalyticProps) => {
               letterSpacing: -0.5,
               marginTop: -4,
             }}>
-            {(item.expense / offset).toFixed(1)}
+            {(item.expense / offset).toString().substring(0, 3)}
           </Text>
         ),
       };
