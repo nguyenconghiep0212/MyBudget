@@ -188,8 +188,8 @@ async function SetMonthlyBudget(newBudget: MonthlyBudget) {
   } else {
     monthlyBudget.forEach(item => {
       if (newBudget.month === item.month && newBudget.year === item.year) {
-        item.amount = newBudget.amount;
-        item.salary = newBudget.salary;
+        item.amount = newBudget.amount || 0;
+        item.salary = newBudget.salary || 0;
       }
     });
   }
