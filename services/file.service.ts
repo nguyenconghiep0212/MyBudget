@@ -12,6 +12,7 @@ const mergeContent: MergeData = {
 
 async function InitFiles() {
   await Promise.all([CheckAndCreateFile(mergeDataFileName)]);
+  await CheckFileData();
 }
 const CheckAndCreateFile = async (fileName: string) => {
   try {
@@ -29,6 +30,17 @@ const CheckAndCreateFile = async (fileName: string) => {
     }
   } catch (error) {
     console.error('Error:', error);
+  }
+};
+const CheckFileData = async () => {
+  const res = await GetMergeData();
+  if (res) {
+    mergeContent.budgetEvents = res.budgetEvents;
+    mergeContent.gold = res.gold;
+    mergeContent.monthlyBudgets = res.monthlyBudgets;
+    console.log('mergeContent data: ' + JSON.stringify(mergeContent));
+  } else {
+    console.error('MergeContent empty');
   }
 };
 
@@ -70,6 +82,7 @@ async function GetMonthlyBudget() {
 }
 
 async function SaveMergeData() {
+  console.log('Save merge data: ' + mergeContent);
   await setFile(mergeDataFileName, JSON.stringify(mergeContent));
 }
 async function GetMergeData() {
@@ -145,14 +158,12 @@ async function PickExternalFile(): Promise<string> {
   return content;
 }
 async function CopyDataToExternalStorage() {
-  await SaveMergeData();
-  CopyFileToExternalStorage(mergeDataFileName);
+  await CopyFileToExternalStorage(mergeDataFileName);
 }
 
 async function ReadDataFromExternalStorage() {
   try {
     const res = await PickExternalFile();
-
     const parsed: MergeData = JSON.parse(res);
     const { budgetEvents, gold, monthlyBudgets } = parsed;
     if (!isBudgetEventArray(budgetEvents)) {
@@ -170,6 +181,7 @@ async function ReadDataFromExternalStorage() {
     await SaveExpense(budgetEvents as BudgetEvent[]);
     await SaveGold(gold as Gold[]);
     await SaveMonthlyBudget(monthlyBudgets as MonthlyBudget[]);
+    console.log('Merge data: ' + mergeContent);
 
     // console.log('--------------------SaveExpense: ' + budgetEvents);
     // console.log('--------------------SaveGold: ' + gold);
