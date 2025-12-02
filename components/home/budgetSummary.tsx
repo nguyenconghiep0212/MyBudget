@@ -58,8 +58,6 @@ const BudgetSummary = ({ style }: BudgetSummaryProps) => {
   const [data, setData] = React.useState<SummaryDataDisplay[]>([]);
   const [summaryTime, setSummaryTime] = React.useState('day');
   function GetYearSummeryData() {
-    console.log('Year Summery: ', yearSummery);
-
     const temp = budgetEvent.filter(item => {
       return new Date(item.date).getFullYear() === yearSummery;
     });
@@ -174,21 +172,15 @@ const BudgetSummary = ({ style }: BudgetSummaryProps) => {
     }
     setData(displayData);
   }
-  useEffect(() => {
-    GetYearSummeryData();
-    OnChangeTimeSummary(summaryTime);
-  }, []);
   useFocusEffect(
     useCallback(() => {
       GetYearSummeryData();
-      OnChangeTimeSummary(summaryTime);
-    }, []),
+    }, [yearSummery]),
   );
   useFocusEffect(
     useCallback(() => {
-      GetYearSummeryData();
       OnChangeTimeSummary(summaryTime);
-    }, [yearSummery]),
+    }, [budgetEventByYear]),
   );
   const DataCard = data.map((item, index) => (
     <Surface style={[styles.surface]} key={index}>
