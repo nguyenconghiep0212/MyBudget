@@ -38,7 +38,6 @@ const CheckFileData = async () => {
     mergeContent.budgetEvents = res.budgetEvents;
     mergeContent.gold = res.gold;
     mergeContent.monthlyBudgets = res.monthlyBudgets;
-    console.log('mergeContent data: ' + JSON.stringify(mergeContent));
   } else {
     console.error('MergeContent empty');
   }

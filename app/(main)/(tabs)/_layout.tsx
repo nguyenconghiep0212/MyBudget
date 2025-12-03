@@ -1,6 +1,6 @@
 import { Tabs } from 'expo-router';
 import useColorScheme from '@/hooks/useColorScheme';
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, FontAwesome } from '@expo/vector-icons';
 import { colors } from '@/theme';
 
 export default function TabLayout() {
@@ -35,10 +35,17 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="precious-metal"
+        name="gold"
         options={{
-          title: 'Precious Metal',
+          title: 'Gold',
           tabBarIcon: ({ color }) => <AntDesign name="gold" size={24} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="exchange"
+        options={{
+          title: 'Exchange',
+          tabBarIcon: ({ color }) => <FontAwesome name="dollar" size={24} color={color} />,
         }}
       />
       <Tabs.Screen
