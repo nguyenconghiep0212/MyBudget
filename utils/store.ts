@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import app from '@/slices/app.slice';
 import budget from '@/slices/budget.slice';
 import precious_metal from '@/slices/precious_metal.slice';
+import exchange from '@/slices/exchange.slice';
 import config from '@/utils/config';
 import { Env } from '@/types/env';
 import logger from 'redux-logger';
@@ -11,6 +12,7 @@ const store = configureStore({
     app,
     budget,
     precious_metal,
+    exchange,
     // add more store ...
   },
   middleware: getDefaultMiddleware =>

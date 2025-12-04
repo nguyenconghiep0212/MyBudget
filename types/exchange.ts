@@ -16,6 +16,7 @@ export interface VPBankData {
 }
 export interface VPBank {
   effectiveTime: string;
+  effectiveDate: string;
   exchangeRates: VPBankData[];
 }
 
@@ -45,4 +46,20 @@ export interface VietcomBankData {
 export interface VietcomBank {
   UpdatedDate: '';
   Data: VietcomBankData[];
+}
+
+export interface ExchangeRateTable {
+  flag: any;
+  currencyName: string;
+  currencyCode: string;
+  buyRateCash: number;
+  buyRateTransfer: number;
+  sellRateCash: number;
+  sellRateTransfer: number;
+}
+
+export enum BANKENUM {
+  VIETCOMBANK = 'vietcombank',
+  BIDV = 'bidv',
+  VPBANK = 'vpbank',
 }

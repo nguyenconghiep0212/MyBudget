@@ -1,7 +1,8 @@
 import { View, StyleSheet } from 'react-native';
 import useColorScheme from '@/hooks/useColorScheme';
 import { colors } from '@/theme';
-import Exchange from '@/components/exhange';
+import Exchange from '@/components/exhange/exchange';
+import ExchangeRateTable from '@/components/exhange/exchangeRateTable';
 const styles = StyleSheet.create({
   root: {
     flex: 1,
@@ -11,6 +12,7 @@ const styles = StyleSheet.create({
     paddingRight: 20,
     paddingLeft: 20,
     color: 'white',
+    rowGap: 8,
   },
 });
 
@@ -20,6 +22,7 @@ export default function Index() {
   return (
     <View style={[styles.root, isDark && { backgroundColor: colors.blackGray }]}>
       <Exchange />
+      <ExchangeRateTable />
     </View>
   );
 }

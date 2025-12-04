@@ -204,7 +204,6 @@ const AddExpenseModal = ({
                 value={newExpense.amount ? newExpense.amount.toString() : ''}
                 keyboardType="numeric"
                 onChangeText={event => {
-                  console.log(event);
                   setNewExpense({
                     ...newExpense,
                     amount: parseFloat(event) as unknown as number,

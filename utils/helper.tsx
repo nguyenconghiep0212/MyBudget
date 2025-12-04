@@ -1,3 +1,5 @@
+import { Alert } from 'react-native';
+
 const months = [
   'January',
   'February',
@@ -45,5 +47,19 @@ function getWeekOfYear(date: Date): number {
 
   return weekNumber;
 }
-
-export { days, months, formatCurrency, getWeekOfYear, GetToday };
+function showAlert(title: string, message: string) {
+  Alert.alert(
+    title,
+    message,
+    [
+      {
+        text: 'Close',
+        style: 'cancel',
+      },
+    ],
+    {
+      cancelable: true,
+    },
+  );
+}
+export { days, months, formatCurrency, getWeekOfYear, GetToday, showAlert };

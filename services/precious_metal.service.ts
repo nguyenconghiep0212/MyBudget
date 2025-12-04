@@ -1,3 +1,4 @@
+import { showAlert } from '@/utils/helper';
 import axios from 'axios';
 
 const fetchGoldPriceSJC = async () => {
@@ -13,6 +14,7 @@ const fetchGoldPriceSJC = async () => {
     }
   } catch (error: any) {
     console.error('Error fetching gold price SJC:', error);
+    showAlert('Network Error', 'Please check your Wifi/4G connection and try again.');
   } finally {
   }
 };
@@ -33,6 +35,7 @@ const fetchGoldPricePNJ = async (zone = 11) => {
     }
   } catch (error: any) {
     console.error('Error fetching gold price SJC:', error);
+    showAlert('Network Error', 'Please check your Wifi/4G connection and try again.');
   } finally {
   }
 };
@@ -55,6 +58,7 @@ async function getGoldPriceByMonth() {
     }
   } catch (error) {
     console.error('Error fetching monthly gold price:', error);
+    showAlert('Network Error', 'Please check your Wifi/4G connection and try again.');
   }
 
   function extractChartObject(htmlString: string) {
