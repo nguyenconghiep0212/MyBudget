@@ -4,14 +4,21 @@ import {
   fetchVietcomBankExchangeRate,
 } from '@/services/exchange.service';
 import { colors } from '@/theme';
-import { useFocusEffect } from 'expo-router';
-import { useCallback, useState } from 'react';
-import { StyleProp, View, Image, ViewStyle, TextInput, StyleSheet, Text } from 'react-native';
-import { SegmentedButtons } from 'react-native-paper';
+import { useEffect, useState } from 'react';
+import {
+  Switch,
+  StyleProp,
+  View,
+  ViewStyle,
+  TextInput,
+  StyleSheet,
+  Text,
+  Image,
+} from 'react-native';
 import { useExchangeSlice } from '@/slices/exchange.slice';
 import { Dropdown } from 'react-native-element-dropdown';
 import { Entypo } from '@expo/vector-icons';
-import { showAlert } from '@/utils/helper';
+import { formatCurrency, showAlert } from '@/utils/helper';
 const styles = StyleSheet.create({
   inputField: {
     width: '100%',
@@ -53,31 +60,31 @@ const styles = StyleSheet.create({
 type ExchangeProps = {
   style?: StyleProp<ViewStyle>;
 };
-enum BANKENUM {
-  VIETCOMBANK = 'vietcombank',
-  BIDV = 'bidv',
-  VPBANK = 'vpbank',
-}
+const bankLogoPath = '@/assets/images/banks/';
+const flags: any = {
+  vp: require(`${bankLogoPath}VPBank.webp`),
+  bidv: require(`${bankLogoPath}BIDV.webp`),
+  vietcom: require(`${bankLogoPath}VietcomBank.webp`),
+};
 const Exchange = ({ style }: ExchangeProps) => {
   const {
     dispatch,
     DataApiLoading,
     DataApiLoaded,
     refreshExchangeRate,
-    lastUpdateTime,
     SetVPBankExchangeRate,
     SetBIDVBankExchangeRate,
     SetVietcomBankExchangeRate,
-    SetSelectedBank,
+    SetExchangeRateItems,
   } = useExchangeSlice();
+  const [isSwitchOn, setIsSwitchOn] = useState('buy');
   const [exchangeNumber, setExchangeNumber] = useState<number>(0);
   const [exchangedNumber, setExchangedNumber] = useState<number>(0);
   const [exchangeRateFrom, setExchangeRateFrom] = useState<number[]>([]);
   const [exchangeRateTo, setExchangeRateTo] = useState<number[]>([]);
   const [selectedExchangeRateFrom, setSelectedExchangeRateFrom] = useState<number>(1);
   const [selectedExchangeRateTo, setSelectedExchangeRateTo] = useState<number>(1);
-  const [selectedBank, setSelectedBank] = useState<string>(BANKENUM.VIETCOMBANK);
-  const bankLogoPath = '@/assets/images/banks/';
+
   async function getVPBankExchange() {
     const res = await fetchVPBankExchangeRate();
     if (res) {
@@ -97,37 +104,27 @@ const Exchange = ({ style }: ExchangeProps) => {
     }
   }
 
-  function onSelectedBank(bank: string) {
-    setSelectedBank(bank);
-    if (bank === BANKENUM.VIETCOMBANK) {
-      dispatch(SetSelectedBank(bank));
-    }
-    if (bank === BANKENUM.VPBANK) {
-      dispatch(SetSelectedBank(bank));
-    }
-    if (bank === BANKENUM.BIDV) {
-      dispatch(SetSelectedBank(bank));
-    }
-  }
-
   function submitExchangeCurrency(number: number) {
     setExchangedNumber(number);
   }
-  useFocusEffect(
-    useCallback(() => {
-      console.log('Fetching exchange rate data...');
-      dispatch(DataApiLoading());
-      Promise.all([getVPBankExchange(), getBIDVBankExchange(), getVietcomBankExchange()])
-        .then(() => {
-          dispatch(DataApiLoaded());
-          console.log('Fetching exchange rate data succeeded.');
-        })
-        .catch(error => {
-          showAlert('Network Error', 'Please check your Wifi/4G connection and try again.');
-          dispatch(DataApiLoaded());
-        });
-    }, [refreshExchangeRate]),
-  );
+  function onToggleSwitch() {
+    if (isSwitchOn === 'buy') setIsSwitchOn('sell');
+    else setIsSwitchOn('buy');
+  }
+  useEffect(() => {
+    console.log('Fetching exchange rate data...');
+    dispatch(DataApiLoading());
+    Promise.all([getVPBankExchange(), getBIDVBankExchange(), getVietcomBankExchange()])
+      .then(() => {
+        dispatch(DataApiLoaded());
+        dispatch(SetExchangeRateItems());
+        console.log('Fetching exchange rate data succeeded.');
+      })
+      .catch(error => {
+        showAlert('Network Error', 'Please check your Wifi/4G connection and try again.');
+        dispatch(DataApiLoaded());
+      });
+  }, [refreshExchangeRate]);
   const renderItem = (item: any) => {
     return (
       <View
@@ -145,123 +142,28 @@ const Exchange = ({ style }: ExchangeProps) => {
 
   return (
     <View style={[style, { width: '100%' }]}>
-      <Text style={{ color: colors.gray, marginVertical: 8, fontSize: 12 }}>
-        * Bank exchange rates are for reference only and may vary *
-      </Text>
-      <SegmentedButtons
-        theme={{
-          colors: {
-            secondaryContainer: colors.NavyBlueBg,
-            onSecondaryContainer: 'white',
-            onSurface: 'white',
-          },
-        }}
-        value={selectedBank}
-        onValueChange={event => {
-          onSelectedBank(event);
-        }}
-        buttons={[
-          {
-            value: BANKENUM.VIETCOMBANK,
-            label: '',
-            icon() {
-              return (
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: 4,
-                  }}>
-                  <Image
-                    source={require(`${bankLogoPath}VietcomBank.webp`)}
-                    style={{ width: 20, height: 20, resizeMode: 'contain' }}
-                  />
-                  <Text
-                    style={{
-                      fontSize: 10,
-                      color: colors.lightGray,
-                      fontWeight: 800,
-                    }}>
-                    VietcomBank
-                  </Text>
-                </View>
-              );
-            },
-          },
-          {
-            value: BANKENUM.BIDV,
-            label: '',
-            icon() {
-              return (
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: 4,
-                  }}>
-                  <Image
-                    source={require(`${bankLogoPath}BIDV.webp`)}
-                    style={{ width: 20, height: 20, resizeMode: 'contain' }}
-                  />
-                  <Text
-                    style={{
-                      fontSize: 10,
-                      color: colors.lightGray,
-                      fontWeight: 800,
-                    }}>
-                    BIDV
-                  </Text>
-                </View>
-              );
-            },
-          },
-          {
-            value: BANKENUM.VPBANK,
-            label: '',
-            icon() {
-              return (
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: 4,
-                  }}>
-                  <Image
-                    source={require(`${bankLogoPath}VPBank.webp`)}
-                    style={{ width: 20, height: 20, resizeMode: 'contain' }}
-                  />
-                  <Text
-                    style={{
-                      fontSize: 10,
-                      color: colors.lightGray,
-                      fontWeight: 800,
-                    }}>
-                    VPBank
-                  </Text>
-                </View>
-              );
-            },
-          },
-        ]}
-      />
       <View
         style={{
-          marginVertical: 8,
+          width: '100%',
           flexDirection: 'row',
-          justifyContent: 'space-between',
+          gap: 4,
+          justifyContent: 'center',
           alignItems: 'center',
         }}>
-        <View style={{ flexDirection: 'row', justifyContent: 'flex-start', gap: 4 }}>
-          <Text style={{ fontSize: 12, color: colors.lightGray }}>Last update time:</Text>
-          <Text style={{ fontSize: 12, color: colors.gray }}>{lastUpdateTime}</Text>
-        </View>
-        <View style={{ flexDirection: 'row', justifyContent: 'flex-start', gap: 4 }}>
-          <Text style={{ fontSize: 12, color: colors.lightGray }}>Unit:</Text>
-          <Text style={{ fontSize: 12, color: colors.gray }}>VND</Text>
-        </View>
+        <Text
+          style={{ color: isSwitchOn === 'sell' ? colors.Negative : colors.gray, fontWeight: 600 }}>
+          Sell price
+        </Text>
+        <Switch
+          value={isSwitchOn === 'sell' ? false : true}
+          trackColor={{ true: `${colors.Positive}60`, false: `${colors.Negative}60` }}
+          thumbColor={isSwitchOn === 'buy' ? colors.Positive : colors.Negative}
+          onValueChange={onToggleSwitch}
+        />
+        <Text
+          style={{ color: isSwitchOn === 'buy' ? colors.Positive : colors.gray, fontWeight: 600 }}>
+          Buy price
+        </Text>
       </View>
       <View style={[styles.superContainer]}>
         <View style={[styles.superItemContainer]}>
@@ -313,13 +215,73 @@ const Exchange = ({ style }: ExchangeProps) => {
               setSelectedExchangeRateTo(item.id);
             }}
           />
-          <View style={[styles.inputField, { justifyContent: 'center' }]}>
-            <Text
-              style={{
-                color: colors.white,
-              }}>
-              {exchangedNumber}
-            </Text>
+          <View style={{ columnGap: 2, marginTop: 2 }}>
+            <View
+              style={[
+                {
+                  justifyContent: 'flex-start',
+                  alignItems: 'center',
+                  flexDirection: 'row',
+                  gap: 4,
+                },
+              ]}>
+              <Image
+                source={flags['vp']}
+                style={{ width: 15, height: 15, resizeMode: 'contain' }}
+              />
+              <Text
+                style={{
+                  color: colors.lightGray,
+                  fontSize: 13,
+                  letterSpacing: 0.5,
+                }}>
+                {formatCurrency(exchangedNumber)}
+              </Text>
+            </View>
+            <View
+              style={[
+                {
+                  justifyContent: 'flex-start',
+                  alignItems: 'center',
+                  flexDirection: 'row',
+                  gap: 4,
+                },
+              ]}>
+              <Image
+                source={flags['bidv']}
+                style={{ width: 15, height: 15, resizeMode: 'contain' }}
+              />
+              <Text
+                style={{
+                  color: colors.lightGray,
+                  fontSize: 13,
+                  letterSpacing: 0.5,
+                }}>
+                {formatCurrency(exchangedNumber)}
+              </Text>
+            </View>
+            <View
+              style={[
+                {
+                  justifyContent: 'flex-start',
+                  alignItems: 'center',
+                  flexDirection: 'row',
+                  gap: 4,
+                },
+              ]}>
+              <Image
+                source={flags['vietcom']}
+                style={{ width: 15, height: 15, resizeMode: 'contain' }}
+              />
+              <Text
+                style={{
+                  color: colors.lightGray,
+                  fontSize: 13,
+                  letterSpacing: 0.5,
+                }}>
+                {formatCurrency(exchangedNumber)}
+              </Text>
+            </View>
           </View>
         </View>
       </View>

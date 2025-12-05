@@ -14,8 +14,8 @@ export const colors = {
   transparent: 'transparent',
   NavyBlueText: '#6298b8ff',
   NavyBlueBg: '#355a77ff',
-  Negative: '#ff7e7eff',
-  Positive: '#7eff9dff',
+  Negative: '#ff7e7e',
+  Positive: '#7eff9c',
   gold: '#ffee00b9',
   darkGreen: '#2d8241ff',
 };

@@ -6,7 +6,6 @@ import { useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { View, StyleSheet, StyleProp, ViewStyle, Text, ScrollView, Image } from 'react-native';
 import { DataTable, Surface } from 'react-native-paper';
-import usdFlag from '@/assets/images/countries/usd.webp';
 const styles = StyleSheet.create({
   body: {
     width: '100%',
@@ -37,14 +36,13 @@ const styles = StyleSheet.create({
 type ExchangeRateTableProps = {
   style?: StyleProp<ViewStyle>;
 };
-const flags = {
-  usd: usdFlag,
-};
+
 const ExchangeRateTableView = ({ style }: ExchangeRateTableProps) => {
   const [exchangeTableData, setExchangeTableData] = useState<ExchangeRateTable[]>([]);
   const [refreshFlag, setRefreshFlag] = useState<boolean>(false);
   const {
     dispatch,
+    loadingDataApi,
     selectedBank,
     VPBankExchangeRate,
     BIDVBankExchangeRate,
@@ -52,6 +50,31 @@ const ExchangeRateTableView = ({ style }: ExchangeRateTableProps) => {
     SetLastUpdateTime,
   } = useExchangeSlice();
   const countriesLogoPath = '@/assets/images/countries/';
+  const flags: any = {
+    aud: require(`${countriesLogoPath}aud.webp`),
+    cad: require(`${countriesLogoPath}cad.webp`),
+    chf: require(`${countriesLogoPath}chf.webp`),
+    cny: require(`${countriesLogoPath}cny.webp`),
+    dkk: require(`${countriesLogoPath}dkk.webp`),
+    eur: require(`${countriesLogoPath}eur.webp`),
+    gbp: require(`${countriesLogoPath}gbp.webp`),
+    hkd: require(`${countriesLogoPath}hkd.webp`),
+    inr: require(`${countriesLogoPath}inr.webp`),
+    jpy: require(`${countriesLogoPath}jpy.webp`),
+    krw: require(`${countriesLogoPath}krw.webp`),
+    kwd: require(`${countriesLogoPath}kwd.webp`),
+    lak: require(`${countriesLogoPath}lak.webp`),
+    myr: require(`${countriesLogoPath}myr.webp`),
+    nok: require(`${countriesLogoPath}nok.webp`),
+    nzd: require(`${countriesLogoPath}nzd.webp`),
+    rub: require(`${countriesLogoPath}rub.webp`),
+    sar: require(`${countriesLogoPath}sar.webp`),
+    sek: require(`${countriesLogoPath}sek.webp`),
+    sgd: require(`${countriesLogoPath}sgd.webp`),
+    thb: require(`${countriesLogoPath}thb.webp`),
+    twd: require(`${countriesLogoPath}twd.webp`),
+    usd: require(`${countriesLogoPath}usd.webp`),
+  };
   function standardizeBankDataObject(bank: BANKENUM) {
     let exchangeRateTable: ExchangeRateTable[] = [];
     switch (bank) {
@@ -60,7 +83,7 @@ const ExchangeRateTableView = ({ style }: ExchangeRateTableProps) => {
           dispatch(SetLastUpdateTime(formatTime(new Date(VietcomBankExchangeRate.UpdatedDate))));
           VietcomBankExchangeRate.Data.forEach(item => {
             exchangeRateTable.push({
-              flag: flags[item.currencyCode.toLowerCase()],
+              flag: flags[item.currencyCode.toLowerCase()] || null,
               currencyName: item.currencyName,
               currencyCode: item.currencyCode,
               buyRateCash: parseFloat(item.cash.split(',').join('')),
@@ -85,7 +108,7 @@ const ExchangeRateTableView = ({ style }: ExchangeRateTableProps) => {
           BIDVBankExchangeRate.data.forEach(item => {
             if (item.currency !== 'USD(10-20)' && item.currency !== 'USD(1-2-5)')
               exchangeRateTable.push({
-                flag: countriesLogoPath + 'im_flag_' + item.currency.toLowerCase() + '.webp',
+                flag: flags[item.currency.toLowerCase()] || null,
                 currencyName: item.nameVI,
                 currencyCode: item.currency,
                 buyRateCash: parseFloat(item.muaTm.split(',').join('')),
@@ -108,7 +131,7 @@ const ExchangeRateTableView = ({ style }: ExchangeRateTableProps) => {
           VPBankExchangeRate.exchangeRates.forEach(item => {
             if (item.currency !== 'XAU')
               exchangeRateTable.push({
-                flag: countriesLogoPath + 'im_flag_' + item.currency.toLowerCase() + '.webp',
+                flag: flags[item.currency.toLowerCase()] || null,
                 currencyName: item.currencyName,
                 currencyCode: item.currency,
                 buyRateCash: item.buyCash,
@@ -135,7 +158,7 @@ const ExchangeRateTableView = ({ style }: ExchangeRateTableProps) => {
   useFocusEffect(
     useCallback(() => {
       standardizeBankDataObject(selectedBank);
-    }, [selectedBank]),
+    }, [selectedBank, loadingDataApi]),
   );
   useEffect(() => {}, [refreshFlag]);
   return (
@@ -148,11 +171,11 @@ const ExchangeRateTableView = ({ style }: ExchangeRateTableProps) => {
             }}>
             <DataTable>
               <DataTable.Header>
-                <DataTable.Title>
-                  <Text style={styles.TableTitle}>Currency</Text>
+                <DataTable.Title style={{ maxWidth: 40, justifyContent: 'flex-start' }}>
+                  <Text style={styles.TableTitle}>Code</Text>
                 </DataTable.Title>
                 <DataTable.Title style={{ justifyContent: 'center' }}>
-                  <Text style={styles.TableTitle}>Name</Text>
+                  <Text style={styles.TableTitle}>Currency</Text>
                 </DataTable.Title>
                 <DataTable.Title style={{ justifyContent: 'center' }}>
                   <Text style={styles.TableTitle}>Buy</Text>
@@ -168,25 +191,27 @@ const ExchangeRateTableView = ({ style }: ExchangeRateTableProps) => {
                   style={{
                     backgroundColor: index % 2 === 0 ? colors.black : colors.blackGray,
                   }}>
-                  <DataTable.Cell>
+                  <DataTable.Cell style={{ maxWidth: 40, justifyContent: 'flex-start' }}>
                     <View>
-                      <Image
-                        source={{
-                          uri:
-                            countriesLogoPath +
-                            'im_flag_' +
-                            item.currencyCode.toLowerCase() +
-                            '.webp',
-                        }}
-                        style={{ width: 20, height: 14, resizeMode: 'contain', marginBottom: 2 }}
-                      />
-                      <Text style={{ color: colors.lightGray, fontSize: 12 }}>
+                      {item.currencyCode && (
+                        <Image
+                          source={item.flag}
+                          style={{
+                            width: 20,
+                            height: 14,
+                            resizeMode: 'contain',
+                            marginBottom: 2,
+                            borderRadius: 4,
+                          }}
+                        />
+                      )}
+                      <Text style={{ color: colors.lightGray, fontSize: 10, fontWeight: 800 }}>
                         {item.currencyCode}
                       </Text>
                     </View>
                   </DataTable.Cell>
-                  <DataTable.Cell>
-                    <Text style={{ color: colors.lightGray, fontSize: 10 }}>
+                  <DataTable.Cell style={{ justifyContent: 'center' }}>
+                    <Text style={{ color: colors.lightGray, fontSize: 10, textAlign: 'center' }}>
                       {item.currencyName}
                     </Text>
                   </DataTable.Cell>

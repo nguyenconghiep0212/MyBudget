@@ -57,6 +57,16 @@ export interface ExchangeRateTable {
   sellRateCash: number;
   sellRateTransfer: number;
 }
+export interface ExchangeRateItem {
+  currencyCode: string;
+  rates: {
+    bank: BANKENUM;
+    buyRateCash: number;
+    buyRateTransfer: number;
+    sellRateCash: number;
+    sellRateTransfer: number;
+  }[];
+}
 
 export enum BANKENUM {
   VIETCOMBANK = 'vietcombank',
