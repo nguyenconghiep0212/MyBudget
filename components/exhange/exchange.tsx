@@ -19,6 +19,7 @@ import { useExchangeSlice } from '@/slices/exchange.slice';
 import { Dropdown } from 'react-native-element-dropdown';
 import { Entypo } from '@expo/vector-icons';
 import { formatCurrency, showAlert } from '@/utils/helper';
+import { BANKENUM } from '@/types';
 const styles = StyleSheet.create({
   inputField: {
     width: '100%',
@@ -49,7 +50,7 @@ const styles = StyleSheet.create({
   },
   placeholderStyle: {
     color: colors.lightGray,
-    fontSize: 14,
+    fontSize: 10,
   },
   selectedTextStyle: {
     color: colors.white,
@@ -62,9 +63,36 @@ type ExchangeProps = {
 };
 const bankLogoPath = '@/assets/images/banks/';
 const flags: any = {
-  vp: require(`${bankLogoPath}VPBank.webp`),
+  vpbank: require(`${bankLogoPath}VPBank.webp`),
   bidv: require(`${bankLogoPath}BIDV.webp`),
-  vietcom: require(`${bankLogoPath}VietcomBank.webp`),
+  vietcombank: require(`${bankLogoPath}VietcomBank.webp`),
+};
+const countriesLogoPath = '@/assets/images/countries/';
+const countriesFlags: any = {
+  aud: require(`${countriesLogoPath}aud.webp`),
+  cad: require(`${countriesLogoPath}cad.webp`),
+  chf: require(`${countriesLogoPath}chf.webp`),
+  cny: require(`${countriesLogoPath}cny.webp`),
+  dkk: require(`${countriesLogoPath}dkk.webp`),
+  eur: require(`${countriesLogoPath}eur.webp`),
+  gbp: require(`${countriesLogoPath}gbp.webp`),
+  hkd: require(`${countriesLogoPath}hkd.webp`),
+  inr: require(`${countriesLogoPath}inr.webp`),
+  jpy: require(`${countriesLogoPath}jpy.webp`),
+  krw: require(`${countriesLogoPath}krw.webp`),
+  kwd: require(`${countriesLogoPath}kwd.webp`),
+  lak: require(`${countriesLogoPath}lak.webp`),
+  myr: require(`${countriesLogoPath}myr.webp`),
+  nok: require(`${countriesLogoPath}nok.webp`),
+  nzd: require(`${countriesLogoPath}nzd.webp`),
+  rub: require(`${countriesLogoPath}rub.webp`),
+  sar: require(`${countriesLogoPath}sar.webp`),
+  sek: require(`${countriesLogoPath}sek.webp`),
+  sgd: require(`${countriesLogoPath}sgd.webp`),
+  thb: require(`${countriesLogoPath}thb.webp`),
+  twd: require(`${countriesLogoPath}twd.webp`),
+  usd: require(`${countriesLogoPath}usd.webp`),
+  vnd: require(`${countriesLogoPath}vnd.webp`),
 };
 const Exchange = ({ style }: ExchangeProps) => {
   const {
@@ -72,6 +100,7 @@ const Exchange = ({ style }: ExchangeProps) => {
     DataApiLoading,
     DataApiLoaded,
     refreshExchangeRate,
+    exchangeRateList,
     SetVPBankExchangeRate,
     SetBIDVBankExchangeRate,
     SetVietcomBankExchangeRate,
@@ -79,11 +108,27 @@ const Exchange = ({ style }: ExchangeProps) => {
   } = useExchangeSlice();
   const [isSwitchOn, setIsSwitchOn] = useState('buy');
   const [exchangeNumber, setExchangeNumber] = useState<number>(0);
-  const [exchangedNumber, setExchangedNumber] = useState<number>(0);
-  const [exchangeRateFrom, setExchangeRateFrom] = useState<number[]>([]);
-  const [exchangeRateTo, setExchangeRateTo] = useState<number[]>([]);
-  const [selectedExchangeRateFrom, setSelectedExchangeRateFrom] = useState<number>(1);
-  const [selectedExchangeRateTo, setSelectedExchangeRateTo] = useState<number>(1);
+  const [exchangedNumber, setExchangedNumber] = useState<
+    { bank: BANKENUM; rate: number; final: number }[]
+  >([
+    {
+      bank: BANKENUM.VPBANK,
+      rate: 1,
+      final: 0,
+    },
+    {
+      bank: BANKENUM.BIDV,
+      rate: 1,
+      final: 0,
+    },
+    {
+      bank: BANKENUM.VIETCOMBANK,
+      rate: 1,
+      final: 0,
+    },
+  ]);
+  const [selectedExchangeRateFrom, setSelectedExchangeRateFrom] = useState<string>('USD');
+  const [selectedExchangeRateTo, setSelectedExchangeRateTo] = useState<string>('VND');
 
   async function getVPBankExchange() {
     const res = await fetchVPBankExchangeRate();
@@ -105,7 +150,51 @@ const Exchange = ({ style }: ExchangeProps) => {
   }
 
   function submitExchangeCurrency(number: number) {
-    setExchangedNumber(number);
+    const exchangeRateFrom =
+      exchangeRateList.find(
+        item => item.currencyCode.toLowerCase() === selectedExchangeRateFrom.toLowerCase(),
+      )?.rates || [];
+    const exchangeRateTo =
+      exchangeRateList.find(
+        item => item.currencyCode.toLowerCase() === selectedExchangeRateTo.toLowerCase(),
+      )?.rates || [];
+    const temp = [
+      {
+        bank: BANKENUM.VPBANK,
+        rate: GetRate(BANKENUM.VPBANK),
+        final: number * GetRate(BANKENUM.VPBANK),
+      },
+      {
+        bank: BANKENUM.BIDV,
+        rate: GetRate(BANKENUM.BIDV),
+        final: number * GetRate(BANKENUM.BIDV),
+      },
+      {
+        bank: BANKENUM.VIETCOMBANK,
+        rate: GetRate(BANKENUM.VIETCOMBANK),
+        final: number * GetRate(BANKENUM.VIETCOMBANK),
+      },
+    ];
+
+    console.log('temp:', temp);
+    setExchangedNumber(temp);
+    function GetRate(bank: BANKENUM) {
+      const temp =
+        isSwitchOn === 'buy'
+          ? (exchangeRateFrom.find(i => i.bank === bank)?.buyRateTransfer ||
+              exchangeRateFrom.find(i => i.bank === bank)?.buyRateCash ||
+              0) /
+            (exchangeRateTo.find(i => i.bank === bank)?.buyRateTransfer ||
+              exchangeRateTo.find(i => i.bank === bank)?.buyRateCash ||
+              0)
+          : (exchangeRateFrom.find(i => i.bank === bank)?.sellRateTransfer ||
+              exchangeRateFrom.find(i => i.bank === bank)?.sellRateCash ||
+              0) /
+            (exchangeRateTo.find(i => i.bank === bank)?.sellRateTransfer ||
+              exchangeRateTo.find(i => i.bank === bank)?.sellRateCash ||
+              0);
+      return temp === Infinity ? 0 : temp;
+    }
   }
   function onToggleSwitch() {
     if (isSwitchOn === 'buy') setIsSwitchOn('sell');
@@ -125,17 +214,25 @@ const Exchange = ({ style }: ExchangeProps) => {
         dispatch(DataApiLoaded());
       });
   }, [refreshExchangeRate]);
+  useEffect(() => {
+    submitExchangeCurrency(exchangeNumber);
+  }, [isSwitchOn, selectedExchangeRateTo, selectedExchangeRateFrom]);
   const renderItem = (item: any) => {
     return (
       <View
         style={{
-          padding: 10,
+          paddingHorizontal: 10,
+          paddingVertical: 6,
           flexDirection: 'row',
           alignItems: 'center',
-          gap: 15,
+          gap: 6,
           backgroundColor: colors.blackGray,
         }}>
-        <Text style={styles.selectedTextStyle}>{item.rate}</Text>
+        <Image
+          source={countriesFlags[item.currencyCode.toLowerCase()]}
+          style={{ width: 20, height: 20, resizeMode: 'contain', borderRadius: 4 }}
+        />
+        <Text style={styles.selectedTextStyle}>{item.currencyCode}</Text>
       </View>
     );
   };
@@ -171,15 +268,25 @@ const Exchange = ({ style }: ExchangeProps) => {
             style={styles.dropdownField}
             placeholderStyle={styles.placeholderStyle}
             selectedTextStyle={styles.selectedTextStyle}
-            data={exchangeRateFrom}
+            data={exchangeRateList}
             maxHeight={300}
-            labelField="rate"
-            valueField="id"
+            labelField="currencyCode"
+            valueField="currencyCode"
             placeholder="Select currency"
             value={selectedExchangeRateFrom}
+            renderLeftIcon={() => (
+              <View style={{ marginRight: 8 }}>
+                {selectedExchangeRateFrom && (
+                  <Image
+                    source={countriesFlags[selectedExchangeRateFrom.toLowerCase()]}
+                    style={{ width: 18, height: 18, resizeMode: 'contain', borderRadius: 4 }}
+                  />
+                )}
+              </View>
+            )}
             renderItem={renderItem}
             onChange={item => {
-              setSelectedExchangeRateFrom(item.id);
+              setSelectedExchangeRateFrom(item.currencyCode);
             }}
           />
           <TextInput
@@ -204,84 +311,69 @@ const Exchange = ({ style }: ExchangeProps) => {
             style={styles.dropdownField}
             placeholderStyle={styles.placeholderStyle}
             selectedTextStyle={styles.selectedTextStyle}
-            data={exchangeRateTo}
+            data={exchangeRateList}
             maxHeight={300}
-            labelField="rate"
-            valueField="id"
+            labelField="currencyCode"
+            valueField="currencyCode"
             placeholder="Select currency"
             value={selectedExchangeRateTo}
+            renderLeftIcon={() => (
+              <View style={{ marginRight: 8 }}>
+                {selectedExchangeRateTo && (
+                  <Image
+                    source={countriesFlags[selectedExchangeRateTo.toLowerCase()]}
+                    style={{ width: 18, height: 18, resizeMode: 'contain', borderRadius: 4 }}
+                  />
+                )}
+              </View>
+            )}
             renderItem={renderItem}
             onChange={item => {
-              setSelectedExchangeRateTo(item.id);
+              setSelectedExchangeRateTo(item.currencyCode);
             }}
           />
-          <View style={{ columnGap: 2, marginTop: 2 }}>
-            <View
-              style={[
-                {
-                  justifyContent: 'flex-start',
-                  alignItems: 'center',
-                  flexDirection: 'row',
-                  gap: 4,
-                },
-              ]}>
-              <Image
-                source={flags['vp']}
-                style={{ width: 15, height: 15, resizeMode: 'contain' }}
-              />
-              <Text
-                style={{
-                  color: colors.lightGray,
-                  fontSize: 13,
-                  letterSpacing: 0.5,
-                }}>
-                {formatCurrency(exchangedNumber)}
-              </Text>
-            </View>
-            <View
-              style={[
-                {
-                  justifyContent: 'flex-start',
-                  alignItems: 'center',
-                  flexDirection: 'row',
-                  gap: 4,
-                },
-              ]}>
-              <Image
-                source={flags['bidv']}
-                style={{ width: 15, height: 15, resizeMode: 'contain' }}
-              />
-              <Text
-                style={{
-                  color: colors.lightGray,
-                  fontSize: 13,
-                  letterSpacing: 0.5,
-                }}>
-                {formatCurrency(exchangedNumber)}
-              </Text>
-            </View>
-            <View
-              style={[
-                {
-                  justifyContent: 'flex-start',
-                  alignItems: 'center',
-                  flexDirection: 'row',
-                  gap: 4,
-                },
-              ]}>
-              <Image
-                source={flags['vietcom']}
-                style={{ width: 15, height: 15, resizeMode: 'contain' }}
-              />
-              <Text
-                style={{
-                  color: colors.lightGray,
-                  fontSize: 13,
-                  letterSpacing: 0.5,
-                }}>
-                {formatCurrency(exchangedNumber)}
-              </Text>
-            </View>
+          <View style={{ marginTop: 2 }}>
+            {exchangedNumber.map((item, index) => {
+              return (
+                <View
+                  key={index}
+                  style={[
+                    {
+                      justifyContent: 'flex-start',
+                      alignItems: 'center',
+                      flexDirection: 'row',
+                      gap: 4,
+                      marginTop: 2,
+                    },
+                  ]}>
+                  <Image
+                    source={flags[item.bank]}
+                    style={{ width: 15, height: 15, resizeMode: 'contain' }}
+                  />
+                  {item.final === 0 ? (
+                    <Text
+                      style={{
+                        color: colors.gray,
+                        fontSize: 12,
+                        letterSpacing: 0.5,
+                        fontWeight: 800,
+                      }}>
+                      No Data
+                    </Text>
+                  ) : (
+                    <Text
+                      style={{
+                        color: colors.lightGray,
+                        fontSize: 12,
+                        letterSpacing: 0.5,
+                        fontWeight: 600,
+                      }}>
+                      {formatCurrency(item.final)}
+                    </Text>
+                  )}
+                </View>
+              );
+            })}
           </View>
         </View>
       </View>
