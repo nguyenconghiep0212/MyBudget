@@ -197,7 +197,7 @@ export default function DrawerContents() {
             justifyContent: 'flex-end',
             paddingHorizontal: 24,
           }}>
-          <Text style={{ fontSize: 12, color: colors.darkGray }}>v1.1.0</Text>
+          <Text style={{ fontSize: 12, color: colors.darkGray }}>v1.1.1</Text>
         </View>
         <View style={{ paddingHorizontal: 24, height: '100%', width: '100%', gap: 32 }}>
           <DownloadView />
